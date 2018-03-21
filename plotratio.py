@@ -31,4 +31,5 @@ def plotRatio(blueRedRatio,xres,yres):
 	# make a color bar
 	plt.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds)
 
+	plt.savefig('cloudy.png')
 	plt.show()
