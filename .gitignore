@@ -10,3 +10,6 @@ template.py
 #folders
 __pycache__
 
+#exceptions
+!sunny.png
+!cloudy.png

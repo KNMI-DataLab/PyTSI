@@ -53,7 +53,7 @@ def createmask(img):
 	# this is the angle from the north=0, thus I need to add this to my
 	# calculations as I calculate from east=0
 	# thus, azimuth angle of 140degrees is ESE in the morning
-	azimuthDegrees=129.639
+	azimuthDegrees=181.5503686060006
 	azimuthDegreesEast=azimuthDegrees-90
 	theta=-azimuthDegreesEast*pi/180
 	xBand,yBand=calculateBandPosition(img,radiusCircle,xres,yres,theta)
