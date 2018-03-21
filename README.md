@@ -1,4 +1,4 @@
 # cloudDetection
 
-![alt text](sunny.png)
-![alt text](cloudy.png)
+![alt text](sunny.png "Sunny")
+![alt text](cloudy.png "Cloudy")
