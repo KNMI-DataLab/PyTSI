@@ -1,0 +1,12 @@
+#python files
+test.py
+template.py
+
+#images
+*.png
+
+#text files
+
+#folders
+__pycache__
+
