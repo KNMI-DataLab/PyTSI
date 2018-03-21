@@ -1,4 +1,4 @@
 # cloudDetection
 
-![alt text](https://github.com/KNMI-DataLab/cloudDetection/sunny.png)
-![alt text](https://github.com/KNMI-DataLab/cloudDetection/cloudy.png)
+![alt text](sunny.png)
+![alt text](cloudy.png)
