@@ -12,7 +12,7 @@
 from myimports import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def plotRatio(img,redBlueRatio):
+def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
@@ -30,11 +30,9 @@ def plotRatio(img,redBlueRatio):
 	cmap = colors.ListedColormap(['black', 'blue', 'lightgray', 'white'])
 	# set thresholds
 	opaque = 1      #everything above 1 is thick opaque clouds
-	thin   = 0.9    #upper limit
-	sunny  = 0.795  #upper limit
 	lower  = 0.01
 	mask   = 0
-	bounds=[mask,lower,sunny,thin,opaque]
+	bounds=[mask,lower,sunnyThreshold,thinThreshold,opaque]
 	norm = colors.BoundaryNorm(bounds, cmap.N)
 
 	# create subplot environment
@@ -47,7 +45,7 @@ def plotRatio(img,redBlueRatio):
 	ax1.imshow(trueColorImg)
 
 	#### TSI processed image
-	img = cv2.imread('/home/mos/Documents/TSI/processed_images/20180312133900.png')
+	img = cv2.imread('/home/mos/Documents/TSI/processed_images/broken_clouds.png')
 	imgChannels = cv2.split(img)
 	trueColorImg=cv2.merge(list(reversed(imgChannels)))
 	ax2.set_title('TSI processed image')
@@ -63,5 +61,5 @@ def plotRatio(img,redBlueRatio):
 	fig.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
 
 	#plt.tight_layout()
-	plt.savefig('rain.png')
+	plt.savefig('results/broken_clouds.png')
 	plt.show()
