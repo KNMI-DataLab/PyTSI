@@ -23,17 +23,17 @@ def calculateRatio(img, maskedImg):
 	yres = 352
 
 	# setup the numpy array, fill it with zeros
-	blueRedRatio = np.zeros([yres,xres])
+	redBlueRatio = np.zeros([yres,xres])
 
 	# blue red ratio calculation for each pixel in the image
 	for i in range (0,yres):
 		for j in range (0,xres):
 			# check whether on pixel is part of mask
 			# if pixel is masked, do nothing
-			if maskedImg[i,j,2] == 0:
+			if maskedImg[i,j,0] == 0 and maskedImg[i,j,1] == 0 and maskedImg[i,j,2] == 0:
 				pass
 			else:
 				# i = ypixel, j = xpixel, 0,2 = blue, red
-				blueRedRatio[i,j] = maskedImg[i,j,0] / maskedImg[i,j,2]
+				redBlueRatio[i,j] = maskedImg[i,j,2] / maskedImg[i,j,0]
 
-	return blueRedRatio
+	return redBlueRatio
