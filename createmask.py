@@ -34,7 +34,7 @@ def createmask(img):
 	yres=352
 
 	# define radius circle mask
-	radiusCircle=int(xres/2)-4
+	radiusCircle=int(xres/2.2)-4
 
 	# create the mask
 	mask = np.zeros(img.shape, dtype="uint8")
@@ -53,7 +53,7 @@ def createmask(img):
 	# this is the angle from the north=0, thus I need to add this to my
 	# calculations as I calculate from east=0
 	# thus, azimuth angle of 140degrees is ESE in the morning
-	azimuthDegrees=181.5503686060006
+	azimuthDegrees=211.92586033556788
 	azimuthDegreesEast=azimuthDegrees-90
 	theta=-azimuthDegreesEast*pi/180
 	xBand,yBand=calculateBandPosition(img,radiusCircle,xres,yres,theta)
