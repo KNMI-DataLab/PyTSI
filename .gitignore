@@ -11,5 +11,6 @@ template.py
 __pycache__
 
 #exceptions
-!sunny.png
-!cloudy.png
+processed_images/*.png
+processed_images/*.jpg
+
