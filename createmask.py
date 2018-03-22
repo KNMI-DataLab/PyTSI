@@ -4,7 +4,7 @@
 #              
 #
 #
-# AUTHOR: Job Mos						# EMAIL: jobmos95@gmail.com
+# AUTHOR: Job Mos				    # EMAIL: jobmos95@gmail.com
 #
 ###############################################################################
 
