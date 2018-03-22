@@ -2,7 +2,7 @@
 
 ### Sunny
 
-![alt text](results/semi_cloudy.png "Sunny")
+![alt text](results/semi_clouds.png "Sunny")
 
 ### Broken clouds
 
