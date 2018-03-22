@@ -9,8 +9,9 @@ template.py
 
 #folders
 __pycache__
+data092018
+processed_images
 
 #exceptions
 !results/*
-!processed_images/*
 
