@@ -11,6 +11,6 @@ template.py
 __pycache__
 
 #exceptions
-processed_images/*.png
-processed_images/*.jpg
+!processed_images/*.png
+!processed_images/*.jpg
 
