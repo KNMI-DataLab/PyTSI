@@ -1,16 +1,17 @@
 # cloudDetection
 
-<!--![alt text](sunny.png "Sunny")
-![alt text](cloudy.png "Cloudy")-->
+### Sunny
 
-### Sunny conditions
+![alt text](results/semi_cloudy.png "Sunny")
 
-Original image             | Processed image
-:-------------------------:|:-------------------------:
-![](processed_images/sunny_original.jpg)  |  ![](processed_images/sunny_processed.png)
+### Broken clouds
 
-### Cloudy conditions
+![alt text](results/broken_clouds.png "Broken clouds")
 
-Original image             | Processed image
-:-------------------------:|:-------------------------:
-![](processed_images/cloudy_original.jpg)  |  ![](processed_images/cloudy_processed.png)
+### Thin clouds
+
+![alt text](results/thin_clouds.png "Thin clouds")
+
+### Rain
+![alt text](results/rain.png "Rain")
+
