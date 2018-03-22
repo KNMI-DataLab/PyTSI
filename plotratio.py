@@ -38,7 +38,7 @@ def plotRatio(img,redBlueRatio):
 	norm = colors.BoundaryNorm(bounds, cmap.N)
 
 	# create subplot environment
-	fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+	fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15,5))
 
 	#### Original image
 	imgChannels = cv2.split(img)
@@ -62,6 +62,6 @@ def plotRatio(img,redBlueRatio):
 	# make a color bar
 	fig.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
 
-	plt.tight_layout()
+	#plt.tight_layout()
 	plt.savefig('rain.png')
 	plt.show()
