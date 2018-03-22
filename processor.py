@@ -4,7 +4,7 @@
 #              of the masked image.
 #
 #
-# AUTHOR: Job Mos						# EMAIL: jobmos95@gmail.com
+# AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
 #
 ###############################################################################
 
@@ -16,6 +16,7 @@ from cv2show import cv2show
 from createmask import createmask
 from overviewplot import overviewPlot
 from calculateratio import calculateRatio
+from plotratio import plotRatio
 
 # load the original image and displayi it
 # flag "1" indicates color image
@@ -37,8 +38,16 @@ maskedImg = cv2.bitwise_and(img, mask)
 # cv2.imshow("Masked Image", maskedImg)
 # cv2.waitKey(0)
 
-#plot the overview showing the image, mask, and histogram
+# plot the overview showing the image, mask, and histogram
 #overviewPlot(img,mask,maskedImg)
 
-#calculate red/blue ratio per pixel
-calculateRatio(img, maskedImg)
+# calculate red/blue ratio per pixel
+blueRedRatio = calculateRatio(img, maskedImg)
+
+# plot the reb/blue ratios
+plotRatio(blueRedRatio)
+
+# can add:
+# if the average of all the ratios is > ... sunny
+# if the average of all the ratios is < ... cloudy
+# or vice versa
