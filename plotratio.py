@@ -10,9 +10,9 @@
 
 #import libraries
 from myimports import *
-import matplotlib as mpl
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def plotRatio(blueRedRatio):
+def plotRatio(img,redBlueRatio):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
@@ -24,18 +24,44 @@ def plotRatio(blueRedRatio):
 	y = np.linspace(0,yres-1,yres)
 	
 	# convert the data so that they can be plotted
-	grid = blueRedRatio.reshape((yres, xres))
+	grid = redBlueRatio.reshape((yres, xres))
 
 	# make a color map of fixed colors
-	cmap = colors.ListedColormap(['black', 'white', 'blue'])
-	bounds=[0,0.01,1.2,10]
+	cmap = colors.ListedColormap(['black', 'blue', 'lightgray', 'white'])
+	# set thresholds
+	opaque = 1      #everything above 1 is thick opaque clouds
+	thin   = 0.9    #upper limit
+	sunny  = 0.795  #upper limit
+	lower  = 0.01
+	mask   = 0
+	bounds=[mask,lower,sunny,thin,opaque]
 	norm = colors.BoundaryNorm(bounds, cmap.N)
 
+	# create subplot environment
+	fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+	#### Original image
+	imgChannels = cv2.split(img)
+	trueColorImg=cv2.merge(list(reversed(imgChannels)))
+	ax1.set_title('Original image')
+	ax1.imshow(trueColorImg)
+
+	#### TSI processed image
+	img = cv2.imread('/home/mos/Documents/TSI/processed_images/20180312133900.png')
+	imgChannels = cv2.split(img)
+	trueColorImg=cv2.merge(list(reversed(imgChannels)))
+	ax2.set_title('TSI processed image')
+	ax2.imshow(trueColorImg)
+
+	#### Reprocessed image
+	ax3.set_title('Reprocessed image')
+	
 	# tell imshow about colormap so that only set colors are used
-	img = plt.imshow(grid, interpolation='nearest', cmap=cmap, norm=norm)
+	img = ax3.imshow(grid, interpolation='nearest', cmap=cmap, norm=norm)
 
 	# make a color bar
-	plt.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds)
+	fig.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
 
-	plt.savefig('cloudy.png')
+	plt.tight_layout()
+	plt.savefig('rain.png')
 	plt.show()
