@@ -1,10 +1,10 @@
 ###############################################################################
-# DESCRIPTION: 
+# DESCRIPTION: plots the processed cloud image and saves the figure
 #             
 #              
 #
 #
-# AUTHOR: Job Mos						# EMAIL: jobmos95@gmail.com
+# AUTHOR: Job Mos                                   # EMAIL: jobmos95@gmail.com
 #
 ###############################################################################
 
@@ -12,7 +12,13 @@
 from myimports import *
 import matplotlib as mpl
 
-def plotRatio(blueRedRatio,xres,yres):
+def plotRatio(blueRedRatio):
+	# calculate image properties (resolution of the image)
+	# calculation doesn't work yet, setting manually
+	#[xres,yres]=img.shape
+	xres=288
+	yres=352
+	
 	# span an x/y space
 	x = np.linspace(0,xres-1,xres)
 	y = np.linspace(0,yres-1,yres)

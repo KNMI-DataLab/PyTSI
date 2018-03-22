@@ -1,10 +1,10 @@
 ###############################################################################
 # DESCRIPTION: calculates the red/blue ratio of each pixel in the image
 #              r~=1 indicates a cloud, r~0.5 (?) indicates blue sky              
-#			   https://stackoverflow.com/questions/9707676/defining-a-
-#			   discrete-colormap-for-imshow-in-matplotlib
+#	       https://stackoverflow.com/questions/9707676/defining-a-
+#	       discrete-colormap-for-imshow-in-matplotlib
 #
-# AUTHOR: Job Mos						# EMAIL: jobmos95@gmail.com
+# AUTHOR: Job Mos	                            # EMAIL: jobmos95@gmail.com
 #
 ###############################################################################
 
@@ -36,4 +36,4 @@ def calculateRatio(img, maskedImg):
 				# i = ypixel, j = xpixel, 0,2 = blue, red
 				blueRedRatio[i,j] = maskedImg[i,j,0] / maskedImg[i,j,2]
 
-	plotRatio(blueRedRatio,xres,yres)
+	return blueRedRatio
