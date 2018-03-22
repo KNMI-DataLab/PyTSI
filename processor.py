@@ -17,12 +17,14 @@ from createmask import createmask
 from overviewplot import overviewPlot
 from calculateratio import calculateRatio
 from plotratio import plotRatio
+from calculateskycover import calculateSkyCover
+from setthresholds import setThresholds
 
 # load the original image and displayi it
 # flag "1" indicates color image
 # flag "0" indicates greyscale image
 # flag "-1" indicates unchanged (?) image
-img = cv2.imread('../images/20180309115700.jpg')
+img = cv2.imread('processed_images/semi_clouds.jpg')
 #cv2show(img,"Original image")
 
 # resolution of the image ( 352x288(x3) ) 
@@ -41,13 +43,22 @@ maskedImg = cv2.bitwise_and(img, mask)
 # plot the overview showing the image, mask, and histogram
 #overviewPlot(img,mask,maskedImg)
 
+# set thresholds for plotting and sky cover calculations
+sunnyThreshold,thinThreshold = setThresholds()
+
 # calculate red/blue ratio per pixel
-blueRedRatio = calculateRatio(img, maskedImg)
+redBlueRatio = calculateRatio(img, maskedImg)
 
 # plot the reb/blue ratios
-plotRatio(blueRedRatio)
+#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold)
 
 # can add:
 # if the average of all the ratios is > ... sunny
 # if the average of all the ratios is < ... cloudy
 # or vice versa
+
+# calculate solid angle corrections
+#calculateSACorrections(...)
+
+# calculate fractional skycover
+calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
