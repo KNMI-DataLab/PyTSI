@@ -56,4 +56,4 @@ intensityValues = calculateIntensity(maskedImg)
 #calculateSACorrections(...)
 
 # calculate fractional skycover
-#calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
