@@ -15,7 +15,7 @@ from plotratio import plotRatio
 # set printing options to print full np array in stead of summarized
 #np.set_printoptions(threshold=np.nan)
 
-def calculateRatio(img, maskedImg):
+def calculateRatio(maskedImg):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
