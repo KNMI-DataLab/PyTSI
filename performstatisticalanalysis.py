@@ -13,7 +13,8 @@ from myimports import *
 
 def performStatisticalAnalysis(maskedImg):
 
-	greyLevels = 256
+	scaler = 16
+	greyLevels = int(256/scaler)
 
 	xres = 288
 	yres = 352
@@ -30,8 +31,11 @@ def performStatisticalAnalysis(maskedImg):
 				pass
 			else:
 				# i = ypixel, j = xpixel, 0,2 = blue, red
-				blueBand[i,j] = maskedImg[i,j,0]
-				redBand[i,j]  = maskedImg[i,j,2]
+				blueBand[i,j] = int(maskedImg[i,j,0]/scaler)
+				redBand[i,j]  = int(maskedImg[i,j,2]/scaler)
+
+	plt.imshow(blueBand)
+	plt.show()
 
 	# SPECTRAL FEATURES
 
@@ -62,6 +66,11 @@ def performStatisticalAnalysis(maskedImg):
 	greyMin = int(np.amin(blueBand[np.nonzero(blueBand)]))
 	greyMax = int(np.amax(blueBand[np.nonzero(blueBand)]))
 
+	# FOLLOWING CALCULATION TAKES A LARGE AMOUNT OF TIME
+	# 'scaler' is used to decrease amount of grey levels and thus
+	# reduces computation time
+	# scaler=1 is full 256 grey levels
+
 	# calculate the GLCM matrix
 	# loop over GLCM matrix elements
 	for i in range (greyMin,greyMax):
@@ -78,7 +87,7 @@ def performStatisticalAnalysis(maskedImg):
 						# when two pixels 'match' add +1 to GLCM matrix element
 						if blueBand[x,y] == i and blueBand[x+dx,y+dy] == j:
 							GLCM[i,j] += 1
-							print(GLCM[i,j])
+							#print(GLCM[i,j])
 						else:
 							pass
 
