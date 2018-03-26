@@ -64,11 +64,11 @@ def createmask(img):
 
 	# draw a black line on the mask 
 	# cv2.line(mask, point1 (midpoint is 144,176), point2, color, line thickness (in pixels?))
-	cv2.line(mask, (144,176), (xBand,yBand), (0,0,0), 30)
+	cv2.line(mask, (144,176), (xBand,yBand), (0,0,0), 35)
 
 	# ARM
 	# draw a black line on the mask
-	cv2.line(mask, (144,176), (144,0), (0,0,0), 10)
+	cv2.line(mask, (144,176), (144,0), (0,0,0), 17)
 
 	# CAMERA
 	# option to draw a black square where the camera is
