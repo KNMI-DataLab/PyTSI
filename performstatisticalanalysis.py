@@ -82,6 +82,8 @@ def performStatisticalAnalysis(maskedImg):
 						else:
 							pass
 
+	np.savetxt('test.txt', GLCM, fmt='%3d')
+
 	# Energy (B)
 
 	# Entropy (B)
@@ -89,7 +91,3 @@ def performStatisticalAnalysis(maskedImg):
 	# Contrast (B)
 
 	# Homogeneity (B)
-
-
-
-	pass
