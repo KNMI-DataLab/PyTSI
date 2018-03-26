@@ -20,6 +20,7 @@ from plotratio import plotRatio
 from calculateskycover import calculateSkyCover
 from setthresholds import setThresholds
 from calculateintensity import calculateIntensity
+from performstatisticalanalysis import performStatisticalAnalysis
 
 # load the original image and displayi it
 # flag "1" indicates color image
@@ -41,13 +42,13 @@ maskedImg = cv2.bitwise_and(img, mask)
 #overviewPlot(img,mask,maskedImg)
 
 # set thresholds for plotting and sky cover calculations
-sunnyThreshold,thinThreshold = setThresholds()
+#sunnyThreshold,thinThreshold = setThresholds()
 
 # calculate red/blue ratio per pixel
-redBlueRatio = calculateRatio(maskedImg)
+#redBlueRatio = calculateRatio(maskedImg)
 
 # calculate the intensity values
-intensityValues = calculateIntensity(maskedImg)
+#intensityValues = calculateIntensity(maskedImg)
 
 # plot the reb/blue ratios
 #plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold)
@@ -56,4 +57,7 @@ intensityValues = calculateIntensity(maskedImg)
 #calculateSACorrections(...)
 
 # calculate fractional skycover
-calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+#calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+
+# calculates statistical properties of the image
+performStatisticalAnalysis(maskedImg)
