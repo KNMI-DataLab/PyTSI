@@ -90,16 +90,14 @@ def calculateGLCM(blueBand, greyLevels):
 							GLCM4[i,j] += 1
 							#print(GLCM[i,j])
 						else:
-							pass														
+							pass
+	print('\n')														
 
 	# calculate average of the four matrices
 	# GLCM is the matrix used in textural feature analysis
 	GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/4
 
 	np.savetxt('GLCM.txt', GLCM, fmt='%3d')
-
-	plt.imshow(GLCM)
-	plt.show()
 
 	return GLCM
 
@@ -130,7 +128,7 @@ def extractBands(scaler, maskedImg):
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 64
+	greyLevels = 16
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale
@@ -171,4 +169,7 @@ def performStatisticalAnalysis(maskedImg):
 			else:
 				pass
 
-	print(energy, entropy, contrast, homogeneity)
+	print('Energy:      ', energy)
+	print('Entropy:     ', entropy)
+	print('Contrast:    ', contrast)
+	print('Homogeneity: ', homogeneity)
