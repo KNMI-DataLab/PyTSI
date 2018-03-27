@@ -6,10 +6,12 @@ template.py
 *.png
 
 #text files
+*.txt
 
 #folders
 __pycache__
 data092018
+data072017
 processed_images
 
 #exceptions
