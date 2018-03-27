@@ -103,12 +103,8 @@ def calculateGLCM(blueBand, greyLevels):
 
 	return GLCM
 
-def performStatisticalAnalysis(maskedImg):
-
-	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 64
-	scaler = int(256/greyLevels)
-
+def extractBands(scaler, maskedImg):
+	#reset xres and yres
 	xres = 288
 	yres = 352
 
@@ -128,6 +124,17 @@ def performStatisticalAnalysis(maskedImg):
 				blueBand[i,j]  = int(maskedImg[i,j,0]/scaler)
 				greenBand[i,j] = int(maskedImg[i,j,1]/scaler)
 				redBand[i,j]   = int(maskedImg[i,j,2]/scaler)
+
+	return blueBand, greenBand, redBand
+
+def performStatisticalAnalysis(maskedImg):
+
+	#set the number of grey levels used in the GLCM calculation
+	greyLevels = 64
+	scaler = int(256/greyLevels)
+
+	# extract the individual color bands as greyscale
+	blueBand, greenBand, redBand = extractBands(scaler, maskedImg)
 
 	# SPECTRAL FEATURES
 
