@@ -10,6 +10,7 @@
 
 #import libraries
 from myimports import *
+from tqdm import tqdm
 
 def calculateGLCM(blueBand, greyLevels):
 	# matrix elements represent relative frequence that two pixels occur
@@ -32,15 +33,13 @@ def calculateGLCM(blueBand, greyLevels):
 	greyMax = int(np.amax(blueBand[np.nonzero(blueBand)]))
 
 	# FOLLOWING CALCULATION TAKES A LARGE AMOUNT OF TIME
-	# 'scaler' is used to decrease amount of grey levels and thus
+	# 'greyLevels' is used to decrease amount of grey levels and thus
 	# reduces computation time
-	# scaler=1 is full 256 grey levels
 
-	# calculate the GLCM matrix
+	# compute 4 GLCM matrices, bottom right, bottom left, top left, top right
 	# loop over GLCM matrix elements
-	for i in range (greyMin,greyMax):
-		for j in range (greyMin,greyMax):
-			print(i,j)
+	for i in tqdm(range (greyMin,greyMax), desc='GLCM 1st axis'):
+		for j in tqdm(range (greyMin,greyMax), desc='GLCM 2nd axis'):
 			# loop over image pixels
 			for x in range (0, xres):
 				for y in range (0, yres):
@@ -93,21 +92,21 @@ def calculateGLCM(blueBand, greyLevels):
 						else:
 							pass														
 
+	# calculate average of the four matrices
+	# GLCM is the matrix used in textural feature analysis
 	GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/4
-	
-	np.savetxt('GLCM1.txt', GLCM1, fmt='%3d')
-	np.savetxt('GLCM2.txt', GLCM2, fmt='%3d')
-	np.savetxt('GLCM3.txt', GLCM3, fmt='%3d')
-	np.savetxt('GLCM4.txt', GLCM4, fmt='%3d')
 
 	np.savetxt('GLCM.txt', GLCM, fmt='%3d')
 
-	return 0
+	plt.imshow(GLCM)
+	plt.show()
+
+	return GLCM
 
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 16
+	greyLevels = 64
 	scaler = int(256/greyLevels)
 
 	xres = 288
@@ -144,11 +143,25 @@ def performStatisticalAnalysis(maskedImg):
 
 	# Grey Level Co-occurrence Matrices (GLCM)
 	GLCM = calculateGLCM(blueBand, greyLevels)
+	#GLCM = np.loadtxt('GLCM.txt')
 
-	# Energy (B)
+	energy = entropy = contrast = homogeneity = 0
+	
+	for i in range (0, greyLevels):
+		for j in range(0, greyLevels):
+			if GLCM[i,j] != 0:
+				# Energy (B)
+				energy      += GLCM[i,j]**2
 
-	# Entropy (B)
+				# Entropy (B)
+				entropy     += GLCM[i,j] * log(GLCM[i,j],2)
 
-	# Contrast (B)
+				# Contrast (B)
+				contrast    += GLCM[i,j] * (i-j)**2
 
-	# Homogeneity (B)
+				# Homogeneity (B)
+				homogeneity += GLCM[i,j] / (1 + abs(i-j))
+			else:
+				pass
+
+	print(energy, entropy, contrast, homogeneity)
