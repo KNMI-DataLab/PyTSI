@@ -96,9 +96,10 @@ def main():
 					# select the image
 					img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 					# main processing function
-					fractionalSkyCover, energy, entropy, contrast, homogeinty = processor(img, azimuth)
+					fractionalSkyCover, energy, entropy, contrast, homogeinty = processor(img, azimuth, filename.replace(propertiesExtension,''))
 
 					#create the lists of relevant properties
+					print('----create lists of relevant proberties - begin')
 					filenameList.append(filename.replace(propertiesExtension,''))
 					altitudeList.append(altitude)
 					azimuthList.append(azimuth)
@@ -107,6 +108,7 @@ def main():
 					entropyList.append(entropy)
 					contrastList.append(contrast)
 					homogeintyList.append(homogeinty)
+					print('----create lists of relevant proberties - end')
 
 				else:
 					pass
@@ -114,6 +116,7 @@ def main():
 			pass
 
 	# open the data file and write the sorted data lists
+	print('open and write the data in .csv file')
 	with open('data.csv', 'w') as fSC:
 		writer = csv.writer(fSC, delimiter='\t')
 		writer.writerows(sorted(zip(filenameList, altitudeList, azimuthList, fractionalSkyCoverList, energyList, entropyList, contrastList, homogeintyList)))
