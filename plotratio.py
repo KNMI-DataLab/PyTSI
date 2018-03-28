@@ -12,7 +12,7 @@
 from myimports import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold):
+def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold, filename):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
@@ -45,7 +45,8 @@ def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold):
 	ax1.imshow(trueColorImg)
 
 	#### TSI processed image
-	img = cv2.imread('/home/mos/Documents/TSI/processed_images/sunny.png')
+	img = cv2.imread('/home/mos/Documents/TSI/data/'+filename+'0.png')
+	print('/home/mos/Documents/TSI/data/'+filename+'.png')
 	imgChannels = cv2.split(img)
 	trueColorImg=cv2.merge(list(reversed(imgChannels)))
 	ax2.set_title('TSI processed image')
@@ -61,5 +62,5 @@ def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold):
 	fig.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
 
 	#plt.tight_layout()
-	plt.savefig('results/broken_clouds.png')
-	plt.show()
+	plt.savefig('results/test/'+filename)
+	#plt.show()
