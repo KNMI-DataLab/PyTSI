@@ -49,57 +49,24 @@ def calculateGLCM(blueBand, greyLevels):
 				for y in range (0, yres):
 					# GLCM1
 					# check whether on pixel is part of mask
-					# if pixel is masked, do nothing
-					if blueBand[x,y] == 0 or blueBand[x+dx,y+dy] == 0:
-						pass
+					# if pixel is masked, skip to next iteration
+					if blueBand[x,y] == 0:
+						continue
 					else:
 						# when two pixels 'match' add +1 to GLCM matrix element
-						if blueBand[x,y] == i and blueBand[x+dx,y+dy] == j:
-							GLCM1[i,j] += 1
-							#print(GLCM[i,j])
+						if blueBand[x,y] != i:
+							continue
 						else:
-							pass
+							if blueBand[x+dx,y+dy] == j:
+								GLCM1[i,j] += 1
+							if blueBand[x-dx,y-dy] == j:
+								GLCM4[i,j] += 1
+							if use4:
+								if blueBand[x-dx,y+dy] == j:
+									GLCM2[i,j] += 1
+								if blueBand[x+dx,y-dy] == j:
+									GLCM3[i,j] += 1
 
-					# GLCM2
-					# check whether on pixel is part of mask
-					# if pixel is masked, do nothing
-					if use4:
-						if blueBand[x,y] == 0 or blueBand[x-dx,y+dy] == 0:
-							pass
-						else:
-							# when two pixels 'match' add +1 to GLCM matrix element
-							if blueBand[x,y] == i and blueBand[x-dx,y+dy] == j:
-								GLCM2[i,j] += 1
-								#print(GLCM[i,j])
-							else:
-								pass
-
-					# GLCM3
-					# check whether on pixel is part of mask
-					# if pixel is masked, do nothing
-					if use4:
-						if blueBand[x,y] == 0 or blueBand[x+dx,y-dy] == 0:
-							pass
-						else:
-							# when two pixels 'match' add +1 to GLCM matrix element
-							if blueBand[x,y] == i and blueBand[x+dx,y-dy] == j:
-								GLCM3[i,j] += 1
-								#print(GLCM[i,j])
-							else:
-								pass
-
-					# GLCM4
-					# check whether on pixel is part of mask
-					# if pixel is masked, do nothing
-					if blueBand[x,y] == 0 or blueBand[x-dx,y-dy] == 0:
-						pass
-					else:
-						# when two pixels 'match' add +1 to GLCM matrix element
-						if blueBand[x,y] == i and blueBand[x-dx,y-dy] == j:
-							GLCM4[i,j] += 1
-							#print(GLCM[i,j])
-						else:
-							pass
 	print('\n')														
 
 	# calculate average of the four matrices
@@ -128,7 +95,7 @@ def extractBands(scaler, maskedImg):
 			# check whether on pixel is part of mask
 			# if pixel is masked, do nothing
 			if maskedImg[i,j,0] == 0 and maskedImg[i,j,1] == 0 and maskedImg[i,j,2] == 0:
-				pass
+				continue
 			else:
 				# i = ypixel, j = xpixel, 0,2 = blue, red
 				blueBand[i,j]  = int(maskedImg[i,j,0]/scaler)
@@ -140,10 +107,11 @@ def extractBands(scaler, maskedImg):
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 4
+	greyLevels = 8
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale
+	print('----extract bands')
 	blueBand, greenBand, redBand = extractBands(scaler, maskedImg)
 
 	# SPECTRAL FEATURES
@@ -159,6 +127,7 @@ def performStatisticalAnalysis(maskedImg):
 	# TEXTURAL FEATURES
 
 	# Grey Level Co-occurrence Matrices (GLCM)
+	print('----calculate GLCM')
 	GLCM = calculateGLCM(blueBand, greyLevels)
 	#GLCM = np.loadtxt('GLCM.txt')
 
