@@ -15,6 +15,7 @@ data092018
 data072017
 processed_images
 data
+testdata
 
 #exceptions
 !results/*
