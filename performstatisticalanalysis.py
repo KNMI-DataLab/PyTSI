@@ -107,7 +107,7 @@ def extractBands(scaler, maskedImg):
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 16
+	greyLevels = 8
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale

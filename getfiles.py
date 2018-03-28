@@ -13,6 +13,7 @@ from myimports import *
 import gzip
 import os
 from processor import processor
+from performstatisticalanalysis import performStatisticalAnalysis
 import csv
 
 # get the altitude of the image
@@ -53,6 +54,24 @@ def plotAzimuthAltitude(azimuth,altitude):
 	plt.ylabel('Altitude')
 	plt.show()
 
+def statistics(maskedImg,filename,propertiesExtension,fractionalSkyCover,altitude,azimuth,filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList):
+	print('calculate statistics')
+	energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
+	
+	#create the lists of relevant properties
+	print('----create lists of relevant proberties - begin')
+	filenameList.append(filename.replace(propertiesExtension,''))
+	altitudeList.append(altitude)
+	azimuthList.append(azimuth)
+	fractionalSkyCoverList.append(fractionalSkyCover)
+	energyList.append(energy)
+	entropyList.append(entropy)
+	contrastList.append(contrast)
+	homogeneityList.append(homogeneity)
+	print('----create lists of relevant proberties - end')
+
+	return filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList
+
 def main():
 	# initiate variables
 	# directory in which the data is located
@@ -73,7 +92,7 @@ def main():
 	energyList = []
 	entropyList = []
 	contrastList = []
-	homogeintyList = []
+	homogeneityList = []
 
 
 	# look for the file names
@@ -92,23 +111,14 @@ def main():
 				altitude = getAltitude(lines)
 				azimuth = getAzimuth(lines)
 
-				if altitude > 10:
+				if altitude >= 10:
 					# select the image
 					img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 					# main processing function
-					fractionalSkyCover, energy, entropy, contrast, homogeinty = processor(img, azimuth, filename.replace(propertiesExtension,''))
+					fractionalSkyCover, maskedImg = processor(img, azimuth, filename.replace(propertiesExtension,''))
 
-					#create the lists of relevant properties
-					print('----create lists of relevant proberties - begin')
-					filenameList.append(filename.replace(propertiesExtension,''))
-					altitudeList.append(altitude)
-					azimuthList.append(azimuth)
-					fractionalSkyCoverList.append(fractionalSkyCover)
-					energyList.append(energy)
-					entropyList.append(entropy)
-					contrastList.append(contrast)
-					homogeintyList.append(homogeinty)
-					print('----create lists of relevant proberties - end')
+					# calculate statistical properties of the image
+					#filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList = statistics(maskedImg,filename,propertiesExtension,fractionalSkyCover,altitude,azimuth,filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList)
 
 				else:
 					pass
@@ -119,7 +129,7 @@ def main():
 	print('open and write the data in .csv file')
 	with open('data.csv', 'w') as fSC:
 		writer = csv.writer(fSC, delimiter='\t')
-		writer.writerows(sorted(zip(filenameList, altitudeList, azimuthList, fractionalSkyCoverList, energyList, entropyList, contrastList, homogeintyList)))
+		writer.writerows(sorted(zip(filenameList, altitudeList, azimuthList, fractionalSkyCoverList, energyList, entropyList, contrastList, homogeneityList)))
 	
 	#plot the azimuth vs altitude
 	#plotAzimuthAltitude(azimuth,altitude)

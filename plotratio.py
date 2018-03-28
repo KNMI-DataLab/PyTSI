@@ -13,6 +13,7 @@ from myimports import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold, filename):
+	print('plot sky cover image')
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape

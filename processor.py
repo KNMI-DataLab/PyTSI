@@ -51,7 +51,6 @@ def processor(img, azimuth, filename):
 	#intensityValues = calculateIntensity(maskedImg)
 
 	# plot the reb/blue ratios
-	print('plot sky cover image')
 	plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
 	# calculate solid angle corrections
@@ -61,8 +60,4 @@ def processor(img, azimuth, filename):
 	print('calcualte fSC')
 	fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
 
-	# calculates statistical properties of the image
-	print('calculate statistics')
-	energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
-
-	return fractionalSkyCover, energy, entropy, contrast, homogeneity
+	return fractionalSkyCover, maskedImg
