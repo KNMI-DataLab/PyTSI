@@ -32,6 +32,10 @@ def calculateGLCM(blueBand, greyLevels):
 	greyMin = int(np.amin(blueBand[np.nonzero(blueBand)]))
 	greyMax = int(np.amax(blueBand[np.nonzero(blueBand)]))
 
+	# specify if an average of 4 matrices should be used
+	# if false: only 2 matrices are used
+	use4 = False
+
 	# FOLLOWING CALCULATION TAKES A LARGE AMOUNT OF TIME
 	# 'greyLevels' is used to decrease amount of grey levels and thus
 	# reduces computation time
@@ -55,30 +59,35 @@ def calculateGLCM(blueBand, greyLevels):
 							#print(GLCM[i,j])
 						else:
 							pass
+
 					# GLCM2
 					# check whether on pixel is part of mask
 					# if pixel is masked, do nothing
-					if blueBand[x,y] == 0 or blueBand[x-dx,y+dy] == 0:
-						pass
-					else:
-						# when two pixels 'match' add +1 to GLCM matrix element
-						if blueBand[x,y] == i and blueBand[x-dx,y+dy] == j:
-							GLCM2[i,j] += 1
-							#print(GLCM[i,j])
-						else:
+					if use4:
+						if blueBand[x,y] == 0 or blueBand[x-dx,y+dy] == 0:
 							pass
+						else:
+							# when two pixels 'match' add +1 to GLCM matrix element
+							if blueBand[x,y] == i and blueBand[x-dx,y+dy] == j:
+								GLCM2[i,j] += 1
+								#print(GLCM[i,j])
+							else:
+								pass
+
 					# GLCM3
 					# check whether on pixel is part of mask
 					# if pixel is masked, do nothing
-					if blueBand[x,y] == 0 or blueBand[x+dx,y-dy] == 0:
-						pass
-					else:
-						# when two pixels 'match' add +1 to GLCM matrix element
-						if blueBand[x,y] == i and blueBand[x+dx,y-dy] == j:
-							GLCM3[i,j] += 1
-							#print(GLCM[i,j])
-						else:
+					if use4:
+						if blueBand[x,y] == 0 or blueBand[x+dx,y-dy] == 0:
 							pass
+						else:
+							# when two pixels 'match' add +1 to GLCM matrix element
+							if blueBand[x,y] == i and blueBand[x+dx,y-dy] == j:
+								GLCM3[i,j] += 1
+								#print(GLCM[i,j])
+							else:
+								pass
+
 					# GLCM4
 					# check whether on pixel is part of mask
 					# if pixel is masked, do nothing
@@ -95,7 +104,10 @@ def calculateGLCM(blueBand, greyLevels):
 
 	# calculate average of the four matrices
 	# GLCM is the matrix used in textural feature analysis
-	GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/4
+	if use4:
+		GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/4
+	else:
+		GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/2
 
 	np.savetxt('GLCM.txt', GLCM, fmt='%3d')
 
@@ -128,7 +140,7 @@ def extractBands(scaler, maskedImg):
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 16
+	greyLevels = 4
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale
@@ -173,3 +185,5 @@ def performStatisticalAnalysis(maskedImg):
 	print('Entropy:     ', entropy)
 	print('Contrast:    ', contrast)
 	print('Homogeneity: ', homogeneity)
+
+	return energy, entropy, contrast, homogeneity

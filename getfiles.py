@@ -12,6 +12,8 @@
 from myimports import *
 import gzip
 import os
+from processor import processor
+import csv
 
 # get the altitude of the image
 def getAltitude(lines):
@@ -51,7 +53,7 @@ def plotAzimuthAltitude(azimuth,altitude):
 	plt.ylabel('Altitude')
 	plt.show()
 
-def getFiles():
+def main():
 	# initiate variables
 	# directory in which the data is located
 	directory_in_str = 'data'
@@ -64,9 +66,15 @@ def getFiles():
 	imageExtension = '0.jpg'
 
 	# empty lists for storing the data
-	name = []
-	altitude = []
-	azimuth = []
+	filenameList = []
+	altitudeList = []
+	azimuthList = []
+	fractionalSkyCoverList = []
+	energyList = []
+	entropyList = []
+	contrastList = []
+	homogeintyList = []
+
 
 	# look for the file names
 	for file in os.listdir(directory):
@@ -80,21 +88,38 @@ def getFiles():
 				# read the file and store line per line
 				for i, line in enumerate(f):
 					lines.append(line)
-				#create the lists of relevant properties
-				name.append(filename.replace(propertiesExtension,''))
-				altitude.append(getAltitude(lines))
-				azimuth.append(getAzimuth(lines))
+				#get the altitude and azimuth from the defs			
+				altitude = getAltitude(lines)
+				azimuth = getAzimuth(lines)
+
+				if altitude > 10:
+					# select the image
+					img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
+					# main processing function
+					fractionalSkyCover, energy, entropy, contrast, homogeinty = processor(img, azimuth)
+
+					#create the lists of relevant properties
+					filenameList.append(filename.replace(propertiesExtension,''))
+					altitudeList.append(altitude)
+					azimuthList.append(azimuth)
+					fractionalSkyCoverList.append(fractionalSkyCover)
+					energyList.append(energy)
+					entropyList.append(entropy)
+					contrastList.append(contrast)
+					homogeintyList.append(homogeinty)
+
+				else:
+					pass
 		else:
 			pass
 
-	# sort the filename, altitude and azimuth by filename
-	# this compact method zips, sortes and unzips in one line of code
-	name, altitude, azimuth = zip(*sorted(zip(name, altitude, azimuth)))
-
+	# open the data file and write the sorted data lists
+	with open('data.csv', 'w') as fSC:
+		writer = csv.writer(fSC, delimiter='\t')
+		writer.writerows(sorted(zip(filenameList, altitudeList, azimuthList, fractionalSkyCoverList, energyList, entropyList, contrastList, homogeintyList)))
+	
 	#plot the azimuth vs altitude
-	plotAzimuthAltitude(azimuth,altitude)
+	#plotAzimuthAltitude(azimuth,altitude)
 
-	# select the image
-	img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
-
-	return img
+if __name__ == '__main__':
+	main()	

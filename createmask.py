@@ -26,7 +26,7 @@ def calculateBandPosition(img,radiusCircle,xres,yres,theta):
 
 	return x,y
 
-def createmask(img):
+def createmask(img, azimuthDegrees):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
@@ -57,7 +57,6 @@ def createmask(img):
 	# semi_clouds: 187.40266748658414
 	# broken_clouds: 218.77307228422038
 	# thin_clouds: 244.1381726946926
-	azimuthDegrees=218.77307228422038
 	azimuthDegreesEast=azimuthDegrees-90
 	theta=-azimuthDegreesEast*pi/180
 	xBand,yBand=calculateBandPosition(img,radiusCircle,xres,yres,theta)

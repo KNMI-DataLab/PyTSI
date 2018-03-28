@@ -1,7 +1,7 @@
 ###############################################################################
-# DESCRIPTION: Reads a file from the image library, creates a circular mask
-#              using OpenCV (cv2), applies the mask and creates a histogram
-#              of the masked image.
+# DESCRIPTION: creates a circular mask using OpenCV (cv2), applies the mask and
+#              creates a histogram of the masked image.
+#              
 #
 #
 # AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
@@ -22,42 +22,40 @@ from setthresholds import setThresholds
 from calculateintensity import calculateIntensity
 from performstatisticalanalysis import performStatisticalAnalysis
 
-# load the original image and displayi it
-# flag "1" indicates color image
-# flag "0" indicates greyscale image
-# flag "-1" indicates unchanged (?) image
-img = cv2.imread('processed_images/broken_clouds.jpg')
-#cv2show(img,"Original image")
+def processor(img, azimuth):
+	#cv2show(img,"Original image")
 
-# resolution of the image ( 352x288(x3) ) 
-#print(img.shape)
+	# resolution of the image ( 352x288(x3) ) 
+	#print(img.shape)
 
-# create mask
-mask = createmask(img)
+	# create mask
+	mask = createmask(img, azimuth)
 
-# apply the mask and display the result
-maskedImg = cv2.bitwise_and(img, mask)
+	# apply the mask and display the result
+	maskedImg = cv2.bitwise_and(img, mask)
 
-# plot the overview showing the image, mask, and histogram
-#overviewPlot(img,mask,maskedImg)
+	# plot the overview showing the image, mask, and histogram
+	#overviewPlot(img,mask,maskedImg)
 
-# set thresholds for plotting and sky cover calculations
-#sunnyThreshold,thinThreshold = setThresholds()
+	# set thresholds for plotting and sky cover calculations
+	sunnyThreshold,thinThreshold = setThresholds()
 
-# calculate red/blue ratio per pixel
-#redBlueRatio = calculateRatio(maskedImg)
+	# calculate red/blue ratio per pixel
+	redBlueRatio = calculateRatio(maskedImg)
 
-# calculate the intensity values
-#intensityValues = calculateIntensity(maskedImg)
+	# calculate the intensity values
+	#intensityValues = calculateIntensity(maskedImg)
 
-# plot the reb/blue ratios
-#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold)
+	# plot the reb/blue ratios
+	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold)
 
-# calculate solid angle corrections
-#calculateSACorrections(...)
+	# calculate solid angle corrections
+	#calculateSACorrections(...)
 
-# calculate fractional skycover
-#calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+	# calculate fractional skycover
+	fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
 
-# calculates statistical properties of the image
-performStatisticalAnalysis(maskedImg)
+	# calculates statistical properties of the image
+	energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
+
+	return fractionalSkyCover, energy, entropy, contrast, homogeneity

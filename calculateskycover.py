@@ -34,9 +34,6 @@ def calculateSkyCover(redBlueRatio,sunnyThreshold,thinThreshold):
 				else:
 					cloudyPixels+=1
 
-	print('amount of sunny pixels  :', sunnyPixels)
-	print('amount of cloudy pixels :', cloudyPixels)
-
 	fractionalSkyCover = sunnyPixels/(sunnyPixels+cloudyPixels)
 
-	print('fractional sky cover    :', fractionalSkyCover)
+	return fractionalSkyCover
