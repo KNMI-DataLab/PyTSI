@@ -7,12 +7,14 @@ template.py
 
 #text files
 *.txt
+*.csv
 
 #folders
 __pycache__
 data092018
 data072017
 processed_images
+data
 
 #exceptions
 !results/*
