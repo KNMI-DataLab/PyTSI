@@ -1,5 +1,4 @@
 #python files
-test.py
 template.py
 
 #images
@@ -16,6 +15,9 @@ data072017
 processed_images
 data
 testdata
+
+#test files
+test*
 
 #exceptions
 !results/*
