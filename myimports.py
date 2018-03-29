@@ -8,12 +8,14 @@
 #
 ###############################################################################
 
-# import libraries
-import cv2
+# import libraries and adds plotting folder to path
 import sys
+import cv2
 import numpy as np
 from math import cos,sin,pi,log
 from PIL import Image, ImageDraw
 from matplotlib import pyplot as plt
 from matplotlib import colors as colors
 import matplotlib.cm as cm
+
+sys.path.append('/home/mos/Documents/TSI/plotting')

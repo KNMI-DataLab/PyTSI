@@ -12,10 +12,11 @@
 from myimports import *
 import gzip
 import os
-from processor import processor
-from performstatisticalanalysis import performStatisticalAnalysis
 import csv
 from tqdm import tqdm
+from processor import processor
+from performstatisticalanalysis import performStatisticalAnalysis
+from plotskycover import plotSkyCoverComparison
 
 # get the altitude of the image
 def getAltitude(lines):
@@ -137,8 +138,11 @@ def main():
 										thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI,
 										energy, entropy, contrast, homogeneity))
 	
-	#plot the azimuth vs altitude
+	# plot the azimuth vs altitude
 	#plotAzimuthAltitude(azimuth,altitude)
+
+	# plot the sky cover comparison
+	#plotSkyCoverComparison()
 
 if __name__ == '__main__':
 	main()	
