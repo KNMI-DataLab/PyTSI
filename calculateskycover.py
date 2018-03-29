@@ -22,18 +22,26 @@ def calculateSkyCover(redBlueRatio,sunnyThreshold,thinThreshold):
 	xres=288
 	yres=352
 
-	sunnyPixels=0
-	cloudyPixels=0
+	sunnyPixels = 0
+	thinPixels = 0
+	opaquePixels = 0
 
 	# classify each pixel as cloudy/clear
 	for i in range (0,yres):
 		for j in range (0,xres):
+			# avoid mask
 			if redBlueRatio[i,j] != 0:
 				if redBlueRatio[i,j] <= sunnyThreshold:
-					sunnyPixels+=1
+					sunnyPixels += 1
+				elif redBlueRatio[i,j] <= thinThreshold:
+					thinPixels += 1
 				else:
-					cloudyPixels+=1
+					opaquePixels += 1
 
-	fractionalSkyCover = sunnyPixels/(sunnyPixels+cloudyPixels)
+	cloudyPixels = thinPixels + opaquePixels
 
-	return fractionalSkyCover
+	thinSkyCover = thinPixels / (sunnyPixels+cloudyPixels)
+	opaqueSkyCover = opaquePixels / (sunnyPixels+cloudyPixels)
+	fractionalSkyCover = thinSkyCover + opaqueSkyCover
+
+	return thinSkyCover, opaqueSkyCover, fractionalSkyCover
