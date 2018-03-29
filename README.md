@@ -1,17 +1,10 @@
 # cloudDetection
 
-### Sunny
-
-![alt text](results/semi_clouds.png "Sunny")
-
-### Broken clouds
+### Comparison of the original image, old TSI software and the new software
 
 ![alt text](results/broken_clouds.png "Broken clouds")
 
-### Thin clouds
+### Cloud cover comparison of the old and new software
 
-![alt text](results/thin_clouds.png "Thin clouds")
-
-### Rain
-![alt text](results/rain.png "Rain")
+![alt text](results/skycovercomparison.png "Sky cover comparison")
 
