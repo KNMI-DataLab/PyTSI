@@ -10,7 +10,6 @@
 
 #import libraries
 from myimports import *
-from plotratio import plotRatio
 
 # set printing options to print full np array in stead of summarized
 #np.set_printoptions(threshold=np.nan)
@@ -30,8 +29,8 @@ def calculateRatio(maskedImg):
 		for j in range (0,xres):
 			# check whether on pixel is part of mask
 			# if pixel is masked, do nothing
-			if maskedImg[i,j,0] == 0 and maskedImg[i,j,1] == 0 and maskedImg[i,j,2] == 0:
-				pass
+			if maskedImg[i,j,0] == 0:
+				continue
 			else:
 				# i = ypixel, j = xpixel, 0,2 = blue, red
 				redBlueRatio[i,j] = maskedImg[i,j,2] / maskedImg[i,j,0]

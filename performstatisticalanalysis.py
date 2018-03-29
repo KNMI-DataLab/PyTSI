@@ -42,8 +42,8 @@ def calculateGLCM(blueBand, greyLevels):
 
 	# compute 4 GLCM matrices, bottom right, bottom left, top left, top right
 	# loop over GLCM matrix elements
-	for i in tqdm(range (greyMin,greyMax), desc='GLCM 1st axis'):
-		for j in tqdm(range (greyMin,greyMax), desc='GLCM 2nd axis'):
+	for i in range (greyMin,greyMax):
+		for j in range (greyMin,greyMax):
 			# loop over image pixels
 			for x in range (0, xres):
 				for y in range (0, yres):
@@ -65,9 +65,7 @@ def calculateGLCM(blueBand, greyLevels):
 								if blueBand[x-dx,y+dy] == j:
 									GLCM2[i,j] += 1
 								if blueBand[x+dx,y-dy] == j:
-									GLCM3[i,j] += 1
-
-	print('\n')														
+									GLCM3[i,j] += 1												
 
 	# calculate average of the four matrices
 	# GLCM is the matrix used in textural feature analysis
@@ -111,7 +109,6 @@ def performStatisticalAnalysis(maskedImg):
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale
-	print('----extract bands')
 	blueBand, greenBand, redBand = extractBands(scaler, maskedImg)
 
 	# SPECTRAL FEATURES
@@ -127,7 +124,6 @@ def performStatisticalAnalysis(maskedImg):
 	# TEXTURAL FEATURES
 
 	# Grey Level Co-occurrence Matrices (GLCM)
-	print('----calculate GLCM')
 	GLCM = calculateGLCM(blueBand, greyLevels)
 	#GLCM = np.loadtxt('GLCM.txt')
 
@@ -149,10 +145,5 @@ def performStatisticalAnalysis(maskedImg):
 				homogeneity += GLCM[i,j] / (1 + abs(i-j))
 			else:
 				pass
-
-	print('Energy:      ', energy)
-	print('Entropy:     ', entropy)
-	print('Contrast:    ', contrast)
-	print('Homogeneity: ', homogeneity)
 
 	return energy, entropy, contrast, homogeneity

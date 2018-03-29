@@ -29,35 +29,30 @@ def processor(img, azimuth, filename):
 	#print(img.shape)
 
 	# create mask
-	print('create mask')
 	mask = createmask(img, azimuth)
 
 	# apply the mask and display the result
-	print('apply mask')
 	maskedImg = cv2.bitwise_and(img, mask)
 
 	# plot the overview showing the image, mask, and histogram
 	#overviewPlot(img,mask,maskedImg)
 
 	# set thresholds for plotting and sky cover calculations
-	print('set thresholds')
 	sunnyThreshold,thinThreshold = setThresholds()
 
 	# calculate red/blue ratio per pixel
-	print('calculate rb rabio')
 	redBlueRatio = calculateRatio(maskedImg)
 
 	# calculate the intensity values
 	#intensityValues = calculateIntensity(maskedImg)
 
 	# plot the reb/blue ratios
-	plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
+	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
 	# calculate solid angle corrections
 	#calculateSACorrections(...)
 
 	# calculate fractional skycover
-	print('calcualte fSC')
-	fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+	thinSkyCover, opaqueSkyCover, fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
 
-	return fractionalSkyCover, maskedImg
+	return thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg

@@ -15,6 +15,7 @@ import os
 from processor import processor
 from performstatisticalanalysis import performStatisticalAnalysis
 import csv
+from tqdm import tqdm
 
 # get the altitude of the image
 def getAltitude(lines):
@@ -46,6 +47,29 @@ def getAzimuth(lines):
 
 	return azimuth
 
+# get the fractional sky cover of the 'old' TSI software
+def getFractionalSkyCoverTSI(lines):
+	for line in lines:
+		if line.startswith('tsi.image.fraction.opaque='):
+			# extract opaque fraction from the correct line
+			tmp1, tmp2 = line.split('=')
+			opaqueSkyCoverStr, tmp1 = tmp2.split('\n')
+
+			# convert string to float
+			opaqueSkyCoverTSI = float(opaqueSkyCoverStr)
+
+		elif line.startswith('tsi.image.fraction.thin='):
+			# extract thin fraction from the correct line
+			tmp1, tmp2 = line.split('=')
+			thinSkyCoverStr, tmp1 = tmp2.split('\n')
+
+			# convert string to float
+			thinSkyCoverTSI = float(thinSkyCoverStr)
+
+	fractionalSkyCoverTSI = opaqueSkyCoverTSI + thinSkyCoverTSI
+
+	return thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI
+
 def plotAzimuthAltitude(azimuth,altitude):
 	# plot the azimuth vs altitude with a horizontal line
 	plt.plot(azimuth,altitude)
@@ -53,24 +77,6 @@ def plotAzimuthAltitude(azimuth,altitude):
 	plt.xlabel('Azimuth')
 	plt.ylabel('Altitude')
 	plt.show()
-
-def statistics(maskedImg,filename,propertiesExtension,fractionalSkyCover,altitude,azimuth,filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList):
-	print('calculate statistics')
-	energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
-	
-	#create the lists of relevant properties
-	print('----create lists of relevant proberties - begin')
-	filenameList.append(filename.replace(propertiesExtension,''))
-	altitudeList.append(altitude)
-	azimuthList.append(azimuth)
-	fractionalSkyCoverList.append(fractionalSkyCover)
-	energyList.append(energy)
-	entropyList.append(entropy)
-	contrastList.append(contrast)
-	homogeneityList.append(homogeneity)
-	print('----create lists of relevant proberties - end')
-
-	return filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList
 
 def main():
 	# initiate variables
@@ -80,56 +86,56 @@ def main():
 	# converts the directory from string into 'bytes'
 	directory = os.fsencode(directory_in_str)
 
-	# the '0' is added to exclude some files
+	# alphabetically sort the files in the diretory
+	sortedDirectory = sorted(os.listdir(directory))
+
+	# the '0' is added to exclude some files in the directory
 	propertiesExtension = '0.properties.gz'
 	imageExtension = '0.jpg'
 
-	# empty lists for storing the data
-	filenameList = []
-	altitudeList = []
-	azimuthList = []
-	fractionalSkyCoverList = []
-	energyList = []
-	entropyList = []
-	contrastList = []
-	homogeneityList = []
+	#open the data file
+	with open('data.csv', 'w') as fd:
+		writer = csv.writer(fd, delimiter='\t')
 
+		# look for the file names
+		for file in tqdm(sortedDirectory):
+			# decode the filename from bytes to string
+			filename = os.fsdecode(file)
+			# search for all files ending with particular extension
+			if filename.endswith(propertiesExtension) == True:
+				# unzip the gzip file, open the file as rt=read text
+				with gzip.open(directory_in_str+'/'+filename, 'rt') as f:
+					lines = []
+					# read the file and store line per line
+					for line in f:
+						lines.append(line)
+					#get the altitude and azimuth from the defs			
+					altitude = getAltitude(lines)
+					azimuth = getAzimuth(lines)			
 
-	# look for the file names
-	for file in os.listdir(directory):
-		# decode the filename from bytes to string
-		filename = os.fsdecode(file)
-		# search for all files ending with particular extension
-		if filename.endswith(propertiesExtension) == True:
-			# unzip the gzip file, open the file as rt=read text
-			with gzip.open(directory_in_str+'/'+filename, 'rt') as f:
-				lines = []
-				# read the file and store line per line
-				for i, line in enumerate(f):
-					lines.append(line)
-				#get the altitude and azimuth from the defs			
-				altitude = getAltitude(lines)
-				azimuth = getAzimuth(lines)
+					# only carry out calculations for solar angle > 10 degrees
+					if altitude >= 10:
+						# get the fractional sky cover from 'old' TSI software
+						thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI = getFractionalSkyCoverTSI(lines)
 
-				if altitude >= 10:
-					# select the image
-					img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
-					# main processing function
-					fractionalSkyCover, maskedImg = processor(img, azimuth, filename.replace(propertiesExtension,''))
+						# select the image
+						img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 
-					# calculate statistical properties of the image
-					#filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList = statistics(maskedImg,filename,propertiesExtension,fractionalSkyCover,altitude,azimuth,filenameList,altitudeList,azimuthList,fractionalSkyCoverList,energyList,entropyList,contrastList,homogeneityList)
+						# main processing function
+						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, azimuth, filename.replace(propertiesExtension,''))
 
-				else:
-					pass
-		else:
-			pass
+						# calculate statistical properties of the image
+						energy = 0
+						entropy = 0
+						contrast = 0
+						homogeneity = 0
+						#energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
 
-	# open the data file and write the sorted data lists
-	print('open and write the data in .csv file')
-	with open('data.csv', 'w') as fSC:
-		writer = csv.writer(fSC, delimiter='\t')
-		writer.writerows(sorted(zip(filenameList, altitudeList, azimuthList, fractionalSkyCoverList, energyList, entropyList, contrastList, homogeneityList)))
+						writer.writerow((filename.replace(propertiesExtension,''), 
+										altitude, azimuth, 
+										thinSkyCover, opaqueSkyCover, fractionalSkyCover, 
+										thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI,
+										energy, entropy, contrast, homogeneity))
 	
 	#plot the azimuth vs altitude
 	#plotAzimuthAltitude(azimuth,altitude)
