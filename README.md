@@ -5,6 +5,8 @@
 ![alt text](results/semi_clouds.png "Semi cloudy")
 
 ### Cloud cover comparison of the old and new software
-
-![alt text](results/skycovercomparison.png "Sky cover comparison")
+# No mask around the sun
+![alt text](results/skycovercomparison_nosundisk.png "Sky cover comparison")
+# With mask around the sun
+![alt text](results/skycovercomparison_sundisk.png "Sky cover comparison")
 
