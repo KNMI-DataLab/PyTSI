@@ -12,10 +12,10 @@
 import sys
 import cv2
 import numpy as np
-from math import cos,sin,pi,log
+from math import cos,sin,pi,log,sqrt
 from PIL import Image, ImageDraw
 from matplotlib import pyplot as plt
 from matplotlib import colors as colors
 import matplotlib.cm as cm
 
-sys.path.append('/home/mos/Documents/TSI/plotting')
+sys.path.append('./plotting')
