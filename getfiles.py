@@ -123,7 +123,7 @@ def main():
 						img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 
 						# main processing function
-						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, azimuth, filename.replace(propertiesExtension,''))
+						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, azimuth, altitude, filename.replace(propertiesExtension,''))
 
 						# calculate statistical properties of the image
 						energy = 0
@@ -142,7 +142,7 @@ def main():
 	#plotAzimuthAltitude(azimuth,altitude)
 
 	# plot the sky cover comparison
-	#plotSkyCoverComparison()
+	plotSkyCoverComparison()
 
 if __name__ == '__main__':
 	main()	
