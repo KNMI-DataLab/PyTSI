@@ -22,14 +22,14 @@ from setthresholds import setThresholds
 from calculateintensity import calculateIntensity
 from performstatisticalanalysis import performStatisticalAnalysis
 
-def processor(img, azimuth, filename):
+def processor(img, azimuth, altitude, filename):
 	#cv2show(img,"Original image")
 
 	# resolution of the image ( 352x288(x3) ) 
 	#print(img.shape)
 
 	# create mask
-	mask = createmask(img, azimuth)
+	mask = createmask(img, azimuth, altitude)
 
 	# apply the mask and display the result
 	maskedImg = cv2.bitwise_and(img, mask)
@@ -47,7 +47,7 @@ def processor(img, azimuth, filename):
 	#intensityValues = calculateIntensity(maskedImg)
 
 	# plot the reb/blue ratios
-	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
+	plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
 	# calculate solid angle corrections
 	#calculateSACorrections(...)
