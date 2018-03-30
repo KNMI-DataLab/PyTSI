@@ -45,7 +45,7 @@ def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold, filename):
 	ax1.imshow(trueColorImg)
 
 	#### TSI processed image
-	img = cv2.imread('/home/mos/Documents/TSI/data/'+filename+'0.png')
+	img = cv2.imread('./data/'+filename+'0.png')
 	imgChannels = cv2.split(img)
 	trueColorImg=cv2.merge(list(reversed(imgChannels)))
 	ax2.set_title('TSI processed image')
