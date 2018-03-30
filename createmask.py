@@ -15,8 +15,7 @@ import scipy as scipy
 
 # calculate the outer point of the shadow band position required for drawing 
 # the shadowband line. the formula of a circle is used: x=r*cos(t),y=r*sin(t)
-def calculateBandPosition(img,radiusCircle,xres,yres,theta):
-	n=100
+def calculateBandPosition(xres,yres,theta):
 	r=140
 
 	#for i in range (0,n):
@@ -26,7 +25,32 @@ def calculateBandPosition(img,radiusCircle,xres,yres,theta):
 
 	return x,y
 
-def createmask(img, azimuthDegrees):
+def calculateSunPosition(xres,yres,theta,altitude,radiusCircle):
+	# the 1.2 scaler is implemented to accomodate for the 
+	# hemispheric mirror not being perfectly round and thus
+	# the tracking of the sun is a bit harder
+
+	# method 1
+	#altitudeRadians = (altitude*1.2) * pi / 180
+	#r = radiusCircle*cos(altitudeRadians)
+
+	# method 2
+	#altitudeRadians = (altitude) * pi / 180
+	#r = radiusCircle - altitude / 90 * radiusCircle * cos(altitudeRadians)
+
+	# method 3
+	altitudeRadians = (altitude) * pi / 180
+	r = radiusCircle * 2 * sqrt( 1 - sin(altitudeRadians))
+
+	phi = (altitude)*pi/180
+	x = int(xres/2 + r * cos (theta))
+	y = int(yres/2 + r * sin (-theta))
+	# x=int(xres/2+r*sin(phi)*cos(theta))
+	# y=int(yres/2+r*sin(phi)*sin(-theta))
+
+	return x,y
+
+def createmask(img, azimuthDegrees, altitude):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
@@ -34,7 +58,7 @@ def createmask(img, azimuthDegrees):
 	yres=352
 
 	# define radius circle mask
-	radiusCircle=int(xres/2.2)-4
+	radiusCircle=120
 
 	# create the mask
 	mask = np.zeros(img.shape, dtype="uint8")
@@ -59,7 +83,7 @@ def createmask(img, azimuthDegrees):
 	# thin_clouds: 244.1381726946926
 	azimuthDegreesEast=azimuthDegrees-90
 	theta=-azimuthDegreesEast*pi/180
-	xBand,yBand=calculateBandPosition(img,radiusCircle,xres,yres,theta)
+	xBand,yBand=calculateBandPosition(xres,yres,theta)
 
 	# draw a black line on the mask 
 	# cv2.line(mask, point1 (midpoint is 144,176), point2, color, line thickness (in pixels?))
@@ -72,7 +96,11 @@ def createmask(img, azimuthDegrees):
 	# CAMERA
 	# option to draw a black square where the camera is
 
+	# SUN
+	xSun,ySun = calculateSunPosition(xres,yres,theta,altitude,radiusCircle)
+	cv2.circle(mask, (xSun,ySun), 40, (0,0,0), -1)
+
 	# display constructed mask
-	#cv2show(mask,"Mask")
+	#cv2.imshow('test',mask)
 
 	return mask
