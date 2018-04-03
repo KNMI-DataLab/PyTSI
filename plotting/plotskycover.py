@@ -1,7 +1,20 @@
+###############################################################################
+# DESCRIPTION: plots the sky cover of the old TSI software and the newly
+#              developed software and compares the two.
+#              
+#
+#
+# AUTHOR: Job Mos	                            # EMAIL: jobmos95@gmail.com
+#
+###############################################################################
+
 #import libraries
-from myimports import *
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib import colors as colors
 
 def plotSkyCoverComparison():
+
 	data = np.genfromtxt('data.csv', delimiter='\t', names=['filename', 'altitude', 'azimuth', 'thinskycover', 'opaqueskycover','totalskycover', 'thinskycoverTSI', 'opaqueskycoverTSI','totalskycoverTSI', 'energy', 'entropy', 'contrast', 'homogeneity'])
 
 	fig, ((ax1),(ax2),(ax3),(ax4)) = plt.subplots(4, 1, sharex=True)
@@ -39,3 +52,5 @@ def plotSkyCoverComparison():
 	ax4.set_xlabel('azimuth (deg)')
 
 	plt.show()
+	
+	plt.close()
