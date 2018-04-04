@@ -54,3 +54,34 @@ def plotSkyCoverComparison():
 	plt.show()
 	
 	plt.close()
+
+	fig, ((ax1,ax2,ax3),(ax4,ax5,ax6)) = plt.subplots(2, 3, sharex=True)
+
+	ax1.plot(data['azimuth'],data['altitude']*100, linewidth = 2.0)
+	ax2.plot(data['azimuth'],data['totalskycover'], linewidth = 2.0)
+	ax3.plot(data['azimuth'],data['energy'], linewidth = 2.0)
+	ax4.plot(data['azimuth'],data['entropy'], linewidth = 2.0)
+	ax5.plot(data['azimuth'],data['contrast'], linewidth = 2.0)
+	ax6.plot(data['azimuth'],data['homogeneity'], linewidth = 2.0)
+
+	ax1.set_ylabel('altitude')
+	ax2.set_ylabel('cloud cover')
+	ax3.set_ylabel('energy')
+	ax4.set_ylabel('entropy')
+	ax5.set_ylabel('contrast')
+	ax6.set_ylabel('homogeneity')
+
+	ax1.grid()
+	ax2.grid()
+	ax3.grid()
+	ax4.grid()
+	ax5.grid()
+	ax6.grid()
+
+	ax4.set_xlabel('azimuth (deg)')
+	ax5.set_xlabel('azimuth (deg)')
+	ax6.set_xlabel('azimuth (deg)')
+
+	plt.show()
+
+	plt.close()
