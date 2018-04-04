@@ -17,5 +17,6 @@ from PIL import Image, ImageDraw
 from matplotlib import pyplot as plt
 from matplotlib import colors as colors
 import matplotlib.cm as cm
+import settings
 
 sys.path.append('./plotting')

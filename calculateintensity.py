@@ -12,24 +12,17 @@
 from myimports import *
 
 def calculateIntensity(maskedImg):
-
-	# calculate image properties (resolution of the image)
-	# calculation doesn't work yet, setting manually
-	#[xres,yres]=img.shape
-	xres=288
-	yres=352
-
 	# setup the numpy array, fill it with zeros
-	intensityValues = np.zeros([yres,xres])
+	intensityValues = np.zeros([settings.yres,settings.xres])
 
 	# compute the average of RGB for each pixel
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,settings.yres):
+		for j in range (0,settings.xres):
 			#avoiding the masked part of the image
 			if maskedImg[i,j,0] != 0:
 				intensityValues[i,j] = sum(maskedImg[i,j])
 
-	grid = intensityValues.reshape((yres, xres))
+	grid = intensityValues.reshape((settings.yres, settings.settings.xres))
 	plt.imshow(grid, cmap='gray')
 	plt.show()
 

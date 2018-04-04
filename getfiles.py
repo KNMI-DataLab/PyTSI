@@ -71,15 +71,10 @@ def getFractionalSkyCoverTSI(lines):
 
 	return thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI
 
-def plotAzimuthAltitude(azimuth,altitude):
-	# plot the azimuth vs altitude with a horizontal line
-	plt.plot(azimuth,altitude)
-	plt.axhline(y=10, color='black')
-	plt.xlabel('Azimuth')
-	plt.ylabel('Altitude')
-	plt.show()
-
 def main():
+	# set/initialize the global variables
+	settings.init()
+
 	# initiate variables
 	# directory in which the data is located
 	directory_in_str = 'data'
@@ -103,7 +98,7 @@ def main():
 			# decode the filename from bytes to string
 			filename = os.fsdecode(file)
 			# search for all files ending with particular extension
-			if filename.endswith(propertiesExtension) == True:
+			if filename.endswith(propertiesExtension):
 				# unzip the gzip file, open the file as rt=read text
 				with gzip.open(directory_in_str+'/'+filename, 'rt') as f:
 					lines = []
@@ -130,19 +125,16 @@ def main():
 						entropy = 0
 						contrast = 0
 						homogeneity = 0
-						#energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
+						energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
 
 						writer.writerow((filename.replace(propertiesExtension,''), 
 										altitude, azimuth, 
 										thinSkyCover, opaqueSkyCover, fractionalSkyCover, 
 										thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI,
 										energy, entropy, contrast, homogeneity))
-	
-	# plot the azimuth vs altitude
-	#plotAzimuthAltitude(azimuth,altitude)
 
 	# plot the sky cover comparison
 	plotSkyCoverComparison()
 
 if __name__ == '__main__':
-	main()	
+	main()

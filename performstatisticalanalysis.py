@@ -24,10 +24,6 @@ def calculateGLCM(blueBand, greyLevels):
 	dx = 1
 	dy = 1
 
-	# reset resolutions for GLCM calculation
-	xres = 352
-	yres = 288
-
 	# calculate min and max grey values of the blue band
 	greyMin = int(np.amin(blueBand[np.nonzero(blueBand)]))
 	greyMax = int(np.amax(blueBand[np.nonzero(blueBand)]))
@@ -45,8 +41,8 @@ def calculateGLCM(blueBand, greyLevels):
 	for i in range (greyMin,greyMax):
 		for j in range (greyMin,greyMax):
 			# loop over image pixels
-			for x in range (0, xres):
-				for y in range (0, yres):
+			for x in range (0, settings.yres):
+				for y in range (0, settings.xres):
 					# GLCM1
 					# check whether on pixel is part of mask
 					# if pixel is masked, skip to next iteration
@@ -79,17 +75,16 @@ def calculateGLCM(blueBand, greyLevels):
 	return GLCM
 
 def extractBands(scaler, maskedImg):
-	#reset xres and yres
-	xres = 288
-	yres = 352
-
 	# extract R and B band individually from image
-	blueBand  = np.zeros([yres,xres])
-	greenBand = np.zeros([yres,xres])
-	redBand   = np.zeros([yres,xres])
+	# the arrays are set up in [y,x] orientation because the image
+	# has some 'special' metadata which shows opposite resolution/geometry
+	# view with: "$ identify -verbose data/20170419133000.jpg"
+	blueBand  = np.zeros([settings.yres,settings.xres])
+	greenBand = np.zeros([settings.yres,settings.xres])
+	redBand   = np.zeros([settings.yres,settings.xres])
 
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,settings.yres):
+		for j in range (0,settings.xres):
 			# check whether on pixel is part of mask
 			# if pixel is masked, do nothing
 			if maskedImg[i,j,0] == 0 and maskedImg[i,j,1] == 0 and maskedImg[i,j,2] == 0:

@@ -19,16 +19,14 @@ def calculateSkyCover(redBlueRatio,sunnyThreshold,thinThreshold):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
-	xres=288
-	yres=352
 
 	sunnyPixels = 0
 	thinPixels = 0
 	opaquePixels = 0
 
 	# classify each pixel as cloudy/clear
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,settings.yres):
+		for j in range (0,settings.xres):
 			# avoid mask
 			if redBlueRatio[i,j] != 0:
 				if redBlueRatio[i,j] <= sunnyThreshold:

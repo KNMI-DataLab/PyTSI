@@ -15,18 +15,12 @@ from myimports import *
 #np.set_printoptions(threshold=np.nan)
 
 def calculateRatio(maskedImg):
-	# calculate image properties (resolution of the image)
-	# calculation doesn't work yet, setting manually
-	#[xres,yres]=img.shape
-	xres = 288
-	yres = 352
-
 	# setup the numpy array, fill it with zeros
-	redBlueRatio = np.zeros([yres,xres])
+	redBlueRatio = np.zeros([settings.yres,settings.xres])
 
 	# blue red ratio calculation for each pixel in the image
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,settings.yres):
+		for j in range (0,settings.xres):
 			# check whether on pixel is part of mask
 			# if pixel is masked, do nothing
 			if maskedImg[i,j,0] == 0:

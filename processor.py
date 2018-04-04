@@ -26,7 +26,7 @@ def processor(img, azimuth, altitude, filename):
 	#cv2show(img,"Original image")
 
 	# resolution of the image ( 352x288(x3) ) 
-	#print(img.shape)
+	print(img.shape)
 
 	# create mask
 	mask = createmask(img, azimuth, altitude)

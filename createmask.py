@@ -16,7 +16,7 @@ from math import tan
 
 # calculate the outer point of the shadow band position required for drawing 
 # the shadowband line. the formula of a circle is used: x=r*cos(t),y=r*sin(t)
-def calculateBandPosition(xres,yres,theta):
+def calculateBandPosition(theta):
 	# rInner defines how many pixels from the center 
 	# the shadowband should be drawn
 	# rOuter 
@@ -25,14 +25,14 @@ def calculateBandPosition(xres,yres,theta):
 
 	#for i in range (0,n):
 	#theta=-i/(n-1)*3.1415
-	xInner = int(xres / 2 + rInner * cos(theta))
-	yInner = int(yres / 2 + rInner * sin(-theta))
-	xOuter = int(xres / 2 + rOuter * cos(theta))
-	yOuter = int(yres / 2 + rOuter * sin(-theta))
+	xInner = int(settings.xres / 2 + rInner * cos(theta))
+	yInner = int(settings.yres / 2 + rInner * sin(-theta))
+	xOuter = int(settings.xres / 2 + rOuter * cos(theta))
+	yOuter = int(settings.yres / 2 + rOuter * sin(-theta))
 
 	return xInner,yInner,xOuter,yOuter
 
-def calculateSunPosition(xres,yres,theta,altitude,radiusCircle):
+def calculateSunPosition(theta,altitude,radiusCircle):
 	radiusMirror = 140
 	altitudeRadians = (altitude) * pi / 180
 
@@ -66,8 +66,8 @@ def calculateSunPosition(xres,yres,theta,altitude,radiusCircle):
 	d = b**2 - 4 * a * c
 	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
 
-	x = int(xres/2 + r * cos (theta))
-	y = int(yres/2 + r * sin (-theta))
+	x = int(settings.xres/2 + r * cos (theta))
+	y = int(settings.yres/2 + r * sin (-theta))
 
 	# x=int(xres/2+r*sin(phi)*cos(theta))
 	# y=int(yres/2+r*sin(phi)*sin(-theta))
@@ -78,8 +78,6 @@ def createmask(img, azimuthDegrees, altitude):
 	# calculate image properties (resolution of the image)
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
-	xres=288
-	yres=352
 
 	# define radius circle mask
 	radiusCircle=120
@@ -107,7 +105,7 @@ def createmask(img, azimuthDegrees, altitude):
 	# thin_clouds: 244.1381726946926
 	azimuthDegreesEast = azimuthDegrees - 90
 	theta = -azimuthDegreesEast * pi / 180
-	xInner,yInner,xOuter,yOuter = calculateBandPosition(xres,yres,theta)
+	xInner,yInner,xOuter,yOuter = calculateBandPosition(theta)
 
 	# draw a black line on the mask 
 	# cv2.line(mask, point1 (midpoint is 144,176), point2, color, line thickness (in pixels?))
@@ -124,7 +122,7 @@ def createmask(img, azimuthDegrees, altitude):
 	# option to draw a black square where the camera is
 
 	# SUN
-	xSun,ySun = calculateSunPosition(xres,yres,theta,altitude,radiusCircle)
+	xSun,ySun = calculateSunPosition(theta,altitude,radiusCircle)
 	cv2.circle(mask, (xSun,ySun), 40, (0,0,0), -1)
 
 	# display constructed mask
