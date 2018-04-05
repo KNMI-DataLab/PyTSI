@@ -1,9 +1,12 @@
 import numpy as np 
-from sklearn import preprocessing, cross_validation, neighbors
+from sklearn import preprocessing, model_selectrion, neighbors
 import pandas as pd
 import cv2 as cv2
 from math import log, sqrt
 import sys as sys
+import csv
+import os
+from tqdm import tqdm
 
 # five folders: data/swimcat/(A-sky,B-pattern,C-thick-dark,D-thick-white,E-veil)/images/*.png
 
@@ -49,10 +52,6 @@ def calculateGLCM(blueBand, greyLevels):
 	# if false: only 2 matrices are used
 	use4 = True
 
-	# FOLLOWING CALCULATION TAKES A LARGE AMOUNT OF TIME
-	# 'greyLevels' is used to decrease amount of grey levels and thus
-	# reduces computation time
-
 	# compute 4 GLCM matrices, bottom right, bottom left, top left, top right
 	# loop over GLCM matrix elements
 	for i in range (greyMin,greyMax):
@@ -96,25 +95,20 @@ def calculateSpectralFeatures(redBand,greenBand,blueBand):
 	diffRB = meanR - meanB
 	diffGB = meanG - meanB
 
-	print(meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB)
-
 	return meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB
 
 # energy,entropy,contrast,homogeneity
-def calculaeTexturalFeatures(GLCM, greyLevels):
+def calculateTexturalFeatures(GLCM, greyLevels):
 	energy = entropy = contrast = homogeneity = 0
 	for i in range (0, greyLevels):
 		for j in range(0, greyLevels):
 			if GLCM[i,j] != 0:
 				# Energy (B)
 				energy      += GLCM[i,j]**2
-
 				# Entropy (B)
 				entropy     += GLCM[i,j] * log(GLCM[i,j],2)
-
 				# Contrast (B)
 				contrast    += GLCM[i,j] * (i-j)**2
-
 				# Homogeneity (B)
 				homogeneity += GLCM[i,j] / (1 + abs(i-j))
 			else:
@@ -123,6 +117,39 @@ def calculaeTexturalFeatures(GLCM, greyLevels):
 	return energy, entropy, contrast, homogeneity
 
 # cloud cover
+	# setup the numpy array, fill it with zeros
+def calculateSkyCover(img, sunnyThreshold, thinThreshold):
+	redBlueRatio = np.zeros([yres,xres])
+
+	# blue red ratio calculation for each pixel in the image
+	for i in range (0,yres):
+		for j in range (0,xres):
+			# i = ypixel, j = xpixel, 0,2 = blue, red
+			redBlueRatio[i,j] = img[i,j,2] / img[i,j,0]
+
+	sunnyPixels = 0
+	thinPixels = 0
+	opaquePixels = 0
+
+	# classify each pixel as cloudy/clear
+	for i in range (0,yres):
+		for j in range (0,xres):
+			# avoid mask
+			if redBlueRatio[i,j] != 0:
+				if redBlueRatio[i,j] <= sunnyThreshold:
+					sunnyPixels += 1
+				elif redBlueRatio[i,j] <= thinThreshold:
+					thinPixels += 1
+				else:
+					opaquePixels += 1
+
+	cloudyPixels = thinPixels + opaquePixels
+
+	thinSkyCover = thinPixels / (sunnyPixels+cloudyPixels)
+	opaqueSkyCover = opaquePixels / (sunnyPixels+cloudyPixels)
+	fractionalSkyCover = thinSkyCover + opaqueSkyCover
+
+	return fractionalSkyCover
 
 # write to file: id,mean,stdev,skew,diff,energy,entropy,contrast,homogeneity,cloudcover,class
 # classes:
@@ -132,18 +159,49 @@ def calculaeTexturalFeatures(GLCM, greyLevels):
 #	- 3: thick white
 #	- 4: veil
 
-global xres, yres
-xres = yres = 125
+def main():
+	global xres, yres
+	xres = yres = 125
 
-greyLevels = 32
-scaler = int(256/greyLevels)
+	greyLevels = 32
+	scaler = int(256/greyLevels)
 
-img = cv2.imread('data/swimcat/A-sky/images/A_224img.png')
+	sunnyThreshold = 0.795
+	thinThreshold = 0.9
 
-blueBand, greenBand, redBand = extractBands(img,scaler)
+	dataFolder = '/home/mos/Documents/TSI/machinelearning/data/swimcat/'
 
-GLCM = calculateGLCM(blueBand,greyLevels)
+	dirList = []
+	dirList.append(dataFolder + 'A-sky/images')
+	dirList.append(dataFolder + 'B-pattern/images/')
+	dirList.append(dataFolder + 'C-thick-dark/images/')
+	dirList.append(dataFolder + 'D-thick-white/images/')
+	dirList.append(dataFolder + 'E-veil/images/')
 
-meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB = calculateSpectralFeatures(redBand,greenBand,blueBand)
+	with open('data.csv', 'w', newline ='') as csvfile:
+		# set up csv writing environment
+		writer = csv.writer(csvfile, delimiter=',')
+		for cloudClass, dirName in enumerate(dirList):
+			dirName = os.fsencode(dirList[cloudClass])
+			dirName = os.listdir(dirName)
+			for file in tqdm(dirName):
+				filename = os.fsdecode(file)
+				# absolute location of the file
+				fileLocation = dirList[cloudClass] + '/' + filename
+				# read the image
+				img = cv2.imread(fileLocation)
+				# extract the bands
+				blueBand, greenBand, redBand = extractBands(img,scaler)
+				# calculate the GLCM
+				GLCM = calculateGLCM(blueBand,greyLevels)
+				# calculate the spectral features
+				meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB = calculateSpectralFeatures(redBand,greenBand,blueBand)
+				# calculate the textural features
+				energy, entropy, contrast, homogeneity = calculateTexturalFeatures(GLCM,greyLevels)
+				#calculate the cloud cover
+				cloudCover = calculateSkyCover(img, sunnyThreshold, thinThreshold)
+				#write the data to a file
+				writer.writerow((filename,meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudClass))
 
-energy, entropy, contrast, homogeneity = calculaeTexturalFeatures(GLCM,greyLevels)
+if __name__ == '__main__':
+	main()
