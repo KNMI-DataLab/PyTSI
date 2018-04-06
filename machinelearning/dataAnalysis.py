@@ -1,12 +1,12 @@
-import numpy as np 
-from sklearn import preprocessing, model_selectrion, neighbors
-import pandas as pd
 import cv2 as cv2
 from math import log, sqrt
 import sys as sys
 import csv
 import os
 from tqdm import tqdm
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib import colors as colors
 
 # five folders: data/swimcat/(A-sky,B-pattern,C-thick-dark,D-thick-white,E-veil)/images/*.png
 
@@ -18,12 +18,12 @@ def extractBands(img,scaler):
 	# the arrays are set up in [y,x] orientation because the image
 	# has some 'special' metadata which shows opposite resolution/geometry
 	# view with: "$ identify -verbose data/20170419133000.jpg"
-	blueBand  = np.zeros([yres,xres])
-	greenBand = np.zeros([yres,xres])
-	redBand   = np.zeros([yres,xres])
+	blueBand  = np.zeros([xres,yres])
+	greenBand = np.zeros([xres,yres])
+	redBand   = np.zeros([xres,yres])
 
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,xres):
+		for j in range (0,yres):
 			# i = ypixel, j = xpixel, 0,2 = blue, red
 			blueBand[i,j]  = int(img[i,j,0]/scaler)
 			greenBand[i,j] = int(img[i,j,1]/scaler)
@@ -57,8 +57,8 @@ def calculateGLCM(blueBand, greyLevels):
 	for i in range (greyMin,greyMax):
 		for j in range (greyMin,greyMax):
 			# loop over image pixels
-			for x in range (1, yres-1):
-				for y in range (1, xres-1):
+			for x in range (1, xres-1):
+				for y in range (1, yres-1):
 					# when two pixels 'match' add +1 to GLCM matrix element
 					if blueBand[x,y] != i:
 						continue
@@ -71,7 +71,7 @@ def calculateGLCM(blueBand, greyLevels):
 							if blueBand[x-dx,y+dy] == j:
 								GLCM2[i,j] += 1
 							if blueBand[x+dx,y-dy] == j:
-								GLCM3[i,j] += 1												
+								GLCM3[i,j] += 1
 
 	# calculate average of the four matrices
 	# GLCM is the matrix used in textural feature analysis
@@ -84,16 +84,15 @@ def calculateGLCM(blueBand, greyLevels):
 
 	return GLCM
 
-def calculateSpectralFeatures(redBand,greenBand,blueBand):
-	N = xres*yres
-	meanR = np.sum(redBand) / N
-	meanG = np.sum(greenBand) / N
-	meanB = np.sum(blueBand) / N
-	stDev = sqrt(np.sum(np.square(np.subtract(blueBand,meanB)))/(N-1))
+def calculateSpectralFeatures(redBand,greenBand,blueBand,N):
+	meanR    = np.sum(redBand) / N
+	meanG    = np.sum(greenBand) / N
+	meanB    = np.sum(blueBand) / N
+	stDev    = sqrt(np.sum(np.square(np.subtract(blueBand,meanB)))/(N-1))
 	skewness = np.sum(np.power(np.divide(np.subtract(blueBand,meanB),stDev),3)) / N
-	diffRG = meanR - meanG
-	diffRB = meanR - meanB
-	diffGB = meanG - meanB
+	diffRG   = meanR - meanG
+	diffRB   = meanR - meanB
+	diffGB   = meanG - meanB
 
 	return meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB
 
@@ -117,37 +116,49 @@ def calculateTexturalFeatures(GLCM, greyLevels):
 	return energy, entropy, contrast, homogeneity
 
 # cloud cover
-	# setup the numpy array, fill it with zeros
-def calculateSkyCover(img, sunnyThreshold, thinThreshold):
-	redBlueRatio = np.zeros([yres,xres])
+def calculateSkyCover(img, cloudyThreshold,filename):
+	redBlueRatio = np.zeros([xres,yres])
 
 	# blue red ratio calculation for each pixel in the image
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,xres):
+		for j in range (0,yres):
 			# i = ypixel, j = xpixel, 0,2 = blue, red
-			redBlueRatio[i,j] = img[i,j,2] / img[i,j,0]
+			redBlueRatio[i,j] = abs(int(img[i,j,2]) - int(img[i,j,0]))
+
+#####PLOTTING
+	grid = redBlueRatio.reshape((yres, xres))
+
+	# make a color map of fixed colors
+	cmap = colors.ListedColormap(['white', 'blue', 'blue'])
+	# set thresholds
+	cloudy = 256
+	lower = 0
+	bounds=[lower,cloudyThreshold,cloudy]
+	norm = colors.BoundaryNorm(bounds, cmap.N)
+
+	# tell imshow about colormap so that only set colors are used
+	img = plt.imshow(grid, interpolation='nearest', cmap=cmap, norm=norm)
+
+	# make a color bar
+	plt.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
+
+	plt.savefig('results/'+filename)
+	plt.close()
+#####
 
 	sunnyPixels = 0
-	thinPixels = 0
-	opaquePixels = 0
+	cloudyPixels = 0
 
 	# classify each pixel as cloudy/clear
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,xres):
+		for j in range (0,yres):
 			# avoid mask
-			if redBlueRatio[i,j] != 0:
-				if redBlueRatio[i,j] <= sunnyThreshold:
-					sunnyPixels += 1
-				elif redBlueRatio[i,j] <= thinThreshold:
-					thinPixels += 1
-				else:
-					opaquePixels += 1
+			if redBlueRatio[i,j] >= cloudyThreshold:
+				cloudyPixels += 1
+			else:
+				sunnyPixels += 1
 
-	cloudyPixels = thinPixels + opaquePixels
-
-	thinSkyCover = thinPixels / (sunnyPixels+cloudyPixels)
-	opaqueSkyCover = opaquePixels / (sunnyPixels+cloudyPixels)
-	fractionalSkyCover = thinSkyCover + opaqueSkyCover
+	fractionalSkyCover = cloudyPixels / (sunnyPixels+cloudyPixels)
 
 	return fractionalSkyCover
 
@@ -161,27 +172,29 @@ def calculateSkyCover(img, sunnyThreshold, thinThreshold):
 
 def main():
 	global xres, yres
-	xres = yres = 125
 
 	greyLevels = 32
 	scaler = int(256/greyLevels)
 
-	sunnyThreshold = 0.795
-	thinThreshold = 0.9
+	cloudyThreshold = 25
 
-	dataFolder = '/home/mos/Documents/TSI/machinelearning/data/swimcat/'
+	database = 'tsi'
+
+	dataFolder = '/home/mos/Documents/TSI/machinelearning/data/labeled_images/'+database+'/'
 
 	dirList = []
 	dirList.append(dataFolder + 'A-sky/images')
 	dirList.append(dataFolder + 'B-pattern/images/')
-	dirList.append(dataFolder + 'C-thick-dark/images/')
+	#dirList.append(dataFolder + 'C-thick-dark/images/')
 	dirList.append(dataFolder + 'D-thick-white/images/')
 	dirList.append(dataFolder + 'E-veil/images/')
 
-	with open('data.csv', 'w', newline ='') as csvfile:
+	with open('data_' + database + '_' + str(greyLevels) + 'levels.csv', 'w', newline ='') as csvfile:
 		# set up csv writing environment
 		writer = csv.writer(csvfile, delimiter=',')
-		for cloudClass, dirName in enumerate(dirList):
+		# write the headers to the file
+		csvfile.write('filename,meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudCover,cloudClass\n')
+		for cloudClass, dirName in enumerate(tqdm(dirList)):
 			dirName = os.fsencode(dirList[cloudClass])
 			dirName = os.listdir(dirName)
 			for file in tqdm(dirName):
@@ -190,18 +203,22 @@ def main():
 				fileLocation = dirList[cloudClass] + '/' + filename
 				# read the image
 				img = cv2.imread(fileLocation)
+				xres,yres,numberOfColorbands = img.shape
+				N = xres * yres
 				# extract the bands
 				blueBand, greenBand, redBand = extractBands(img,scaler)
 				# calculate the GLCM
 				GLCM = calculateGLCM(blueBand,greyLevels)
 				# calculate the spectral features
-				meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB = calculateSpectralFeatures(redBand,greenBand,blueBand)
+				meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB = calculateSpectralFeatures(redBand,greenBand,blueBand,N)
 				# calculate the textural features
 				energy, entropy, contrast, homogeneity = calculateTexturalFeatures(GLCM,greyLevels)
 				#calculate the cloud cover
-				cloudCover = calculateSkyCover(img, sunnyThreshold, thinThreshold)
+				cloudCover = calculateSkyCover(img,cloudyThreshold,filename)
 				#write the data to a file
-				writer.writerow((filename,meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudClass))
+				writer.writerow((filename,meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudCover,cloudClass))
+
+	print('END')
 
 if __name__ == '__main__':
 	main()
