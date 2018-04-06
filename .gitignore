@@ -3,6 +3,7 @@ template.py
 
 #images
 *.png
+*.jpg
 
 #text files
 *.txt
@@ -16,6 +17,9 @@ data
 test
 correctionsoftware
 cleaning
+machinelearning/data
+machinelearning/results
+machinelearning/results_ratio
 
 #test files
 test*
