@@ -9,3 +9,5 @@
 ### With mask around the sun
 ![alt text](results/skycovercomparison_sundisk.png "Sky cover comparison")
 
+## Result of JPG compression
+![alt text](results/jpegcompressionresult.png "JPEG compression")
