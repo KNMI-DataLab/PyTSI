@@ -20,10 +20,10 @@ cleaning
 machinelearning/data
 machinelearning/results
 machinelearning/results_ratio
+testing
 
 #test files
 test*
 
 #exceptions
 !results/*
-
