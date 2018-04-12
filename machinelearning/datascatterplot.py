@@ -2,12 +2,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import colors as colors
 
-data = np.genfromtxt('data_tsi_32levels.csv', delimiter=',', names=['filename','meanR','meanG','meanB','stDev','skewness','diffRG','diffRB','diffGB','energy','entropy','contrast','homogeneity','cloudClass'])
+data = np.genfromtxt('data_tsi_swimcat_256levels.csv', delimiter=',', names=['filename','meanR','meanG','meanB','stDev','skewness','diffRG','diffRB','diffGB','energy','entropy','contrast','homogeneity','cloudCover','cloudClass'])
 
 #plt.plot(data['azimuth'],data['thinskycoverTSI']*100, color = 'tab:red', label = 'thin (TSI)', linewidth = 2.0)
 
-xdata = 'diffRB'
-ydata = 'homogeneity'
+xdata = 'meanB'
+ydata = 'diffRB'
 
 plt.scatter(data[xdata],data[ydata],c=data['cloudClass'])
 
