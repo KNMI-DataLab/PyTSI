@@ -1,5 +1,5 @@
 import cv2 as cv2
-from math import log, sqrt
+from math import log10, sqrt
 import sys as sys
 import csv
 import os
@@ -7,6 +7,8 @@ from tqdm import tqdm
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import colors as colors
+import time
+from skimage.feature import greycomatrix
 
 # five folders: data/swimcat/(A-sky,B-pattern,C-thick-dark,D-thick-white,E-veil)/images/*.png
 
@@ -101,15 +103,15 @@ def calculateTexturalFeatures(GLCM, greyLevels):
 	energy = entropy = contrast = homogeneity = 0
 	for i in range (0, greyLevels):
 		for j in range(0, greyLevels):
-			if GLCM[i,j] != 0:
+			if GLCM[i,j,0,0] != 0:
 				# Energy (B)
-				energy      += GLCM[i,j]**2
+				energy      += GLCM[i,j,0,0]**2
 				# Entropy (B)
-				entropy     += GLCM[i,j] * log(GLCM[i,j],2)
+				entropy     += GLCM[i,j,0,0] * log10(GLCM[i,j,0,0],2)
 				# Contrast (B)
-				contrast    += GLCM[i,j] * (i-j)**2
+				contrast    += GLCM[i,j,0,0] * (i-j)**2
 				# Homogeneity (B)
-				homogeneity += GLCM[i,j] / (1 + abs(i-j))
+				homogeneity += GLCM[i,j,0,0] / (1 + abs(i-j))
 			else:
 				pass
 
@@ -126,10 +128,11 @@ def calculateSkyCover(img, cloudyThreshold,filename):
 			redBlueRatio[i,j] = abs(int(img[i,j,2]) - int(img[i,j,0]))
 
 #####PLOTTING
-	grid = redBlueRatio.reshape((yres, xres))
+	grid = redBlueRatio.reshape((xres, yres))
 
 	# make a color map of fixed colors
-	cmap = colors.ListedColormap(['white', 'blue', 'blue'])
+	cmap = colors.ListedColormap(['white', 'blue','blue'])
+	#cmap = 'Blues'
 	# set thresholds
 	cloudy = 256
 	lower = 0
@@ -141,7 +144,7 @@ def calculateSkyCover(img, cloudyThreshold,filename):
 
 	# make a color bar
 	plt.colorbar(img, cmap=cmap, norm=norm, boundaries=bounds, ticks=bounds, fraction=0.045, pad=0.04)
-
+	#plt.colorbar()
 	plt.savefig('results/'+filename)
 	plt.close()
 #####
@@ -154,9 +157,9 @@ def calculateSkyCover(img, cloudyThreshold,filename):
 		for j in range (0,yres):
 			# avoid mask
 			if redBlueRatio[i,j] >= cloudyThreshold:
-				cloudyPixels += 1
-			else:
 				sunnyPixels += 1
+			else:
+				cloudyPixels += 1
 
 	fractionalSkyCover = cloudyPixels / (sunnyPixels+cloudyPixels)
 
@@ -173,12 +176,14 @@ def calculateSkyCover(img, cloudyThreshold,filename):
 def main():
 	global xres, yres
 
-	greyLevels = 32
+	greyLevels = 256
 	scaler = int(256/greyLevels)
+
+	dx = dy = 1
 
 	cloudyThreshold = 25
 
-	database = 'tsi'
+	database = 'swimcat'
 
 	dataFolder = '/home/mos/Documents/TSI/machinelearning/data/labeled_images/'+database+'/'
 
@@ -207,8 +212,12 @@ def main():
 				N = xres * yres
 				# extract the bands
 				blueBand, greenBand, redBand = extractBands(img,scaler)
+				#plt.imshow(blueBand)
+				#plt.savefig('results/test/'+str(greyLevels)+'levels'+filename)
 				# calculate the GLCM
-				GLCM = calculateGLCM(blueBand,greyLevels)
+				blueBand = blueBand.astype(int)
+				GLCM = greycomatrix(blueBand,[dx,dy],[0, np.pi/2.0, np.pi, 3.0*np.pi/2.0, 2.0*np.pi], levels=greyLevels)
+				#GLCM = calculateGLCM(blueBand,greyLevels)
 				# calculate the spectral features
 				meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB = calculateSpectralFeatures(redBand,greenBand,blueBand,N)
 				# calculate the textural features
