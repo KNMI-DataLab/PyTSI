@@ -61,7 +61,7 @@ def calculateGLCM(blueBand, greyLevels):
 								if blueBand[x-dx,y+dy] == j:
 									GLCM2[i,j] += 1
 								if blueBand[x+dx,y-dy] == j:
-									GLCM3[i,j] += 1												
+									GLCM3[i,j] += 1
 
 	# calculate average of the four matrices
 	# GLCM is the matrix used in textural feature analysis
@@ -123,7 +123,7 @@ def performStatisticalAnalysis(maskedImg):
 	#GLCM = np.loadtxt('GLCM.txt')
 
 	energy = entropy = contrast = homogeneity = 0
-	
+
 	for i in range (0, greyLevels):
 		for j in range(0, greyLevels):
 			if GLCM[i,j] != 0:
@@ -131,7 +131,7 @@ def performStatisticalAnalysis(maskedImg):
 				energy      += GLCM[i,j]**2
 
 				# Entropy (B)
-				entropy     += GLCM[i,j] * log(GLCM[i,j],2)
+				entropy     += GLCM[i,j] * log10(GLCM[i,j],2)
 
 				# Contrast (B)
 				contrast    += GLCM[i,j] * (i-j)**2

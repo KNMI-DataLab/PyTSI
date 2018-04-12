@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: creates a circular mask using OpenCV (cv2), applies the mask and
 #              creates a histogram of the masked image.
-#              
+#
 #
 #
 # AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
@@ -21,18 +21,22 @@ from calculateskycover import calculateSkyCover
 from setthresholds import setThresholds
 from calculateintensity import calculateIntensity
 from performstatisticalanalysis import performStatisticalAnalysis
+from project3d import project3d
 
 def processor(img, azimuth, altitude, filename):
 	#cv2show(img,"Original image")
 
-	# resolution of the image ( 352x288(x3) ) 
-	print(img.shape)
+	# resolution of the image ( 352x288(x3) )
+	#print(img.shape)
 
 	# create mask
 	mask = createmask(img, azimuth, altitude)
 
 	# apply the mask and display the result
 	maskedImg = cv2.bitwise_and(img, mask)
+
+	# plot the data onto a 3d projected plane
+	project3d(maskedImg)
 
 	# plot the overview showing the image, mask, and histogram
 	#overviewPlot(img,mask,maskedImg)
@@ -47,7 +51,7 @@ def processor(img, azimuth, altitude, filename):
 	#intensityValues = calculateIntensity(maskedImg)
 
 	# plot the reb/blue ratios
-	plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
+	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
 	# calculate solid angle corrections
 	#calculateSACorrections(...)

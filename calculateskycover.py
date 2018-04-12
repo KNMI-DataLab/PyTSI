@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: calculates the fractional cloud sky cover
-#             
-#              
+#
+#
 #
 #
 # AUTHOR: Job Mos						# EMAIL: jobmos95@gmail.com
