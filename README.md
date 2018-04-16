@@ -11,3 +11,7 @@
 
 ## Result of JPG compression
 ![alt text](results/jpegcompressionresult.png "JPEG compression")
+
+## TSI image showing the Python set outlines
+![alt text](results/outline_regions.png "outline regions")
+
