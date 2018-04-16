@@ -26,3 +26,5 @@ test*.*
 
 #exceptions
 !results/*
+!testing/*/*.*
+!testing/*/*/*.*
