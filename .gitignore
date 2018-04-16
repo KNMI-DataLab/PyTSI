@@ -21,9 +21,8 @@ machinelearning/data
 machinelearning/results
 machinelearning/results_ratio
 
-
 #test files
-test*
+test*.*
 
 #exceptions
 !results/*
