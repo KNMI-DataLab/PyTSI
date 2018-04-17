@@ -13,5 +13,5 @@
 ![alt text](results/jpegcompressionresult.png "JPEG compression")
 
 ## TSI image showing the Python set outlines
-![alt text](results/outline_regions.png "outline regions")
+![alt text](results/segmented_image.png "Segmented Image")
 
