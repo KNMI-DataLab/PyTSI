@@ -171,7 +171,7 @@ def saveOutputToFigures(regions,imageWithOutlines):
 
 	plt.tight_layout()
 
-	plt.savefig('semented_image.png',bbox_inches='tight')
+	plt.savefig('segmented_image.png',bbox_inches='tight')
 	plt.close()
 
 def main():
