@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: creates the mask needed for RGB calculations such as the
 #              histogram and cloud/no cloud determination.
-#              
+#
 #
 #
 # AUTHOR: Job Mos				    # EMAIL: jobmos95@gmail.com
@@ -14,14 +14,16 @@ import scipy as scipy
 from math import cos,sin,sqrt,tan,pi
 import numpy as np
 import matplotlib.pyplot as plt
+
+# print options
 np.set_printoptions(threshold=np.nan)
 
-# calculate the outer point of the shadow band position required for drawing 
+# calculate the outer point of the shadow band position required for drawing
 # the shadowband line. the formula of a circle is used: x=r*cos(t),y=r*sin(t)
 def calculateBandPosition(xres, yres, theta):
-	# rInner defines how many pixels from the center 
+	# rInner defines how many pixels from the center
 	# the shadowband should be drawn
-	# rOuter 
+	# rOuter
 	rInner = 40
 	rOuter = 140
 
@@ -34,116 +36,7 @@ def calculateBandPosition(xres, yres, theta):
 
 	return xInner,yInner,xOuter,yOuter
 
-def calculateSunPosition(theta,altitude,radiusCircle):
-	radiusMirror = 140
-	altitudeRadians = (altitude) * pi / 180
-
-	# the 1.2 scaler is implemented to accomodate for the 
-	# hemispheric mirror not being perfectly round and thus
-	# the tracking of the sun is a bit harder
-
-	# method 1
-	#r = radiusCircle*cos(altitudeRadians)
-
-	# method 2
-	#r = radiusCircle - altitude / 90 * radiusCircle * cos(altitudeRadians)
-
-	# method 3 (paraboly approximation)
-	#r = radiusCircle * sqrt( 1 - sin(altitudeRadians))
-
-	# method 4 (slightly different parabola approximation)
-	#r = radiusMirror * sqrt( 1 / 0.23 ) * ( 1 - sin(altitudeRadians)) / 2
-
-	# method 5 (intersect between altitude line and parabola)
-	# intersection between:
-	# y1 = sin(alt)/cos(alt)x+0 (y=ax+b, linear line)
-	# y2 = -0.23x**2+1 (parabola that describes the geometry of mirror)
-	# the second order function that needs to be solved (y1=y2):
-	# -0.23x**2-sin(alt)/cos(alt)x+1=0
-	# solution x is the distance of the sun from the zenith in pixels
-	# x = (-b + sqrt(b **2 - 4 * a * c))/(2*a)
-	a = -0.23
-	b = -tan(altitudeRadians)
-	c = 1.25
-	d = b**2 - 4 * a * c
-	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
-
-	x = int(settings.xres/2 + r * cos (theta))
-	y = int(settings.yres/2 + r * sin (-theta))
-
-	# x=int(xres/2+r*sin(phi)*cos(theta))
-	# y=int(yres/2+r*sin(phi)*sin(-theta))
-
-	return x,y
-
-def createmask(img, azimuthDegrees, altitude):
-	# calculate image properties (resolution of the image)
-	# calculation doesn't work yet, setting manually
-	#[xres,yres]=img.shape
-
-	# define radius circle mask
-	radiusCircle=120
-
-	# create the mask
-	mask = np.zeros(img.shape, dtype="uint8")
-
-	# HEMISPHERE
-	# draw a white circle on the mask
-	# resolution of the image ( 352x288(x3) ) 
-	cv2.circle(mask, (144,176), radiusCircle, (255,255,255), -1)
-
-	# SHADOWBAND
-	# first calculate the position of the shadow band
-	# this is based on angle theta, this angle should directly be linked 
-	# to sun position
-	
-	# angle theta is given as "azimuth" in the properties file
-	# this is the angle from the north=0, thus I need to add this to my
-	# calculations as I calculate from east=0
-	# thus, azimuth angle of 140degrees is ESE in the morning
-	# rain: 211.92586033556788
-	# semi_clouds: 187.40266748658414
-	# broken_clouds: 218.77307228422038
-	# thin_clouds: 244.1381726946926
-	azimuthDegreesEast = azimuthDegrees - 90
-	theta = -azimuthDegreesEast * pi / 180
-	xInner,yInner,xOuter,yOuter = calculateBandPosition(theta)
-
-	# draw a black line on the mask 
-	# cv2.line(mask, point1 (midpoint is 144,176), point2, color, line thickness (in pixels?))
-	cv2.line(mask, (xInner,yInner), (xOuter,yOuter), (0,0,0), 35)
-
-	# ARM
-	# draw a black line on the mask
-	#cv2.line(mask, (144,176), (144,0), (0,0,0), 17)
-	cv2.rectangle(mask, (141,190), (154,153), (0,0,0), -1)
-	cv2.rectangle(mask, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(mask, (144,91) , (152,26) , (0,0,0), -1)
-
-	# CAMERA
-	# option to draw a black square where the camera is
-
-	# SUN
-	xSun,ySun = calculateSunPosition(theta,altitude,radiusCircle)
-	cv2.circle(mask, (xSun,ySun), 40, (0,0,0), -1)
-
-	# display constructed mask
-	#cv2.imshow('test',mask)
-
-	return mask
-
-def createRegions(img):
-	yres, xres, ncolors = img.shape
-	regions = np.zeros((yres,xres,ncolors), dtype="uint8")
-	radiusCircle = 120
-	radiusMirror = 140
-	azimuth = 92.32342601883832
-	altitude = 16.160075768731204
-
-	# large circle
-	cv2.circle(regions, (int(xres/2),int(yres/2)), radiusCircle, (255,255,0), -1)
-
-	# polygon
+def polygon():
 	azimuth = azimuth - 90
 	width = 50
 	r = xres/2
@@ -156,12 +49,14 @@ def createRegions(img):
 	polygon = np.array([p1,p2,p4,p3],dtype = int)
 	cv2.fillConvexPoly(regions, polygon, color=(0,255,255))
 
-	# inner circle
+def innerCircle():
 	cv2.circle(regions, (int(xres/2),int(yres/2)), 90, (0,255,0), -1)
-	
-	# sun circle
+
+def largeCircle():
+	cv2.circle(regions, (int(xres/2),int(yres/2)), radiusCircle, (255,255,0), -1)
+
+def sunCircle():
 	altitude = altitude * pi /180
-	
 	a = -0.23
 	b = -tan(altitude)
 	c = 1.25
@@ -171,11 +66,21 @@ def createRegions(img):
 	ySun = int(yres/2 + r * sin (theta))
 	cv2.circle(regions, (xSun,ySun), 40, (255,0,0), -1)
 
-
-	# outer circle
+def createStencil():
 	stencil = np.zeros((yres,xres,ncolors), dtype="uint8")
 	cv2.circle(stencil, (int(xres/2), int(yres/2)), radiusCircle, (255,255,255), -1)
+	return stencil
+
+def outerCircle():
 	regions = cv2.bitwise_and(regions,stencil)
+
+def createRegions(img):
+	yres, xres, ncolors = img.shape
+	regions = np.zeros((yres,xres,ncolors), dtype="uint8")
+	radiusCircle = 120
+	radiusMirror = 140
+	azimuth = 92.32342601883832
+	altitude = 16.160075768731204
 
 	# shadowband
 	xInner,yInner,xOuter,yOuter = calculateBandPosition(xres, yres, theta)
@@ -206,6 +111,8 @@ def createRegions(img):
 	return regions, outlines, stencil
 
 def main():
+	global regions
+
 	img = cv2.imread('test_img.jpg')
 
 	# convert image to RGB
@@ -234,7 +141,9 @@ def main():
 
 	plt.imshow(result)
 	plt.savefig('outline_regions.png')
-	plt.show()
+	plt.imshow(regions)
+	plt.savefig('regions.png')
+	#plt.show()
 	plt.close()
 
 if __name__ == '__main__':
