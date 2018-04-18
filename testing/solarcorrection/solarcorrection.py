@@ -15,6 +15,9 @@ from math import cos,sin,sqrt,tan,pi
 import numpy as np
 import sys as sys
 import matplotlib.pyplot as plt
+from tqdm import tqdm
+import gzip
+import os
 
 # print options
 np.set_printoptions(threshold=np.nan)
@@ -24,7 +27,7 @@ def largeCircle(radiusCircle):
 	cv2.circle(labels, (int(xres/2),int(yres/2)), radiusCircle, 1, -1)
 	cv2.circle(outlines, (int(xres/2),int(yres/2)), radiusCircle, (255,0,0), outlineThickness)
 
-def horizonArea(widthHorizonAreaDegrees):
+def drawHorizonArea(widthHorizonAreaDegrees):
 	global theta, horizonArea
 	azimuthFromEast = azimuth - 90
 	r = xres/2
@@ -120,7 +123,6 @@ def createRegions(img):
 	# variable assignment
 	global regions, stencil, labels, outlines, stencilLabels
 	global yres, xres
-	global azimuth, altitude
 	global outlineThickness
 	yres, xres, nColors = img.shape
 	labels = np.zeros((yres,xres))
@@ -132,15 +134,13 @@ def createRegions(img):
 	radiusInnerCircle = 90
 	radiusCircle = 130
 	radiusMirror = 140
-	azimuth = 66.868741228036
-	altitude = 10.056278611719174
 	outlineThickness = 3
 	bandThickness = 35
 	widthHorizonAreaDegrees = 50
 
 	# drawing the shapes on arrays
 	largeCircle(radiusCircle)
-	horizonArea(widthHorizonAreaDegrees)
+	drawHorizonArea(widthHorizonAreaDegrees)
 	innerCircle(radiusInnerCircle)
 	sunCircle(radiusSunCircle, radiusMirror)
 	createStencil(radiusCircle)
@@ -151,41 +151,94 @@ def createRegions(img):
 
 	return regions, labels, outlines, stencil, stencilLabels
 
-def saveOutputToFigures(regions,imageWithOutlines):
-	fig, (ax1,ax2,ax3) = plt.subplots(1,3)
+def saveOutputToFigures(filename,imgTSI,regions,imageWithOutlines):
+	fig, (ax1,ax2,ax3,ax4) = plt.subplots(1,4)
 	ax1.set_adjustable('box-forced')
 	ax2.set_adjustable('box-forced')
 	ax3.set_adjustable('box-forced')
+	ax4.set_adjustable('box-forced')
 
 	ax1.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
 	ax1.set_title('Original image')
 	ax1.imshow(img)
 
 	ax2.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
-	ax2.set_title('Segments')
-	ax2.imshow(regions)
+	ax2.set_title('Old software')
+	ax2.imshow(imgTSI)
 
 	ax3.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
-	ax3.set_title('Segmented image')
-	ax3.imshow(imageWithOutlines)
+	ax3.set_title('New segments')
+	ax3.imshow(regions)
+
+	ax4.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
+	ax4.set_title('New software')
+	ax4.imshow(imageWithOutlines)
 
 	plt.tight_layout()
 
-	plt.savefig('segmented_image.png',bbox_inches='tight')
+	plt.savefig('results/'+filename+'_segmented_image.png',bbox_inches='tight')
 	plt.close()
 
-def main():
-	# read image
+def getAltitude(lines):
+	for line in lines:
+		if line.startswith('tsi.image.solar.altitude='):
+			# extract altitude from the correct line
+			tmp1, tmp2 = line.split('=')
+			altitudeStr, tmp1 = tmp2.split('\n')
+
+			# convert string to float
+			altitude = float(altitudeStr)
+		else:
+			pass
+
+	return altitude
+
+def getAzimuth(lines):
+	for line in lines:
+		if line.startswith('tsi.image.solar.azimuth='):
+			# extract azimuth from the correct line
+			tmp1, tmp2 = line.split('=')
+			azimuthStr, tmp1 = tmp2.split('\n')
+
+			# convert string to float
+			azimuth = float(azimuthStr)
+		else:
+			pass
+
+	return azimuth
+
+def loopOverFiles():
+	global azimuth, altitude
 	global img
-	img = cv2.imread('20170601044900.jpg')
+	directory_in_str = '/usr/people/mos/Documents/data/06/DBASE/20170602_tsi-cabauw_realtime'
+	directory = os.fsencode(directory_in_str)
+	sortedDirectory = sorted(os.listdir(directory))
+	propertiesExtension = '0.properties.gz'
+	imageExtension = '0.jpg'
+	for file in tqdm(sortedDirectory):
+		filename = os.fsdecode(file)
+		if filename.endswith(propertiesExtension):
+			# unzip the gzip file, open the file as rt=read text
+			with gzip.open(directory_in_str+'/'+filename, 'rt') as f:
+				lines = []
+				# read the file and store line per line
+				for line in f:
+					lines.append(line)
+				#get the altitude and azimuth from the defs
+				altitude = getAltitude(lines)
+				azimuth = getAzimuth(lines)
 
-	# convert image to RGB
-	img = img[...,::-1]
+				if altitude >= 10:
+					img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
+					imgTSI = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,'0.png'))
+					img = img[...,::-1] # convert from BGR -> RGB
+					imgTSI = imgTSI[...,::-1] # convert from BGR -> RGB
 
-	# create all the regions and outlines
-	createRegions(img)
+					createRegions(img)
+					saveOutputToFigures(filename,imgTSI,regions,imageWithOutlines)
 
-	saveOutputToFigures(regions,imageWithOutlines)
+def main():
+	loopOverFiles()
 
 if __name__ == '__main__':
 	main()
