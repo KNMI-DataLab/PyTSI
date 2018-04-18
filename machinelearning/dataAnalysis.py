@@ -107,7 +107,7 @@ def calculateTexturalFeatures(GLCM, greyLevels):
 				# Energy (B)
 				energy      += GLCM[i,j,0,0]**2
 				# Entropy (B)
-				entropy     += GLCM[i,j,0,0] * log10(GLCM[i,j,0,0],2)
+				entropy     += GLCM[i,j,0,0] * log10(GLCM[i,j,0,0])
 				# Contrast (B)
 				contrast    += GLCM[i,j,0,0] * (i-j)**2
 				# Homogeneity (B)

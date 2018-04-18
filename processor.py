@@ -22,8 +22,11 @@ from setthresholds import setThresholds
 from calculateintensity import calculateIntensity
 from performstatisticalanalysis import performStatisticalAnalysis
 from project3d import project3d
+from createregions import createRegions
+from overview_with_segments import saveOutputToFigures
+from overlay_outlines_on_image import overlayOutlinesOnImage
 
-def processor(img, azimuth, altitude, filename):
+def processor(img, imgTSI, azimuth, altitude, filename):
 	#cv2show(img,"Original image")
 
 	# resolution of the image ( 352x288(x3) )
@@ -36,7 +39,7 @@ def processor(img, azimuth, altitude, filename):
 	maskedImg = cv2.bitwise_and(img, mask)
 
 	# plot the data onto a 3d projected plane
-	project3d(maskedImg)
+	#project3d(maskedImg)
 
 	# plot the overview showing the image, mask, and histogram
 	#overviewPlot(img,mask,maskedImg)
@@ -50,6 +53,9 @@ def processor(img, azimuth, altitude, filename):
 	# calculate the intensity values
 	#intensityValues = calculateIntensity(maskedImg)
 
+	# create the segments for solar correction
+	regions, outlines, stencil, imageWithOutlines = createRegions(img, imgTSI, azimuth, altitude, filename)
+
 	# plot the reb/blue ratios
 	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
@@ -58,5 +64,10 @@ def processor(img, azimuth, altitude, filename):
 
 	# calculate fractional skycover
 	thinSkyCover, opaqueSkyCover, fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+
+	imageWithOutlines = overlayOutlinesOnImage(redBlueRatio,outlines,stencil)
+
+	# plot overview with outlines
+	saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines)
 
 	return thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg

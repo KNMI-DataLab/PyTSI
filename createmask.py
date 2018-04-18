@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: creates the mask needed for RGB calculations such as the
 #              histogram and cloud/no cloud determination.
-#              
+#
 #
 #
 # AUTHOR: Job Mos				    # EMAIL: jobmos95@gmail.com
@@ -14,12 +14,12 @@ from cv2show import cv2show
 import scipy as scipy
 from math import tan
 
-# calculate the outer point of the shadow band position required for drawing 
+# calculate the outer point of the shadow band position required for drawing
 # the shadowband line. the formula of a circle is used: x=r*cos(t),y=r*sin(t)
 def calculateBandPosition(theta):
-	# rInner defines how many pixels from the center 
+	# rInner defines how many pixels from the center
 	# the shadowband should be drawn
-	# rOuter 
+	# rOuter
 	rInner = 40
 	rOuter = 140
 
@@ -36,7 +36,7 @@ def calculateSunPosition(theta,altitude,radiusCircle):
 	radiusMirror = 140
 	altitudeRadians = (altitude) * pi / 180
 
-	# the 1.2 scaler is implemented to accomodate for the 
+	# the 1.2 scaler is implemented to accomodate for the
 	# hemispheric mirror not being perfectly round and thus
 	# the tracking of the sun is a bit harder
 
@@ -80,21 +80,21 @@ def createmask(img, azimuthDegrees, altitude):
 	#[xres,yres]=img.shape
 
 	# define radius circle mask
-	radiusCircle=120
+	radiusCircle=140
 
 	# create the mask
 	mask = np.zeros(img.shape, dtype="uint8")
 
 	# HEMISPHERE
 	# draw a white circle on the mask
-	# resolution of the image ( 352x288(x3) ) 
+	# resolution of the image ( 352x288(x3) )
 	cv2.circle(mask, (144,176), radiusCircle, (255,255,255), -1)
 
 	# SHADOWBAND
 	# first calculate the position of the shadow band
-	# this is based on angle theta, this angle should directly be linked 
+	# this is based on angle theta, this angle should directly be linked
 	# to sun position
-	
+
 	# angle theta is given as "azimuth" in the properties file
 	# this is the angle from the north=0, thus I need to add this to my
 	# calculations as I calculate from east=0
@@ -107,7 +107,7 @@ def createmask(img, azimuthDegrees, altitude):
 	theta = -azimuthDegreesEast * pi / 180
 	xInner,yInner,xOuter,yOuter = calculateBandPosition(theta)
 
-	# draw a black line on the mask 
+	# draw a black line on the mask
 	# cv2.line(mask, point1 (midpoint is 144,176), point2, color, line thickness (in pixels?))
 	cv2.line(mask, (xInner,yInner), (xOuter,yOuter), (0,0,0), 35)
 
@@ -122,8 +122,8 @@ def createmask(img, azimuthDegrees, altitude):
 	# option to draw a black square where the camera is
 
 	# SUN
-	xSun,ySun = calculateSunPosition(theta,altitude,radiusCircle)
-	cv2.circle(mask, (xSun,ySun), 40, (0,0,0), -1)
+	#xSun,ySun = calculateSunPosition(theta,altitude,radiusCircle)
+	#cv2.circle(mask, (xSun,ySun), 40, (0,0,0), -1)
 
 	# display constructed mask
 	#cv2.imshow('test',mask)

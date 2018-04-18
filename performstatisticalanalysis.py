@@ -11,6 +11,7 @@
 #import libraries
 from myimports import *
 from tqdm import tqdm
+from skimage.feature import greycomatrix
 
 def calculateGLCM(blueBand, greyLevels):
 	# matrix elements represent relative frequence that two pixels occur
@@ -70,7 +71,7 @@ def calculateGLCM(blueBand, greyLevels):
 	else:
 		GLCM = (GLCM1+GLCM2+GLCM3+GLCM4)/2
 
-	np.savetxt('GLCM.txt', GLCM, fmt='%3d')
+	#np.savetxt('GLCM.txt', GLCM, fmt='%3d')
 
 	return GLCM
 
@@ -106,38 +107,29 @@ def performStatisticalAnalysis(maskedImg):
 	# extract the individual color bands as greyscale
 	blueBand, greenBand, redBand = extractBands(scaler, maskedImg)
 
-	# SPECTRAL FEATURES
-
-	# mean (R and B)
-
-	# standard deviation (B)
-
-	# skewness (B)
-
-	# difference (R-G, R-B and G-B)
-
-	# TEXTURAL FEATURES
-
+	blueBand = blueBand.astype(int)
 	# Grey Level Co-occurrence Matrices (GLCM)
-	GLCM = calculateGLCM(blueBand, greyLevels)
+	dx = 1 ; dy = 1
+	GLCM = greycomatrix(blueBand,[dx,dy],[0, np.pi/2.0, np.pi, 3.0*np.pi/2.0, 2.0*np.pi], levels=greyLevels)
+	#GLCM = calculateGLCM(blueBand, greyLevels)
 	#GLCM = np.loadtxt('GLCM.txt')
 
 	energy = entropy = contrast = homogeneity = 0
 
 	for i in range (0, greyLevels):
 		for j in range(0, greyLevels):
-			if GLCM[i,j] != 0:
+			if GLCM[i,j,0,0] != 0:
 				# Energy (B)
-				energy      += GLCM[i,j]**2
+				energy      += GLCM[i,j,0,0]**2
 
 				# Entropy (B)
-				entropy     += GLCM[i,j] * log10(GLCM[i,j],2)
+				entropy     += GLCM[i,j,0,0] * log10(GLCM[i,j,0,0])
 
 				# Contrast (B)
-				contrast    += GLCM[i,j] * (i-j)**2
+				contrast    += GLCM[i,j,0,0] * (i-j)**2
 
 				# Homogeneity (B)
-				homogeneity += GLCM[i,j] / (1 + abs(i-j))
+				homogeneity += GLCM[i,j,0,0] / (1 + abs(i-j))
 			else:
 				pass
 

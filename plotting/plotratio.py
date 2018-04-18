@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: plots the processed cloud image and saves the figure
-#             
-#              
+#
+#
 #
 #
 # AUTHOR: Job Mos                                   # EMAIL: jobmos95@gmail.com
@@ -18,11 +18,11 @@ def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold, filename):
 	#[xres,yres]=img.shape
 	xres=288
 	yres=352
-	
+
 	# span an x/y space
 	x = np.linspace(0,xres-1,xres)
 	y = np.linspace(0,yres-1,yres)
-	
+
 	# convert the data so that they can be plotted
 	grid = redBlueRatio.reshape((yres, xres))
 
@@ -53,7 +53,7 @@ def plotRatio(img,redBlueRatio,sunnyThreshold,thinThreshold, filename):
 
 	#### Reprocessed image
 	ax3.set_title('Reprocessed image')
-	
+
 	# tell imshow about colormap so that only set colors are used
 	img = ax3.imshow(grid, interpolation='nearest', cmap=cmap, norm=norm)
 

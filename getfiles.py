@@ -1,9 +1,9 @@
 ###############################################################################
 # DESCRIPTION: read the information from the properties file
-#              
-#              
-#              
-#              
+#
+#
+#
+#
 # AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
 #
 ###############################################################################
@@ -30,7 +30,7 @@ def getAltitude(lines):
 			altitude = float(altitudeStr)
 		else:
 			pass
-		
+
 	return altitude
 
 # get the azimuth of the image
@@ -105,9 +105,9 @@ def main():
 					# read the file and store line per line
 					for line in f:
 						lines.append(line)
-					#get the altitude and azimuth from the defs			
+					#get the altitude and azimuth from the defs
 					altitude = getAltitude(lines)
-					azimuth = getAzimuth(lines)			
+					azimuth = getAzimuth(lines)
 
 					# only carry out calculations for solar angle > 10 degrees
 					if altitude >= 10:
@@ -116,9 +116,10 @@ def main():
 
 						# select the image
 						img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
+						imgTSI = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,'0.png'))
 
 						# main processing function
-						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, azimuth, altitude, filename.replace(propertiesExtension,''))
+						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, imgTSI, azimuth, altitude, filename.replace(propertiesExtension,''))
 
 						# calculate statistical properties of the image
 						energy = 0
@@ -127,9 +128,9 @@ def main():
 						homogeneity = 0
 						energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
 
-						writer.writerow((filename.replace(propertiesExtension,''), 
-										altitude, azimuth, 
-										thinSkyCover, opaqueSkyCover, fractionalSkyCover, 
+						writer.writerow((filename.replace(propertiesExtension,''),
+										altitude, azimuth,
+										thinSkyCover, opaqueSkyCover, fractionalSkyCover,
 										thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI,
 										energy, entropy, contrast, homogeneity))
 
