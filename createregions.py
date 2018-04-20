@@ -152,7 +152,7 @@ def createRegions(img, imgTSI, azimuth, altitude, filename):
 	drawArm()
 	drawBand(bandThickness)
 
-	return regions, outlines, stencil, imageWithOutlines
+	return regions, outlines, labels, stencil, imageWithOutlines
 
 def getAltitude(lines):
 	for line in lines:
