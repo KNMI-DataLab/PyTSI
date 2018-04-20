@@ -106,33 +106,59 @@ def main():
 					for line in f:
 						lines.append(line)
 					#get the altitude and azimuth from the defs
+					start_time = timeit.default_timer()
 					altitude = getAltitude(lines)
 					azimuth = getAzimuth(lines)
+					elapsed = timeit.default_timer() - start_time
+					print('get altitude azimuth from TSI properties file, time elapsed:',elapsed)
 
 					# only carry out calculations for solar angle > 10 degrees
 					if altitude >= 10:
+						print(filename)
 						# get the fractional sky cover from 'old' TSI software
+						start_time = timeit.default_timer()
 						thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI = getFractionalSkyCoverTSI(lines)
+						elapsed = timeit.default_timer() - start_time
+						print('get fractional sky cover from TSI properties file, time elapsed:',elapsed)
 
 						# select the image
+						start_time = timeit.default_timer()
 						img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 						imgTSI = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,'0.png'))
+						elapsed = timeit.default_timer() - start_time
+						print('select image, time elapsed:',elapsed)
 
 						# main processing function
-						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg = processor(img, imgTSI, azimuth, altitude, filename.replace(propertiesExtension,''))
+						start_time = timeit.default_timer()
+						thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS = processor(img, imgTSI, azimuth, altitude, filename.replace(propertiesExtension,''))
+						elapsed = timeit.default_timer() - start_time
+						print('main processor, time elapsed:',elapsed)
 
 						# calculate statistical properties of the image
 						energy = 0
 						entropy = 0
 						contrast = 0
 						homogeneity = 0
+						start_time = timeit.default_timer()
 						energy, entropy, contrast, homogeneity = performStatisticalAnalysis(maskedImg)
+						elapsed = timeit.default_timer() - start_time
+						print('statistical analysis, time elapsed:',elapsed)
 
+						start_time = timeit.default_timer()
 						writer.writerow((filename.replace(propertiesExtension,''),
 										altitude, azimuth,
 										thinSkyCover, opaqueSkyCover, fractionalSkyCover,
 										thinSkyCoverTSI, opaqueSkyCoverTSI, fractionalSkyCoverTSI,
-										energy, entropy, contrast, homogeneity))
+										energy, entropy, contrast, homogeneity,
+										outsideC, outsideS, horizonC, horizonS,
+										innerC, innerS, sunC, sunS
+										))
+						elapsed = timeit.default_timer() - start_time
+						print('write to file, time elapsed:',elapsed)
+
+
+
+	#postProcessor()
 
 	# plot the sky cover comparison
 	plotSkyCoverComparison()
