@@ -22,6 +22,7 @@ machinelearning/results
 machinelearning/results_ratio
 results/regions
 results/test
+testing/solarcorrection/results
 
 #test files
 test*.*
