@@ -21,6 +21,7 @@ def overlayOutlinesOnImage(img,outlines,stencil):
 
 	sunnyThreshold,thinThreshold = setThresholds()
 
+	# convert greyscale image to RGB image
 	#sunny
 	imgRGB[np.where(np.logical_and(img>0,img<=sunnyThreshold))] = (0,0,255)
 	#thin
