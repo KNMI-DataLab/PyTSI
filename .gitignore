@@ -20,6 +20,8 @@ cleaning
 machinelearning/data
 machinelearning/results
 machinelearning/results_ratio
+results/regions
+results/test
 
 #test files
 test*.*
