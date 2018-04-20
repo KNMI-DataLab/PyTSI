@@ -11,7 +11,7 @@
 #import libraries
 from myimports import *
 from tqdm import tqdm
-from skimage.feature import greycomatrix
+from skimage.feature import greycomatrix, greycoprops
 
 def extractBands(scaler, maskedImg):
 	# extract R and B band individually from image
@@ -31,36 +31,55 @@ def extractBands(scaler, maskedImg):
 def performStatisticalAnalysis(maskedImg):
 
 	#set the number of grey levels used in the GLCM calculation
-	greyLevels = 8
+	greyLevels = 16
 	scaler = int(256/greyLevels)
 
 	# extract the individual color bands as greyscale
+	start_time = timeit.default_timer()
 	blueBand, greenBand, redBand = extractBands(scaler, maskedImg)
+	elapsed = timeit.default_timer() - start_time
+	print('---extract bands, time elapsed:',elapsed)
 
 	blueBand = blueBand.astype(int)
 	# Grey Level Co-occurrence Matrices (GLCM)
 	dx = 1 ; dy = 1
-	GLCM = greycomatrix(blueBand,[dx,dy],[0, np.pi/2.0, np.pi, 3.0*np.pi/2.0, 2.0*np.pi], levels=greyLevels)
+
+	start_time = timeit.default_timer()
+	GLCM = greycomatrix(blueBand,[dx,dy],[0, np.pi/2.0, np.pi, 3.0*np.pi/2.0], levels=greyLevels)
+	elapsed = timeit.default_timer() - start_time
+	print('---calculate GLCM, time elapsed:',elapsed)
+
+	GLCM2D = GLCM[:,:,0,0]
 	#GLCM = calculateGLCM(blueBand, greyLevels)
 	#GLCM = np.loadtxt('GLCM.txt')
 
 	energy = entropy = contrast = homogeneity = 0
 
+	start_time = timeit.default_timer()
 	for i in range (0, greyLevels):
 		for j in range(0, greyLevels):
-			if GLCM[i,j,0,0] != 0:
+			if GLCM2D[i,j] != 0:
 				# Energy (B)
-				energy      += GLCM[i,j,0,0]**2
-
+				energy      += np.power(GLCM2D[i,j],2)
 				# Entropy (B)
-				entropy     += GLCM[i,j,0,0] * log10(GLCM[i,j,0,0])
-
+				entropy     += GLCM2D[i,j] * log10(GLCM2D[i,j])
 				# Contrast (B)
-				contrast    += GLCM[i,j,0,0] * (i-j)**2
-
+				contrast    += GLCM2D[i,j] * (i-j)**2
 				# Homogeneity (B)
-				homogeneity += GLCM[i,j,0,0] / (1 + abs(i-j))
+				homogeneity += GLCM2D[i,j] / (1 + abs(i-j))
 			else:
 				pass
+	elapsed = timeit.default_timer() - start_time
+	print('---calculate energy entropy etc., time elapsed:',elapsed)
+
+	#print(energy)
+
+	#energy = entropy = contrast = homogeneity = 0
+
+	#energy = greycoprops(GLCM,prop='ASM')
+	#energy = np.sum(np.power(GLCM[np.where(GLCM[:,:]!=0)],2))
+	#entropy = np.sum(np.power(GLCM[np.where(GLCM[:,:]!=0)],2))
+
+	#print(energy)
 
 	return energy, entropy, contrast, homogeneity

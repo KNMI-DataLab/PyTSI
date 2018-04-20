@@ -20,26 +20,31 @@ def calculateSkyCover(redBlueRatio,sunnyThreshold,thinThreshold):
 	# calculation doesn't work yet, setting manually
 	#[xres,yres]=img.shape
 
-	sunnyPixels = 0
-	thinPixels = 0
-	opaquePixels = 0
-
 	# classify each pixel as cloudy/clear
-	for i in range (0,settings.yres):
-		for j in range (0,settings.xres):
-			# avoid mask
-			if redBlueRatio[i,j] != 0:
-				if redBlueRatio[i,j] <= sunnyThreshold:
-					sunnyPixels += 1
-				elif redBlueRatio[i,j] <= thinThreshold:
-					thinPixels += 1
-				else:
-					opaquePixels += 1
+	# for i in range (0,settings.yres):
+	# 	for j in range (0,settings.xres):
+	# 		# avoid mask
+	# 		if redBlueRatio[i,j] != 0:
+	# 			if redBlueRatio[i,j] <= sunnyThreshold:
+	# 				sunnyPixels += 1
+	# 			elif redBlueRatio[i,j] <= thinThreshold:
+	# 				thinPixels += 1
+	# 			else:
+	# 				opaquePixels += 1)
+
+	sunnyPixels = np.sum(((redBlueRatio!=0) & (redBlueRatio<=sunnyThreshold)))
+	thinPixels = np.sum(((redBlueRatio!=0) & (redBlueRatio>sunnyThreshold)) & (redBlueRatio<=thinThreshold))
+	opaquePixels = np.sum(((redBlueRatio!=0) & (redBlueRatio>thinThreshold)))
 
 	cloudyPixels = thinPixels + opaquePixels
 
 	thinSkyCover = thinPixels / (sunnyPixels+cloudyPixels)
 	opaqueSkyCover = opaquePixels / (sunnyPixels+cloudyPixels)
 	fractionalSkyCover = thinSkyCover + opaqueSkyCover
+
+	print('number of sunny pixels + cloudy pixels =',sunnyPixels+cloudyPixels)
+
+	if sunnyPixels + cloudyPixels > 60000:
+		sys.exit('')
 
 	return thinSkyCover, opaqueSkyCover, fractionalSkyCover
