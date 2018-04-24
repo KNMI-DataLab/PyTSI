@@ -34,7 +34,6 @@ def processor(img, imgTSI, azimuth, altitude, filename):
 	#print(img.shape)
 
 	# create mask
-	print('create mask')
 	mask = createmask(img, azimuth, altitude)
 
 	# apply the mask and display the result
@@ -47,18 +46,15 @@ def processor(img, imgTSI, azimuth, altitude, filename):
 	#overviewPlot(img,mask,maskedImg)
 
 	# set thresholds for plotting and sky cover calculations
-	print('thresholds')
 	sunnyThreshold,thinThreshold = setThresholds()
 
 	# calculate red/blue ratio per pixel
-	print('calculate ratios')
 	redBlueRatio = calculateRatio(maskedImg)
 
 	# calculate the intensity values
 	#intensityValues = calculateIntensity(maskedImg)
 
 	# create the segments for solar correction
-	print('create regions')
 	regions, outlines, labels, stencil, imageWithOutlines = createRegions(img, imgTSI, azimuth, altitude, filename)
 
 	# plot the reb/blue ratios
@@ -68,17 +64,13 @@ def processor(img, imgTSI, azimuth, altitude, filename):
 	#calculateSACorrections(...)
 
 	# calculate fractional skycover
-	print('calculate sky cover')
 	thinSkyCover, opaqueSkyCover, fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
 
-	print('overlay outlines on image')
 	imageWithOutlines = overlayOutlinesOnImage(redBlueRatio,outlines,stencil)
 
-	print('perform horizon/solar corrections')
 	outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS = preSolarCorrection(labels, redBlueRatio, sunnyThreshold)
 
 	# plot overview with outlines
-	print('save output to figures')
-	saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines)
+	#saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines)
 
 	return thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS

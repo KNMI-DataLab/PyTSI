@@ -1,7 +1,7 @@
 ###############################################################################
 # DESCRIPTION: plots the sky cover of the old TSI software and the newly
 #              developed software and compares the two.
-#              
+#
 #
 #
 # AUTHOR: Job Mos	                            # EMAIL: jobmos95@gmail.com
@@ -52,7 +52,7 @@ def plotSkyCoverComparison():
 	ax4.set_xlabel('azimuth (deg)')
 
 	plt.show()
-	
+
 	plt.close()
 
 	fig, ((ax1,ax2,ax3),(ax4,ax5,ax6)) = plt.subplots(2, 3, sharex=True)
