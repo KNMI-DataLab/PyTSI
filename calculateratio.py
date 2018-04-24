@@ -16,9 +16,9 @@ from myimports import *
 
 def calculateRatio(maskedImg):
 	# setup the numpy array, fill it with zeros
-	#redBlueRatio = np.zeros([settings.yres,settings.xres])
-
-	# blue red ratio calculation for each pixel in the image
+	# redBlueRatio = np.zeros([settings.yres,settings.xres])
+    #
+	# # blue red ratio calculation for each pixel in the image
 	# for i in range (0,settings.yres):
 	# 	for j in range (0,settings.xres):
 	# 		# check whether on pixel is part of mask
@@ -29,15 +29,13 @@ def calculateRatio(maskedImg):
 	# 			# i = ypixel, j = xpixel, 0,2 = blue, red
 	# 			redBlueRatio[i,j] = maskedImg[i,j,2] / maskedImg[i,j,0]
 
-	blueBand = np.zeros([settings.yres,settings.xres])
-	redBand = np.zeros([settings.yres,settings.xres])
-
 	blueBand = maskedImg[:,:,0]
-	redBand = maskedImg[:,:,2]
+	redBand  = maskedImg[:,:,2]
 
-	#nonzerosBlue = maskedImg[np.nonzero(maskedImg[:,:,0])]
-	#nonzerosRed = maskedImg[np.nonzero(maskedImg[:,:,2])]
+	redBlueRatio = np.where(blueBand!=0, redBand/blueBand, 0)
 
-	redBlueRatio = np.divide(maskedImg[:,:,2],maskedImg[:,:,0],where=(blueBand!=0))
+	if np.average(redBlueRatio)<0 or np.average(redBlueRatio) >100:
+		print('odd average redBlueRatio found')
+		sys.exit('')
 
 	return redBlueRatio
