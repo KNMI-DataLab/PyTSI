@@ -11,8 +11,8 @@
 #import libraries
 from myimports import *
 
-def saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines):
-	fig, (ax1,ax2,ax3,ax4) = plt.subplots(1,4)
+def saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA):
+	fig, (ax1,ax2,ax3,ax4,ax5) = plt.subplots(1,5)
 
 	# conversion needs to be centralized in one place.
 	img = img[...,::-1] # convert from BGR -> RGB
@@ -22,6 +22,7 @@ def saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines):
 	ax2.set_adjustable('box-forced')
 	ax3.set_adjustable('box-forced')
 	ax4.set_adjustable('box-forced')
+	ax5.set_adjustable('box-forced')
 
 	ax1.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
 	ax1.set_title('Original image')
@@ -36,8 +37,12 @@ def saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines):
 	ax3.imshow(regions)
 
 	ax4.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
-	ax4.set_title('New software')
+	ax4.set_title('Fixed')
 	ax4.imshow(imageWithOutlines)
+
+	ax5.tick_params(axis='both', which='both',bottom='off',top='off',left='off',right='off',labelbottom='off',labelleft='off')
+	ax5.set_title('HYTA')
+	ax5.imshow(imageWithOutlinesHYTA)
 
 	plt.tight_layout()
 
