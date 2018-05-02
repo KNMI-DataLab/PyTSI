@@ -1,14 +1,5 @@
-###############################################################################
 # DESCRIPTION: Imports all the modules needed for the files
-#
-#
-#
-#
-# AUTHOR: Job Mos	                            # EMAIL: jobmos95@gmail.com
-#
-###############################################################################
 
-# import libraries and adds plotting folder to path
 import sys
 import cv2
 import numpy as np
@@ -20,4 +11,5 @@ import matplotlib.cm as cm
 import settings
 import timeit
 
+# import the path
 sys.path.append('./plotting')

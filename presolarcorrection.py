@@ -1,14 +1,6 @@
-###############################################################################
-# DESCRIPTION:
-#
-#
-#
-#
-# AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
-#
-###############################################################################
+# DESCRIPTION: get amount of pixels in the four different areas to be used in
+#              postprocessing corrections
 
-#import libraries
 from myimports import *
 
 def preSolarCorrection(labels, redBlueRatio, sunnyThreshold):
@@ -20,23 +12,21 @@ def preSolarCorrection(labels, redBlueRatio, sunnyThreshold):
 
 	initialAdjustmentFactorLimit = 0.5
 
-	# subtract horizon and sun circle from image
-	# calculate amount of sunny/cloudy pixels in all areas separately
 	# pixels sun circle
-	sunC = np.sum(((labels == 4) & (redBlueRatio >= sunnyThreshold)))
-	sunS   = np.sum(((labels == 4) & (redBlueRatio <  sunnyThreshold)))
+	sunC = np.sum(((labels == 4) & (redBlueRatio != 0) & (redBlueRatio >= sunnyThreshold)))
+	sunS = np.sum(((labels == 4) & (redBlueRatio != 0) & (redBlueRatio <  sunnyThreshold)))
 
 	# pixels horizon area
-	horizonC   = np.sum(((labels == 2) & (redBlueRatio >= sunnyThreshold)))
-	horizonS     = np.sum(((labels == 2) & (redBlueRatio <  sunnyThreshold)))
+	horizonC   = np.sum(((labels == 2) & (redBlueRatio != 0) & (redBlueRatio >= sunnyThreshold)))
+	horizonS   = np.sum(((labels == 2) & (redBlueRatio != 0) & (redBlueRatio <  sunnyThreshold)))
 
 	# pixels inner circle
-	innerC     = np.sum(((labels == 3) & (redBlueRatio >= sunnyThreshold)))
-	innerS       = np.sum(((labels == 3) & (redBlueRatio <  sunnyThreshold)))
+	innerC     = np.sum(((labels == 3) & (redBlueRatio != 0) & (redBlueRatio >= sunnyThreshold)))
+	innerS     = np.sum(((labels == 3) & (redBlueRatio != 0) & (redBlueRatio <  sunnyThreshold)))
 
 	# pixels outside horizon area and inner circle
-	outsideC   = np.sum(((labels == 1) & (redBlueRatio >= sunnyThreshold)))
-	outsideS     = np.sum(((labels == 1) & (redBlueRatio <  sunnyThreshold)))
+	outsideC   = np.sum(((labels == 1) & (redBlueRatio != 0) & (redBlueRatio >= sunnyThreshold)))
+	outsideS   = np.sum(((labels == 1) & (redBlueRatio != 0) & (redBlueRatio <  sunnyThreshold)))
 
 	showNumberOfPixels = False
 	if showNumberOfPixels:
@@ -51,7 +41,5 @@ def preSolarCorrection(labels, redBlueRatio, sunnyThreshold):
 
 		print('outside cloudy pixels',outsideC)
 		print('outside sunny pixels ',outsideS)
-
-	#sys.exit('MY STOP')
 
 	return outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS

@@ -1,17 +1,7 @@
-###############################################################################
-# DESCRIPTION: creates a circular mask using OpenCV (cv2), applies the mask and
-#              creates a histogram of the masked image.
-#
-#
-#
-# AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
-#
-###############################################################################
+# DESCRIPTION: main processing function containing calls to many functions
 
-#import libraries
 from myimports import *
 
-# import external functions
 from cv2show import cv2show
 from createmask import createmask
 from overviewplot import overviewPlot
@@ -26,13 +16,13 @@ from createregions import createRegions
 from overview_with_segments import saveOutputToFigures
 from overlay_outlines_on_image import overlayOutlinesOnImage
 from presolarcorrection import preSolarCorrection
+from calculateskycoverHYTA import calculateSkyCoverWithHYTA
+from set_hyta_threshold import setHYTAThreshold
+from overlay_outlines_on_HYTA_image import overlayOutlinesOnHYTAImage
+from plot_HYTA_histogram import plotHYTAHistogram
+from completeplot import completeplot
 
 def processor(img, imgTSI, azimuth, altitude, filename):
-	#cv2show(img,"Original image")
-
-	# resolution of the image ( 352x288(x3) )
-	#print(img.shape)
-
 	# create mask
 	mask = createmask(img, azimuth, altitude)
 
@@ -47,12 +37,10 @@ def processor(img, imgTSI, azimuth, altitude, filename):
 
 	# set thresholds for plotting and sky cover calculations
 	sunnyThreshold,thinThreshold = setThresholds()
+	HYTAThreshold,HYTACloud,HYTASun,flatNormalizedRatioBRNoZeros,stDev = setHYTAThreshold(maskedImg)
 
 	# calculate red/blue ratio per pixel
 	redBlueRatio = calculateRatio(maskedImg)
-
-	# calculate the intensity values
-	#intensityValues = calculateIntensity(maskedImg)
 
 	# create the segments for solar correction
 	regions, outlines, labels, stencil, imageWithOutlines = createRegions(img, imgTSI, azimuth, altitude, filename)
@@ -60,17 +48,21 @@ def processor(img, imgTSI, azimuth, altitude, filename):
 	# plot the reb/blue ratios
 	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
 
-	# calculate solid angle corrections
-	#calculateSACorrections(...)
-
 	# calculate fractional skycover
 	thinSkyCover, opaqueSkyCover, fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
+	fractionalSkyCoverHYTA = calculateSkyCoverWithHYTA(HYTACloud,HYTASun)
 
+	# overlay outlines on image(s)
 	imageWithOutlines = overlayOutlinesOnImage(redBlueRatio,outlines,stencil)
+	imageWithOutlinesHYTA = overlayOutlinesOnHYTAImage(maskedImg,outlines,stencil,HYTAThreshold,filename)
 
+	# get some data before doing actual solar/horizon area corrections
 	outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS = preSolarCorrection(labels, redBlueRatio, sunnyThreshold)
 
 	# plot overview with outlines
-	#saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines)
+	#saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA)
 
-	return thinSkyCover, opaqueSkyCover, fractionalSkyCover, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS
+	# plot complete overview with 5 different images, histogram and cloud cover comparisons
+	completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flatNormalizedRatioBRNoZeros,HYTAThreshold,stDev)
+
+	return thinSkyCover, opaqueSkyCover, fractionalSkyCover,fractionalSkyCoverHYTA, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS

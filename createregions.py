@@ -1,14 +1,6 @@
-###############################################################################
-# DESCRIPTION: creates the mask needed for RGB calculations such as the
-#              histogram and cloud/no cloud determination.
-#
-#
-#
-# AUTHOR: Job Mos				    # EMAIL: jobmos95@gmail.com
-#
-###############################################################################
+# DESCRIPTION: subdivides the iamge into four regions. these regions are used
+#              to carry out horizon/sun area corrections
 
-#import libraries
 import cv2 as cv2
 import scipy as scipy
 from math import cos,sin,sqrt,tan,pi
@@ -19,61 +11,74 @@ from tqdm import tqdm
 import gzip
 import os
 
-# print options
-np.set_printoptions(threshold=np.nan)
-
+# outer circle
 def largeCircle(radiusCircle):
-	cv2.circle(regions, (int(xres/2),int(yres/2)), radiusCircle, (255,0,0), -1)
-	cv2.circle(labels, (int(xres/2),int(yres/2)), radiusCircle, 1, -1)
+	cv2.circle(regions,  (int(xres/2),int(yres/2)), radiusCircle, (255,0,0), -1)
+	cv2.circle(labels,   (int(xres/2),int(yres/2)), radiusCircle, 1, -1)
 	cv2.circle(outlines, (int(xres/2),int(yres/2)), radiusCircle, (255,0,0), outlineThickness)
 
+# horizon area polygon
 def drawHorizonArea(widthHorizonAreaDegrees, azimuth):
 	global theta, horizonArea
+	# angle from the east in stead of north
 	azimuthFromEast = azimuth - 90
+	# distance of the three of the four points from the center
 	r = xres/2
+	# angle from degrees to radians
 	theta = azimuthFromEast * pi / 180
+	# horizon width from degrees to radians
 	width = widthHorizonAreaDegrees * pi / 180
-	# four points that comprise the poligon
+	# four points at vertices of polygon
 	p1 = [int(xres/2), int(yres/2)]
 	p2 = [int(xres/2) + r * cos(theta-width), int(yres/2) + r * sin(theta-width)]
 	p3 = [int(xres/2) + r * cos(theta), int(yres/2) + r * sin(theta)]
 	p4 = [int(xres/2) + r * cos(theta+width), int(yres/2) + r * sin(theta+width)]
 	horizonArea = np.array([p1,p2,p3,p4],dtype = int)
+	# draw the polygon
 	cv2.fillConvexPoly(regions, horizonArea, color=(0,255,255))
 	cv2.fillConvexPoly(labels, horizonArea, color=2)
 	cv2.fillConvexPoly(outlines, horizonArea, color=(0,0,0))
 	cv2.polylines(outlines, [horizonArea], True, (0,255,255), outlineThickness)
 
+# inner circle
 def innerCircle(radiusInnerCircle):
 	cv2.circle(regions, (int(xres/2),int(yres/2)), radiusInnerCircle, (0,255,0), -1)
 	cv2.circle(labels, (int(xres/2),int(yres/2)), radiusInnerCircle, 3, -1)
 	cv2.circle(outlines, (int(xres/2),int(yres/2)), radiusInnerCircle, (0,0,0), -1)
 	cv2.circle(outlines, (int(xres/2),int(yres/2)), radiusInnerCircle, (0,255,0), outlineThickness)
 
+# sun circle area (circular)
 def sunCircle(radiusSunCircle, radiusMirror, altitude):
+	# altitude from degrees to radians
 	altitudeRadians = altitude * pi /180
 	a = -0.23
 	b = -tan(altitudeRadians)
 	c = 1.25
 	d = b**2 - 4 * a * c
 	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
+	# x and y position of the sun
 	xSun = int(xres/2 + r * cos (theta))
 	ySun = int(yres/2 + r * sin (theta))
+	# draw the circle
 	cv2.circle(regions, (xSun,ySun), radiusSunCircle, (255,255,0), -1)
 	cv2.circle(labels, (xSun,ySun), radiusSunCircle, 4, -1)
 	cv2.circle(outlines, (xSun,ySun), radiusSunCircle, (0,0,0), -1)
 	cv2.circle(outlines, (xSun,ySun), radiusSunCircle, (255,255,0), outlineThickness)
 
+# the stencil is used to mask the outside of the circle
 def createStencil(radiusCircle):
 	cv2.circle(stencil, (int(xres/2), int(yres/2)), radiusCircle, (255,255,255), -1)
 	cv2.circle(stencilLabels, (int(xres/2), int(yres/2)), radiusCircle, 1, -1)
 
+# combine the stencil with arrays to mask them
 def outerCircle():
 	global regions, labels, outlines
 	regions = cv2.bitwise_and(regions,stencil)
 	labels = cv2.bitwise_and(labels,labels,mask=stencilLabels)
 	outlines = cv2.bitwise_and(outlines,stencil)
 
+# overlay outlines on image by converting to b/w and performing several operations
+# got this from a website
 def overlayOutlinesOnImage(img,outlines):
 	global imageWithOutlines
 	# create mask of outlines and create inverse mask
@@ -91,6 +96,7 @@ def overlayOutlinesOnImage(img,outlines):
 
 	imageWithOutlines = cv2. bitwise_and(dst,stencil)
 
+# camera and camera arm
 def drawArm():
 	cv2.rectangle(regions, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(regions, (145,154), (152,91) , (0,0,0), -1)
@@ -102,15 +108,11 @@ def drawArm():
 	cv2.rectangle(imageWithOutlines, (145,154), (152,91) , (0,0,0), -1)
 	cv2.rectangle(imageWithOutlines, (144,91) , (152,26) , (0,0,0), -1)
 
+# draw the shadowband
 def drawBand(bandThickness):
-	# rInner defines how many pixels from the center
-	# the shadowband should be drawn
-	# rOuter
 	rInner = 40
 	rOuter = 140
 
-	#for i in range (0,n):
-	#theta=-i/(n-1)*3.1415
 	xInner = int(xres / 2 + rInner * cos(theta))
 	yInner = int(yres / 2 + rInner * sin(theta))
 	xOuter = int(xres / 2 + rOuter * cos(theta))
@@ -131,7 +133,7 @@ def createRegions(img, imgTSI, azimuth, altitude, filename):
 	stencil = np.zeros(regions.shape, dtype="uint8")
 	stencilLabels = np.zeros(labels.shape, dtype="uint8")
 	radiusSunCircle = 40
-	radiusInnerCircle = 90
+	radiusInnerCircle = 80
 	radiusCircle = 130
 	radiusMirror = 140
 	outlineThickness = 3

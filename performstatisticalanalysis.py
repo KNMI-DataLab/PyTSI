@@ -1,20 +1,14 @@
-###############################################################################
 # DESCRIPTION: calculates various statistical properties of the image.
 #              the statistical features provide information about the type
-#              of cloud (texture)
-#              these properties are used in the machine learning algorithm to
-#              examine accuracy
-# AUTHOR: Job Mos			            # EMAIL: jobmos95@gmail.com
-#
-###############################################################################
+#              of cloud (texture). these properties are used in the
+#              machine learning algorithm to examine accuracy
 
-#import libraries
 from myimports import *
 from tqdm import tqdm
 from skimage.feature import greycomatrix, greycoprops
 
+# extract the blue green and red bands
 def extractBands(scaler, maskedImg):
-	# extract R and B band individually from image
 	# the arrays are set up in [y,x] orientation because the image
 	# has some 'special' metadata which shows opposite resolution/geometry
 	# view with: "$ identify -verbose data/20170419133000.jpg"
@@ -26,7 +20,6 @@ def extractBands(scaler, maskedImg):
 	return blueBand, greenBand, redBand
 
 def performStatisticalAnalysis(maskedImg):
-
 	#set the number of grey levels used in the GLCM calculation
 	greyLevels = 16
 	scaler = int(256/greyLevels)
@@ -37,9 +30,9 @@ def performStatisticalAnalysis(maskedImg):
 	blueBand = blueBand.astype(int)
 	# Grey Level Co-occurrence Matrices (GLCM)
 	dx = 1 ; dy = 1
-
 	GLCM = greycomatrix(blueBand,[dx,dy],[0, np.pi/2.0, np.pi, 3.0*np.pi/2.0], levels=greyLevels)
 
+	# convert 4D array to 2D array
 	GLCM2D = GLCM[:,:,0,0]
 
 	energy = entropy = contrast = homogeneity = 0
