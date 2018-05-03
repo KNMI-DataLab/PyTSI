@@ -1,5 +1,6 @@
 # DESCRIPTION: set the HYTA threshold. follows approach from Li et al
 
+from myimports import *
 import cv2
 import numpy as np
 import matplotlib
@@ -58,22 +59,24 @@ def determineMCEThreshold(data,nbins):
 
 def setHYTAThreshold(img):
 	# set variable(s)
-	deviationThreshold = 0.065 # original was 0.03
-	fixedThreshold = 0.20 # original was 0.250
+	# setups: 1) devThr: 0.065, fixThr: 0.20
+	#         2) devThr: 0.03 , fixThr: 0.20
+	#         2) devThr: 0.03 , fixThr: 0.25
+	deviationThreshold = 0.03 # original was 0.03, 'high:0.065'
+	fixedThreshold = 0.25 # original was 0.250, 'high:0.20'
 	nbins = 100
 
-	yres,xres,nColors = img.shape
-	ratioBR = np.zeros([yres,xres],dtype=float)
+	ratioBR = np.zeros([resolution.y,resolution.x],dtype=float)
 
 	# extract blue and red bands
-	B = np.zeros((xres,yres),dtype=int)
-	R = np.zeros((xres,yres),dtype=int)
+	B = np.zeros((resolution.x,resolution.y),dtype=int)
+	R = np.zeros((resolution.x,resolution.y),dtype=int)
 	B = img[:,:,0].astype(int)
 	R = img[:,:,2].astype(int)
 
 	# calculate the blue/red ratio
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,resolution.y):
+		for j in range (0,resolution.x):
 			if R[i,j]!=0 and B[i,j]!=0:
 				ratioBR[i,j]=B[i,j]/R[i,j]
 
@@ -85,8 +88,8 @@ def setHYTAThreshold(img):
 		print('NaN found in B/R ratios')
 		sys.exit('MYSTOP')
 
-	for i in range(0,yres):
-		for j in range(0,xres):
+	for i in range(0,resolution.y):
+		for j in range(0,resolution.x):
 			if ratioBR[i,j]!=0:
 				normalizedRatioBR[i,j] = (ratioBR[i,j]-1)/(ratioBR[i,j]+1)
 	# catch Nan

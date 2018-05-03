@@ -1,7 +1,6 @@
 # DESCRIPTION: creates the mask needed for processing
 
 from myimports import *
-from cv2show import cv2show
 import scipy as scipy
 from math import tan
 
@@ -15,10 +14,10 @@ def calculateBandPosition(theta):
 	rOuter = 140
 
 	#
-	xInner = int(settings.xres / 2 + rInner * cos(theta))
-	yInner = int(settings.yres / 2 + rInner * sin(-theta))
-	xOuter = int(settings.xres / 2 + rOuter * cos(theta))
-	yOuter = int(settings.yres / 2 + rOuter * sin(-theta))
+	xInner = int(resolution.x / 2 + rInner * cos(theta))
+	yInner = int(resolution.y / 2 + rInner * sin(-theta))
+	xOuter = int(resolution.x / 2 + rOuter * cos(theta))
+	yOuter = int(resolution.y / 2 + rOuter * sin(-theta))
 
 	return xInner,yInner,xOuter,yOuter
 
@@ -41,8 +40,8 @@ def calculateSunPosition(theta,altitude,radiusCircle):
 	d = b**2 - 4 * a * c
 	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
 
-	x = int(settings.xres/2 + r * cos (theta))
-	y = int(settings.yres/2 + r * sin (-theta))
+	x = int(resolution.x/2 + r * cos (theta))
+	y = int(resolution.y/2 + r * sin (-theta))
 
 	return x,y
 

@@ -11,6 +11,7 @@ from performstatisticalanalysis import performStatisticalAnalysis
 from plotskycover import plotSkyCoverComparison
 from postprocessor import postProcessor
 
+
 # get the altitude of the image
 def getAltitude(lines):
 	for line in lines:
@@ -66,11 +67,11 @@ def getFractionalSkyCoverTSI(lines):
 
 def main():
 	# set/initialize the global variables
-	settings.init()
+	#settings.init()
 
 	# initiate variables
 	# directory in which the data is located
-	directory_in_str = '/usr/people/mos/Documents/data/DBASE/20180201_tsi-cabauw_realtime'
+	directory_in_str = '/usr/people/mos/Documents/data/06/DBASE/20170601_tsi-cabauw_realtime'
 
 	# converts the directory from string into 'bytes'
 	directory = os.fsencode(directory_in_str)
@@ -119,6 +120,11 @@ def main():
 						# read the image
 						img = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,imageExtension))
 						imgTSI = cv2.imread(directory_in_str+'/'+filename.replace(propertiesExtension,'0.png'))
+
+						# get the resolution of the image
+						resolution.getResolution(img)
+
+						#settings.init(img)
 
 						# main processing function
 						thinSkyCover, opaqueSkyCover, fractionalSkyCover,fractionalSkyCoverHYTA, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS = processor(img, imgTSI, azimuth, altitude, filename.replace(propertiesExtension,''))

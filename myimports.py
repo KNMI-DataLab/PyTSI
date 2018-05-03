@@ -10,6 +10,7 @@ from matplotlib import colors as colors
 import matplotlib.cm as cm
 import settings
 import timeit
+import resolution
 
 # import the path
 sys.path.append('./plotting')

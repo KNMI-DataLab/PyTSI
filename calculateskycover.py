@@ -20,7 +20,7 @@ def calculateSkyCover(redBlueRatio,sunnyThreshold,thinThreshold):
 		print('R/B ratio NaN found')
 		sys.exit('')
 
-	if sunnyPixels + cloudyPixels > settingx.yres*settings.xres:
+	if sunnyPixels + cloudyPixels > resolution.y*resolution.x:
 		print('Total amount of non-mask pixels error: ',sunnyPixels,cloudyPixels)
 		sys.exit('')
 

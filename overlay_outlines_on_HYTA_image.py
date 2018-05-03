@@ -4,13 +4,12 @@ from myimports import *
 from setthresholds import setThresholds
 
 def overlayOutlinesOnHYTAImage(img,outlines,stencil,threshold,filename):
-	yres, xres, nColors = img.shape
 	imgRGB = np.zeros(outlines.shape, np.uint8)
 
-	ratioBR = np.zeros([yres,xres],dtype=float)
+	ratioBR = np.zeros([resolution.y,resolution.x],dtype=float)
 	# extract blue and red bands
-	B = np.zeros((xres,yres),dtype=int)
-	R = np.zeros((xres,yres),dtype=int)
+	B = np.zeros((resolution.x,resolution.y),dtype=int)
+	R = np.zeros((resolution.x,resolution.y),dtype=int)
 	B = img[:,:,0].astype(int)
 	R = img[:,:,2].astype(int)
 
@@ -22,8 +21,8 @@ def overlayOutlinesOnHYTAImage(img,outlines,stencil,threshold,filename):
 	R[R==0] = maskValue
 
 	# calculate the blue/red ratio
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,resolution.y):
+		for j in range (0,resolution.x):
 			if R[i,j]!=maskValue and B[i,j]!=maskValue:
 				ratioBR[i,j]=B[i,j]/R[i,j]
 			else:
@@ -34,8 +33,8 @@ def overlayOutlinesOnHYTAImage(img,outlines,stencil,threshold,filename):
 		print('NaN found in B/R ratios')
 		sys.exit('MYSTOP')
 
-	for i in range(0,yres):
-		for j in range(0,xres):
+	for i in range(0,resolution.y):
+		for j in range(0,resolution.x):
 			if ratioBR[i,j]!=maskValue:
 				ratioBR[i,j] = (ratioBR[i,j]-1)/(ratioBR[i,j]+1)
 
@@ -53,7 +52,7 @@ def overlayOutlinesOnHYTAImage(img,outlines,stencil,threshold,filename):
 	mask_inv = cv2.bitwise_not(mask)
 
 	# black out area of outlines
-	img_bg = cv2.bitwise_and(imgRGB[0:yres,0:xres], imgRGB[0:yres,0:xres], mask = mask_inv)
+	img_bg = cv2.bitwise_and(imgRGB[0:resolution.y,0:resolution.x], imgRGB[0:resolution.y,0:resolution.x], mask = mask_inv)
 
 	# take only region of outlines from outlines image
 	outlines_fg = cv2.bitwise_and(outlines, outlines, mask = mask)

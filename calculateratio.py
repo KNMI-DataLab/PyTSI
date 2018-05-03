@@ -4,18 +4,16 @@
 from myimports import *
 
 def calculateRatio(maskedImg):
-	redBlueRatio = np.zeros([settings.yres,settings.xres])
+	redBlueRatio = np.zeros([resolution.y,resolution.x])
 
-	yres,xres,nColors = maskedImg.shape
-
-	blueBand = np.zeros((xres,yres),dtype=int)
-	redBand = np.zeros((xres,yres),dtype=int)
+	blueBand = np.zeros((resolution.x,resolution.y),dtype=int)
+	redBand = np.zeros((resolution.x,resolution.y),dtype=int)
 
 	blueBand = maskedImg[:,:,0].astype(int)
 	redBand  = maskedImg[:,:,2].astype(int)
 
-	for i in range (0,yres):
-		for j in range (0,xres):
+	for i in range (0,resolution.y):
+		for j in range (0,resolution.x):
 			if blueBand[i,j]!=0:
 				redBlueRatio[i,j]=redBand[i,j]/blueBand[i,j]
 

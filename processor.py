@@ -2,15 +2,12 @@
 
 from myimports import *
 
-from cv2show import cv2show
 from createmask import createmask
 from overviewplot import overviewPlot
 from calculateratio import calculateRatio
 from plotratio import plotRatio
 from calculateskycover import calculateSkyCover
 from setthresholds import setThresholds
-from calculateintensity import calculateIntensity
-from performstatisticalanalysis import performStatisticalAnalysis
 from project3d import project3d
 from createregions import createRegions
 from overview_with_segments import saveOutputToFigures
@@ -19,7 +16,6 @@ from presolarcorrection import preSolarCorrection
 from calculateskycoverHYTA import calculateSkyCoverWithHYTA
 from set_hyta_threshold import setHYTAThreshold
 from overlay_outlines_on_HYTA_image import overlayOutlinesOnHYTAImage
-from plot_HYTA_histogram import plotHYTAHistogram
 from completeplot import completeplot
 
 def processor(img, imgTSI, azimuth, altitude, filename):
