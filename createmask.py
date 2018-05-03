@@ -40,8 +40,8 @@ def calculateSunPosition(theta,altitude,radiusCircle):
 	d = b**2 - 4 * a * c
 	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
 
-	x = int(resolution.x/2 + r * cos (theta))
-	y = int(resolution.y/2 + r * sin (-theta))
+	x = int(int(resolution.x/2) + r * cos (theta))
+	y = int(int(resolution.y/2) + r * sin (-theta))
 
 	return x,y
 
@@ -53,7 +53,7 @@ def createmask(img, azimuthDegrees, altitude):
 
 	# HEMISPHERE
 	# draw a white circle on the mask
-	cv2.circle(mask, (144,176), radiusCircle, (255,255,255), -1)
+	cv2.circle(mask, (int(resolution.x/2),int(resolution.y/2)), radiusCircle, (255,255,255), -1)
 
 	# SHADOWBAND
 	# first calculate the position of the shadow band
@@ -73,6 +73,6 @@ def createmask(img, azimuthDegrees, altitude):
 	# ARM + CAMERA
 	cv2.rectangle(mask, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(mask, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(mask, (144,91) , (152,26) , (0,0,0), -1)
+	cv2.rectangle(mask, (int(resolution.x/2),91) , (152,26) , (0,0,0), -1)
 
 	return mask

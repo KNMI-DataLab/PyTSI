@@ -14,9 +14,9 @@ import os
 
 # outer circle
 def largeCircle(radiusCircle):
-	cv2.circle(regions,  (int(resolution.x/2),int(resolution.y/2)), radiusCircle, (255,0,0), -1)
-	cv2.circle(labels,   (int(resolution.x/2),int(resolution.y/2)), radiusCircle, 1, -1)
-	cv2.circle(outlines, (int(resolution.x/2),int(resolution.y/2)), radiusCircle, (255,0,0), outlineThickness)
+	cv2.circle(regions,  (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, (255,0,0), -1)
+	cv2.circle(labels,   (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, 1, -1)
+	cv2.circle(outlines, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, (255,0,0), outlineThickness)
 
 # horizon area polygon
 def drawHorizonArea(widthHorizonAreaDegrees, azimuth):
@@ -24,16 +24,16 @@ def drawHorizonArea(widthHorizonAreaDegrees, azimuth):
 	# angle from the east in stead of north
 	azimuthFromEast = azimuth - 90
 	# distance of the three of the four points from the center
-	r = resolution.x/2
+	r = int(resolution.x/2)
 	# angle from degrees to radians
 	theta = azimuthFromEast * pi / 180
 	# horizon width from degrees to radians
 	width = widthHorizonAreaDegrees * pi / 180
 	# four points at vertices of polygon
-	p1 = [int(resolution.x/2), int(resolution.y/2)]
-	p2 = [int(resolution.x/2) + r * cos(theta-width), int(resolution.y/2) + r * sin(theta-width)]
-	p3 = [int(resolution.x/2) + r * cos(theta), int(resolution.y/2) + r * sin(theta)]
-	p4 = [int(resolution.x/2) + r * cos(theta+width), int(resolution.y/2) + r * sin(theta+width)]
+	p1 = [int(int(resolution.x/2)), int(int(resolution.y/2))]
+	p2 = [int(int(resolution.x/2)) + r * cos(theta-width), int(int(resolution.y/2)) + r * sin(theta-width)]
+	p3 = [int(int(resolution.x/2)) + r * cos(theta), int(int(resolution.y/2)) + r * sin(theta)]
+	p4 = [int(int(resolution.x/2)) + r * cos(theta+width), int(int(resolution.y/2)) + r * sin(theta+width)]
 	horizonArea = np.array([p1,p2,p3,p4],dtype = int)
 	# draw the polygon
 	cv2.fillConvexPoly(regions, horizonArea, color=(0,255,255))
@@ -43,10 +43,10 @@ def drawHorizonArea(widthHorizonAreaDegrees, azimuth):
 
 # inner circle
 def innerCircle(radiusInnerCircle):
-	cv2.circle(regions, (int(resolution.x/2),int(resolution.y/2)), radiusInnerCircle, (0,255,0), -1)
-	cv2.circle(labels, (int(resolution.x/2),int(resolution.y/2)), radiusInnerCircle, 3, -1)
-	cv2.circle(outlines, (int(resolution.x/2),int(resolution.y/2)), radiusInnerCircle, (0,0,0), -1)
-	cv2.circle(outlines, (int(resolution.x/2),int(resolution.y/2)), radiusInnerCircle, (0,255,0), outlineThickness)
+	cv2.circle(regions, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusInnerCircle, (0,255,0), -1)
+	cv2.circle(labels, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusInnerCircle, 3, -1)
+	cv2.circle(outlines, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusInnerCircle, (0,0,0), -1)
+	cv2.circle(outlines, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusInnerCircle, (0,255,0), outlineThickness)
 
 # sun circle area (circular)
 def sunCircle(radiusSunCircle, radiusMirror, altitude):
@@ -58,8 +58,8 @@ def sunCircle(radiusSunCircle, radiusMirror, altitude):
 	d = b**2 - 4 * a * c
 	r = radiusMirror * (-b - sqrt(d)) / (2 * a) / 2
 	# x and y position of the sun
-	xSun = int(resolution.x/2 + r * cos (theta))
-	ySun = int(resolution.y/2 + r * sin (theta))
+	xSun = int(int(resolution.x/2) + r * cos (theta))
+	ySun = int(int(resolution.y/2) + r * sin (theta))
 	# draw the circle
 	cv2.circle(regions, (xSun,ySun), radiusSunCircle, (255,255,0), -1)
 	cv2.circle(labels, (xSun,ySun), radiusSunCircle, 4, -1)
@@ -68,8 +68,8 @@ def sunCircle(radiusSunCircle, radiusMirror, altitude):
 
 # the stencil is used to mask the outside of the circle
 def createStencil(radiusCircle):
-	cv2.circle(stencil, (int(resolution.x/2), int(resolution.y/2)), radiusCircle, (255,255,255), -1)
-	cv2.circle(stencilLabels, (int(resolution.x/2), int(resolution.y/2)), radiusCircle, 1, -1)
+	cv2.circle(stencil, (int(int(resolution.x/2)), int(int(resolution.y/2))), radiusCircle, (255,255,255), -1)
+	cv2.circle(stencilLabels, (int(int(resolution.x/2)), int(int(resolution.y/2))), radiusCircle, 1, -1)
 
 # combine the stencil with arrays to mask them
 def outerCircle():
@@ -101,13 +101,13 @@ def overlayOutlinesOnImage(img,outlines):
 def drawArm():
 	cv2.rectangle(regions, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(regions, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(regions, (144,91) , (152,26) , (0,0,0), -1)
+	cv2.rectangle(regions, (int(resolution.x/2),91) , (152,26) , (0,0,0), -1)
 	cv2.rectangle(labels, (141,190), (154,153), 0, -1)
 	cv2.rectangle(labels, (145,154), (152,91) , 0, -1)
-	cv2.rectangle(labels, (144,91) , (152,26) , 0, -1)
+	cv2.rectangle(labels, (int(resolution.x/2),91) , (152,26) , 0, -1)
 	cv2.rectangle(imageWithOutlines, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(imageWithOutlines, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(imageWithOutlines, (144,91) , (152,26) , (0,0,0), -1)
+	cv2.rectangle(imageWithOutlines, (int(resolution.x/2),91) , (152,26) , (0,0,0), -1)
 
 # draw the shadowband
 def drawBand(bandThickness):
