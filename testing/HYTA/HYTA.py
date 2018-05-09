@@ -17,7 +17,7 @@ np.set_printoptions(threshold=np.nan)
 # cirrus
 
 imageFolder = 'data_images/'
-file = 'cirrus6.jpg'
+file = 'sky2.png'
 img = cv2.imread(imageFolder+file)
 
 # extract the bands
@@ -40,39 +40,54 @@ print('The deviation threshold is set to', deviationThreshold)
 
 mean = np.mean(normalizedRatioBR)
 
-def determineMCEThreshold(normalizedRatioBR):
-    hist, bins = np.histogram(normalizedRatioBR,bins=100)
-    L = len(hist)
-    thresholdList = []
-    for iThreshold in range(2,L):
-        m1 = 0
-        m2 = 0
-        mu1 = 0
-        mu2 = 0
+print(ratioBR)
 
-        for i in range(1,iThreshold):
-            m1 += i * hist[i]
-            mu1 += hist[i]
-        mu1 = m1 / mu1
+def determineMCEThreshold(data):
+	hist, bins = np.histogram(data,100)
+	L = len(hist)
 
-        for i in range(iThreshold,L):
-            m2 += i * hist[i]
-            mu2 += hist[i]
-        mu2 = m2 / mu2
+	thresholdList = []
 
-        thresholdList.append(-m1*log10(mu1)-m2*log10(mu2))
+	if np.argwhere(np.isnan(hist)).any() == True:
+		print('NaN found in B/R ratios')
+		sys.exit('MYSTOP')
 
-    threshold = bins[np.argmin(thresholdList)]
-    return threshold
+	# catch zeros which cause error if not changed to one
+	if hist[1]==0:
+		hist[1]=1
+	if hist[L-2]==0:
+		hist[L-2]=1
+
+	for iThreshold in range(2,L):
+		m1 = 0
+		m2 = 0
+		mu1 = 0
+		mu2 = 0
+
+		for i in range(1,iThreshold):
+			m1 += i * hist[i]
+			mu1 += hist[i]
+
+		for i in range(iThreshold,L):
+			m2 += i * hist[i]
+			mu2 += hist[i]
+
+		mu1 = m1 / mu1
+		mu2 = m2 / mu2
+
+		thresholdList.append(-m1*log10(mu1)-m2*log10(mu2))
+
+	threshold = bins[np.argmin(thresholdList)]
+	return threshold
 
 if stDev <= deviationThreshold:
-    # fixed thresholding
-    threshold = 0.250
-    print('Threshold type: fixed')
+	# fixed thresholding
+	threshold = 0.250
+	print('Threshold type: fixed')
 else:
-    # MCE thresholding
-    threshold = determineMCEThreshold(normalizedRatioBR)
-    print('Threshold type: MCE')
+	# MCE thresholding
+	threshold = determineMCEThreshold(normalizedRatioBR)
+	print('Threshold type: MCE')
 print('The threshold is set to:',threshold)
 x = (np.less(normalizedRatioBR, threshold)).astype(int)
 #x = np.where(normalizedRatioBR < fixedThreshold, normalizedRatioBR, -1)

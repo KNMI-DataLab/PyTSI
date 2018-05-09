@@ -94,13 +94,13 @@ def overlayOutlinesOnImage():
 def drawArm():
 	cv2.rectangle(regions, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(regions, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(regions, (144,91) , (152,26) , (0,0,0), -1)
+	cv2.rectangle(regions, (int(resolution.x/2),91) , (152,26) , (0,0,0), -1)
 	cv2.rectangle(labels, (141,190), (154,153), 0, -1)
 	cv2.rectangle(labels, (145,154), (152,91) , 0, -1)
-	cv2.rectangle(labels, (144,91) , (152,26) , 0, -1)
+	cv2.rectangle(labels, (int(resolution.x/2),91) , (152,26) , 0, -1)
 	cv2.rectangle(imageWithOutlines, (141,190), (154,153), (0,0,0), -1)
 	cv2.rectangle(imageWithOutlines, (145,154), (152,91) , (0,0,0), -1)
-	cv2.rectangle(imageWithOutlines, (144,91) , (152,26) , (0,0,0), -1)
+	cv2.rectangle(imageWithOutlines, (int(resolution.x/2),91) , (152,26) , (0,0,0), -1)
 
 def drawBand(bandThickness):
 	# rInner defines how many pixels from the center
