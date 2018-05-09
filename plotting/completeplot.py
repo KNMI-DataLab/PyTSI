@@ -11,6 +11,7 @@ def completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlines
 
 	data = np.genfromtxt('data_for_completeplot.csv', delimiter='\t', names=True)
 	corrections = np.genfromtxt('corrections.csv', delimiter='\t', names=True)
+	mobotix = np.genfromtxt('/nobackup/users/mos/testing/mobotix/mobotix_cloud_cover.csv', delimiter='\t')
 
 	gs = gridspec.GridSpec(3, 10)
 
@@ -21,12 +22,9 @@ def completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlines
 	ax3 = plt.subplot2grid((3,10), (0,4), rowspan=1, colspan=2)
 	ax4 = plt.subplot2grid((3,10), (0,6), rowspan=1, colspan=2)
 	ax5 = plt.subplot2grid((3,10), (0,8), rowspan=1, colspan=2)
-
 	ax6 = plt.subplot2grid((3,10), (1,0), rowspan=2, colspan=3)
-
 	ax7 = plt.subplot2grid((3,10), (1,3), rowspan=1, colspan=6)
 	ax8 = plt.subplot2grid((3,10), (2,3), rowspan=1, colspan=6)
-
 
 	ax1.set_adjustable('box-forced')
 	ax2.set_adjustable('box-forced')
@@ -71,6 +69,7 @@ def completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlines
 	ax7.plot(data['azimuth'],data['fractionalSkyCoverHYTA']*100,         color = 'tab:purple', label = 'HYTA', linewidth = 2.0)
 	ax7.plot(data['azimuth'],corrections['correctedSkyCover']*100,       color = 'tab:blue',   label = 'Corrected', linewidth = 2.0)
 	ax7.plot(data['azimuth'],corrections['smoothCorrectedSkyCover']*100, color = 'tab:orange', label = 'Smoothened', linewidth = 2.0)
+	ax7.plot(mobotix[:,0],mobotix[:,2]*100,                              color = 'tab:pink',   label = 'Mobotix', linewidth = 2.0)
 	ax7.axvline(currentAzimuth,                                          color='k', linestyle='dashed', linewidth=2, label='azimuth')
 	ax7.set_title('Cloud cover. Current azimuth='+str(currentAzimuth))
 	ax7.legend(bbox_to_anchor=(1.005, 0.9), loc=2, borderaxespad=0.)
@@ -79,10 +78,9 @@ def completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlines
 	ax7.set_ylim([-5,105])
 	ax7.grid()
 
-
 	ax8.plot(data['azimuth'],abs((data['fractionalSkyCoverTSI']-data['fractionalSkyCover'])*100),             color = 'tab:green',  label = 'Old-new', linewidth = 2.0)
-	ax8.plot(data['azimuth'],abs((data['fractionalSkyCoverTSI']-corrections['correctedSkyCover'])*100),       color = 'tab:blue',   label = 'Old-corrected', linewidth = 2.0)
 	ax8.plot(data['azimuth'],abs((data['fractionalSkyCoverTSI']-data['fractionalSkyCoverHYTA'])*100),         color = 'tab:purple', label = 'Old-HYTA', linewidth = 2.0)
+	ax8.plot(data['azimuth'],abs((data['fractionalSkyCoverTSI']-corrections['correctedSkyCover'])*100),       color = 'tab:blue',   label = 'Old-corrected', linewidth = 2.0)
 	ax8.plot(data['azimuth'],abs((data['fractionalSkyCoverTSI']-corrections['smoothCorrectedSkyCover'])*100), color = 'tab:orange', label = 'Old-smoothened', linewidth = 2.0)
 	ax8.axvline(currentAzimuth, color='k', linestyle='dashed', linewidth=2, label='azimuth')
 	ax8.legend(bbox_to_anchor=(1.005, 0.7), loc=2, borderaxespad=0.)
