@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 from matplotlib import colors as colors
 import sys as sys
 
-def plotCorrectionResults(azimuth,correctedSkyCover,smoothCorrectedSkyCover,stDevWidth):
+def plot_correction_results(azimuth,correctedSkyCover,smoothCorrectedSkyCover,stDevWidth):
 
 	data = np.genfromtxt('data.csv', delimiter='\t', names=True)
 
