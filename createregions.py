@@ -14,6 +14,7 @@ import os
 
 # outer circle
 def largeCircle(radiusCircle):
+
 	cv2.circle(regions,  (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, (255,0,0), -1)
 	cv2.circle(labels,   (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, 1, -1)
 	cv2.circle(outlines, (int(int(resolution.x/2)),int(int(resolution.y/2))), radiusCircle, (255,0,0), outlineThickness)

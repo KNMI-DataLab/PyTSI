@@ -61,31 +61,35 @@ def aerosol_correction():
     cloud_corrected = np.copy(cloud)
     sun_corrected = np.copy(sun)
 
-    # carry out corrections if criterions match
+    # carry out corrections if criteria match
     # sun circle
     cloud_corrected = np.where(np.logical_and(sun_st_dev < settings.st_dev_limit,
-                                             np.logical_and(sun_sky_cover_indiv > settings.sun_sky_cover_limit,
-                                                            np.logical_and(remainder_sky_cover < settings.remainder_limit,
-                                                                           remainder_st_dev < settings.remainder_st_dev_limit))),
-                              cloud_corrected - sun_c, cloud_corrected - first_guess)
+                                              np.logical_and(sun_sky_cover_indiv > settings.sun_sky_cover_limit,
+                                                             np.logical_and(
+                                                                 remainder_sky_cover < settings.remainder_limit,
+                                                                 remainder_st_dev < settings.remainder_st_dev_limit))),
+                               cloud_corrected - sun_c, cloud_corrected - first_guess)
 
     sun_corrected = np.where(np.logical_and(sun_st_dev < settings.st_dev_limit,
                                             np.logical_and(sun_sky_cover_indiv > settings.sun_sky_cover_limit,
-                                                           np.logical_and(remainder_sky_cover < settings.remainder_limit,
-                                                                          remainder_st_dev < settings.remainder_st_dev_limit))),
+                                                           np.logical_and(
+                                                               remainder_sky_cover < settings.remainder_limit,
+                                                               remainder_st_dev < settings.remainder_st_dev_limit))),
                              sun_corrected + sun_c, sun_corrected + first_guess)
 
     # horizon area
     cloud_corrected = np.where(np.logical_and(horizon_st_dev < settings.st_dev_limit,
-                                             np.logical_and(horizon_sky_cover_indiv > settings.horizon_sky_cover_limit,
-                                                            np.logical_and(remainder_sky_cover < settings.remainder_limit,
-                                                                           remainder_st_dev < settings.remainder_st_dev_limit))),
-                              cloud_corrected - horizon_c, cloud_corrected)
+                                              np.logical_and(horizon_sky_cover_indiv > settings.horizon_sky_cover_limit,
+                                                             np.logical_and(
+                                                                 remainder_sky_cover < settings.remainder_limit,
+                                                                 remainder_st_dev < settings.remainder_st_dev_limit))),
+                               cloud_corrected - horizon_c, cloud_corrected)
 
     sun_corrected = np.where(np.logical_and(horizon_st_dev < settings.st_dev_limit,
                                             np.logical_and(horizon_sky_cover_indiv > settings.horizon_sky_cover_limit,
-                                                           np.logical_and(remainder_sky_cover < settings.remainder_limit,
-                                                                          remainder_st_dev < settings.remainder_st_dev_limit))),
+                                                           np.logical_and(
+                                                               remainder_sky_cover < settings.remainder_limit,
+                                                               remainder_st_dev < settings.remainder_st_dev_limit))),
                              sun_corrected + horizon_c, sun_corrected)
 
     # corrected sky cover
@@ -105,7 +109,7 @@ def aerosol_correction():
 
     # plot
     if settings.plot_correction_result:
-        plot_correction_results(azimuth, corrected_sky_cover, smooth_corrected_sky_cover, settings.st_dev_width)
+        plot_correction_results(corrected_sky_cover, smooth_corrected_sky_cover)
 
     # zip data and put into file
     rows = zip(azimuth, corrected_sky_cover, smooth_corrected_sky_cover)

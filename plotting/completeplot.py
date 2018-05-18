@@ -92,5 +92,5 @@ def completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlines
 
 	plt.tight_layout()
 
-	plt.savefig('results/completeoverview/'+filename)
+	#plt.savefig('results/completeoverview/'+filename)
 	plt.close()

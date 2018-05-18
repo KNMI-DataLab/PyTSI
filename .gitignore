@@ -11,6 +11,7 @@ template.py
 
 #folders
 __pycache__
+.idea
 data072017
 processed_images
 data

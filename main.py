@@ -7,8 +7,8 @@ import os
 import csv
 from tqdm import tqdm
 from processor import processor
-import performstatisticalanalysis
-from plotskycover import plotSkyCoverComparison
+import statistical_analysis
+import plotskycover
 import postprocessor
 import resolution
 import settings
@@ -21,8 +21,7 @@ def main():
 
     # initiate variables
     # directory in which the data is located
-    # directory_in_str = '/usr/people/mos/Documents/data/06/DBASE/20170601_tsi-cabauw_realtime'
-    directory_in_str = '/nobackup/users/mos/poster_data'
+    directory_in_str = settings.main_data
 
     # converts the directory from string into 'bytes'
     directory = os.fsencode(directory_in_str)
@@ -32,7 +31,8 @@ def main():
 
     # the '0' is added to exclude some files in the directory
     properties_extension = '0.properties.gz'
-    image_extension = '0.jpg'
+    jpg_extension = '0.jpg'
+    png_extension = '0.png'
 
     # open the data file
     with open('data.csv', 'w') as fd:
@@ -64,15 +64,15 @@ def main():
 
                     # only carry out calculations for solar angle > 10 degrees
                     # this strategy is proposed by Long et al
-                    if altitude >= 10:
+                    if altitude >= settings.minimum_altitude:
                         # get the fractional sky cover from 'old' TSI software
                         thin_sky_cover_tsi, opaque_sky_cover_tsi, fractional_sky_cover_tsi = read_properties_file.get_fractional_sky_cover_tsi(
                             lines)
 
                         # read the image
                         img = cv2.imread(
-                            directory_in_str + '/' + filename.replace(properties_extension, image_extension))
-                        img_tsi = cv2.imread(directory_in_str + '/' + filename.replace(properties_extension, '0.png'))
+                            directory_in_str + '/' + filename.replace(properties_extension, jpg_extension))
+                        img_tsi = cv2.imread(directory_in_str + '/' + filename.replace(properties_extension, png_extension))
 
                         # get the resolution of the image
                         resolution.get_resolution(img)
@@ -86,7 +86,7 @@ def main():
 
                         # calculate statistical properties of the image
                         if settings.use_statistical_analysis:
-                            energy, entropy, contrast, homogeneity = performstatisticalanalysis.performStatisticalAnalysis(
+                            energy, entropy, contrast, homogeneity = statistical_analysis.work(
                                 maskedImg)
                         else:
                             energy = entropy = contrast = homogeneity = 0
@@ -108,7 +108,7 @@ def main():
 
     # plot the sky cover comparison
     if settings.plot_sky_cover_comparison:
-        plotSkyCoverComparison()
+        plotskycover.plot()
 
 
 if __name__ == '__main__':
