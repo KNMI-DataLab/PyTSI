@@ -72,34 +72,34 @@ def flatten_clean_array(img):
                 ratioBR[i, j] = B[i, j] / R[i, j]
 
     # normalized B/R ratio
-    normalizedRatioBR = np.zeros(ratioBR.shape, dtype=float)
+    ratioBR_norm = np.zeros(ratioBR.shape, dtype=float)
 
     # catch Nan
-    if np.argwhere(np.isnan(normalizedRatioBR)).any() == True:
+    if np.argwhere(np.isnan(ratioBR_norm)).any() == True:
         sys.exit('NaN found in B/R ratios')
 
     for i in range(0, resolution.y):
         for j in range(0, resolution.x):
             if ratioBR[i, j] != 0:
-                normalizedRatioBR[i, j] = (ratioBR[i, j] - 1) / (ratioBR[i, j] + 1)
+                ratioBR_norm[i, j] = (ratioBR[i, j] - 1) / (ratioBR[i, j] + 1)
     # catch Nan
-    if np.argwhere(np.isnan(normalizedRatioBR)).any() == True:
+    if np.argwhere(np.isnan(ratioBR_norm)).any() == True:
         sys.exit('NaN found in normalized B/R ratios')
 
     # convert 2D array to 1D array
-    flatNormalizedRatioBR = normalizedRatioBR.flatten()
+    ratioBR_norm_1d = ratioBR_norm.flatten()
 
     # remove zeros from 1D array
-    flatNormalizedRatioBRNoZeros = flatNormalizedRatioBR[np.nonzero(flatNormalizedRatioBR)]
+    ratioBR_norm_1d_nz = ratioBR_norm_1d[np.nonzero(ratioBR_norm_1d)]
 
-    return flatNormalizedRatioBRNoZeros
+    return ratioBR_norm_1d_nz
 
 
 def hybrid(img):
-    flatNormalizedRatioBRNoZeros = flatten_clean_array(img)
+    ratioBR_norm_1d_nz = flatten_clean_array(img)
 
     # calculate standard deviation
-    stDev = np.std(flatNormalizedRatioBRNoZeros)
+    stDev = np.std(ratioBR_norm_1d_nz)
 
     # decide which thresholding needs to be used
     if stDev <= settings.deviation_threshold:
@@ -107,6 +107,6 @@ def hybrid(img):
         threshold = settings.fixed_threshold
     else:
         # MCE thresholding
-        threshold = min_cross_entropy(flatNormalizedRatioBRNoZeros, settings.nbins_hybrid)
+        threshold = min_cross_entropy(ratioBR_norm_1d_nz, settings.nbins_hybrid)
 
-    return flatNormalizedRatioBRNoZeros, stDev, threshold
+    return ratioBR_norm_1d_nz, stDev, threshold

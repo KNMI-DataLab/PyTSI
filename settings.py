@@ -17,12 +17,27 @@ smoothing_width = 5
 # colors
 max_color_value = 256
 blue = (0, 0, 255)
+red = (255, 0, 0)
+yellow = (255, 255, 0)
+cyan = (0, 255, 255)
+green = (0, 255, 0)
 gray = (150, 150, 150)
 white = (255, 255, 255)
 black = (0, 0, 0)
 
 # mask
 mask_value = -99
+
+# regions
+radius_sun_circle = 40
+radius_inner_circle = 80
+radius_circle = 130
+radius_mirror = 140
+outline_thickness = 3
+band_thickness = 35
+width_horizon_area_degrees = 50
+r_inner = 40
+r_outer = 140
 
 # sun position
 minimum_altitude = 10
@@ -52,4 +67,6 @@ use_statistical_analysis = True
 # plotting
 plot_sky_cover_comparison = False
 plot_correction_result = False
+plot_overview = False
+plot_poster_images = True
 use_project_3d = False

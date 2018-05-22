@@ -13,6 +13,7 @@ import postprocessor
 import resolution
 import settings
 import read_properties_file
+from shutil import copyfile
 
 
 def main():
@@ -72,7 +73,8 @@ def main():
                         # read the image
                         img = cv2.imread(
                             directory_in_str + '/' + filename.replace(properties_extension, jpg_extension))
-                        img_tsi = cv2.imread(directory_in_str + '/' + filename.replace(properties_extension, png_extension))
+                        img_tsi = cv2.imread(
+                            directory_in_str + '/' + filename.replace(properties_extension, png_extension))
 
                         # get the resolution of the image
                         resolution.get_resolution(img)
@@ -101,6 +103,9 @@ def main():
                                          outsideC, outsideS, horizonC, horizonS,
                                          innerC, innerS, sunC, sunS
                                          ))
+
+    # rename file
+    copyfile('data.csv', 'data_for_completeplot.csv')
 
     # postprocessing step which carries out corrections for solar/horizon area
     if settings.use_postprocessing:
