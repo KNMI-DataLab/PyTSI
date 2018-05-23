@@ -5,6 +5,17 @@ import settings
 
 
 def outlines_over_image(img, outlines, stencil):
+    """Overlay outlines on image by converting to BW and performing several other operations
+
+    Args:
+        img (int): image in NumPy format
+        outlines (int): RGB array of the segment outlines
+        stencil (int): stencil array in RGB format
+
+    Returns:
+        int: image with outlines as overlay
+    """
+    # TODO: there is now a duplicate that does the exact same thing both here and in createregions.py. FIX
     # create mask of outlines and create inverse mask
     img2gray = cv2.cvtColor(outlines, cv2.COLOR_BGR2GRAY)
     ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
@@ -25,6 +36,18 @@ def outlines_over_image(img, outlines, stencil):
 
 
 def fixed(img, outlines, stencil, fixed_sunny_threshold, fixed_thin_threshold):
+    """Preprocess image to be compatible with :meth:`overlay.outlines_over_image` using fixed thresholding
+
+    Args:
+        img (int): image in NumPy format
+        outlines (int): RGB array of the segment outlines
+        stencil (int): stencil array in RGB format
+        fixed_sunny_threshold (float): threshold for sun/cloud
+        fixed_thin_threshold (float): threshold for thin/opaque cloud
+
+    Returns:
+        int: image with outlines
+    """
     imgRGB = np.zeros(outlines.shape, np.uint8)
 
     # convert greyscale image to RGB image
@@ -43,6 +66,17 @@ def fixed(img, outlines, stencil, fixed_sunny_threshold, fixed_thin_threshold):
 
 
 def hybrid(img, outlines, stencil, threshold):
+    """Preprocess image to be compatible with :meth:`overlay.outlines_over_image` using the hybrid threshold
+
+    Args:
+        img (int): image in NumPy format
+        outlines (int): RGB array of the segment outlines
+        stencil (int): stencil array in RGB format
+        threshold (float): threshold for sun/cloud determined by HYbrid Thresholding Algorithm (HYTA)
+
+    Returns:
+        int: image with outlines
+    """
     # TODO clean this up (a.k.a. remove double cacluations of ratio etc)
     imgRGB = np.zeros(outlines.shape, np.uint8)
 

@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>thresholds &mdash; Documentation new TSI software 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Documentation new TSI software
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_example.html">Code example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Documentation new TSI software</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>thresholds</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for thresholds</h1><div class="highlight"><pre>
+<span></span><span class="c1"># DESCRIPTION: sets the fixed thresholds</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">log10</span>
+<span class="kn">import</span> <span class="nn">resolution</span>
+
+
+<div class="viewcode-block" id="fixed"><a class="viewcode-back" href="../thresholds.html#thresholds.fixed">[docs]</a><span class="k">def</span> <span class="nf">fixed</span><span class="p">():</span>
+    <span class="n">fixed_sunny_threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_sunny_threshold</span>
+    <span class="n">fixed_thin_threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_thin_threshold</span>
+
+    <span class="k">return</span> <span class="n">fixed_sunny_threshold</span><span class="p">,</span> <span class="n">fixed_thin_threshold</span></div>
+
+
+<div class="viewcode-block" id="min_cross_entropy"><a class="viewcode-back" href="../thresholds.html#thresholds.min_cross_entropy">[docs]</a><span class="k">def</span> <span class="nf">min_cross_entropy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nbins</span><span class="p">):</span>
+    <span class="c1"># create the histogram and determine length</span>
+    <span class="n">hist</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nbins</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span>
+
+    <span class="n">thresholdList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># catch zeros which cause error if not changed to one</span>
+    <span class="k">if</span> <span class="n">hist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">hist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">hist</span><span class="p">[</span><span class="n">L</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">hist</span><span class="p">[</span><span class="n">L</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">iThreshold</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mu1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mu2</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">iThreshold</span><span class="p">):</span>
+            <span class="n">m1</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">mu1</span> <span class="o">+=</span> <span class="n">hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iThreshold</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+            <span class="n">m2</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">mu2</span> <span class="o">+=</span> <span class="n">hist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">mu1</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">/</span> <span class="n">mu1</span>
+        <span class="n">mu2</span> <span class="o">=</span> <span class="n">m2</span> <span class="o">/</span> <span class="n">mu2</span>
+
+        <span class="n">thresholdList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">m1</span> <span class="o">*</span> <span class="n">log10</span><span class="p">(</span><span class="n">mu1</span><span class="p">)</span> <span class="o">-</span> <span class="n">m2</span> <span class="o">*</span> <span class="n">log10</span><span class="p">(</span><span class="n">mu2</span><span class="p">))</span>
+
+    <span class="c1"># minimum of the list is the threshold</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">thresholdList</span><span class="p">)]</span>
+
+    <span class="c1"># catch miscalculation</span>
+    <span class="k">if</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;histogram data:&#39;</span><span class="p">,</span> <span class="n">hist</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR threshold (&#39;</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="s1">&#39;) smaller or equal to 0&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">threshold</span></div>
+
+
+<div class="viewcode-block" id="flatten_clean_array"><a class="viewcode-back" href="../thresholds.html#thresholds.flatten_clean_array">[docs]</a><span class="k">def</span> <span class="nf">flatten_clean_array</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="n">ratioBR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># extract blue and red bands</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># calculate the blue/red ratio</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ratioBR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+
+    <span class="c1"># normalized B/R ratio</span>
+    <span class="n">ratioBR_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ratioBR</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># catch Nan</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratioBR_norm</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;NaN found in B/R ratios&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ratioBR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ratioBR_norm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratioBR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ratioBR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># catch Nan</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ratioBR_norm</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;NaN found in normalized B/R ratios&#39;</span><span class="p">)</span>
+
+    <span class="c1"># convert 2D array to 1D array</span>
+    <span class="n">ratioBR_norm_1d</span> <span class="o">=</span> <span class="n">ratioBR_norm</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="c1"># remove zeros from 1D array</span>
+    <span class="n">ratioBR_norm_1d_nz</span> <span class="o">=</span> <span class="n">ratioBR_norm_1d</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">ratioBR_norm_1d</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">ratioBR_norm_1d_nz</span></div>
+
+
+<div class="viewcode-block" id="hybrid"><a class="viewcode-back" href="../thresholds.html#thresholds.hybrid">[docs]</a><span class="k">def</span> <span class="nf">hybrid</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="n">ratioBR_norm_1d_nz</span> <span class="o">=</span> <span class="n">flatten_clean_array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+    <span class="c1"># calculate standard deviation</span>
+    <span class="n">stDev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">)</span>
+
+    <span class="c1"># decide which thresholding needs to be used</span>
+    <span class="k">if</span> <span class="n">stDev</span> <span class="o">&lt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">deviation_threshold</span><span class="p">:</span>
+        <span class="c1"># fixed thresholding</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># MCE thresholding</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">min_cross_entropy</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">nbins_hybrid</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">stDev</span><span class="p">,</span> <span class="n">threshold</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

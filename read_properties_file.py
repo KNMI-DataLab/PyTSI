@@ -1,5 +1,10 @@
-# get the altitude of the image
 def get_altitude(lines):
+    """
+    Get the solar altitude from the TSI properties file
+
+    :param lines: line by line reading of the properties file
+    :returns: altitude of the sun
+    """
     for line in lines:
         if line.startswith('tsi.image.solar.altitude='):
             # extract altitude from the correct line
@@ -14,8 +19,13 @@ def get_altitude(lines):
     return altitude
 
 
-# get the azimuth of the image
 def get_azimuth(lines):
+    """
+    Get the solar azimuth from the TSI properties file
+
+    :param lines: line by line reading of the properties file
+    :returns: azimuth of the sun
+    """
     for line in lines:
         if line.startswith('tsi.image.solar.azimuth='):
             # extract azimuth from the correct line
@@ -30,8 +40,13 @@ def get_azimuth(lines):
     return azimuth
 
 
-# get the fractional sky cover of the 'old' TSI software
 def get_fractional_sky_cover_tsi(lines):
+    """
+    Get the fractional sky cover from the TSI properties file
+
+    :param lines: line by line reading of the properties file
+    :returns: fractional sky cover
+    """
     for line in lines:
         if line.startswith('tsi.image.fraction.opaque='):
             # extract opaque fraction from the correct line

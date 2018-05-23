@@ -1,6 +1,3 @@
-# DESCRIPTION: cperform sun circle/horizon area corrections as postprocessing
-#              the approach by Long is used
-
 from myimports import *
 from numpy import genfromtxt
 from plotcorrectionresult import plot_correction_results
@@ -8,6 +5,12 @@ import csv as csv
 
 
 def aerosol_correction():
+    """Perform the horizon area/sun circle correction.
+
+    The data from the main processing loop is used which is then subjected to a few steps. The approach by Long 2010
+    is used. Several statistical features of the segmetns are tested against a set of thresholds defined in
+    :meth:`settings`. Subsequently, the corrected sky cover percentages are written to a file.
+    """
     # read columns of file
     df = genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv', skip_header=1, delimiter='\t')
 

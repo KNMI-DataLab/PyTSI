@@ -1,15 +1,19 @@
-# extract the blue green and red bands
-
 import numpy as np
 
 
-def extract(scaler, maskedImg):
-    # the arrays are set up in [y,x] orientation because the image
-    # has some 'special' metadata which shows opposite resolution/geometry
-    # view with: "$ identify -verbose data/20170419133000.jpg"
+def extract(scaler, masked_img):
+    """Extract the red, green and blue bands from the masked image
 
-    blue_band = np.divide(maskedImg[np.where(maskedImg[:, :, 0] != 0)], scaler).astype(int)
-    green_band = np.divide(maskedImg[np.where(maskedImg[:, :, 1] != 0)], scaler).astype(int)
-    red_band = np.divide(maskedImg[np.where(maskedImg[:, :, 2] != 0)], scaler).astype(int)
+    Args:
+        scaler (int): Maximum number of color levels, used in GLCM matrix
+        masked_img (int): The masked image
+
+    Returns:
+        tuple: Red, green and blue bands
+    """
+
+    blue_band = np.divide(masked_img[np.where(masked_img[:, :, 0] != 0)], scaler).astype(int)
+    green_band = np.divide(masked_img[np.where(masked_img[:, :, 1] != 0)], scaler).astype(int)
+    red_band = np.divide(masked_img[np.where(masked_img[:, :, 2] != 0)], scaler).astype(int)
 
     return blue_band, green_band, red_band

@@ -1,5 +1,3 @@
-# DESCRIPTION: creates the mask needed for processing
-
 import resolution
 import settings
 from math import cos, sin, tan, pi
@@ -7,12 +5,18 @@ import numpy as np
 import cv2 as cv2
 
 
-# calculate the outer point of the shadow band position required for drawing
-# the shadowband line. the formula of a circle is used: x=r*cos(t),y=r*sin(t)
 def calculate_band_position(theta):
-    # r_inner defines how many pixels from the center
-    # the shadowband should be drawn
-    # r_outer-r_inner is the line length
+    """Calculate the inner and outer position of the shadow band, required for drawing the shadow band mask line.
+
+    The formula of a circle is used: :math:`x = r \\cos{\\theta} \wedge y = r \\sin{\\theta}`.
+
+    Args:
+       theta (float): Azimuth of the sun with respect to the East. Normally, azimuth is measured from the North. However,
+                      to simplify calculations, the east was used.
+
+    Returns:
+       tuple: X and y locations of the inner and outer points of the shadow band
+    """
 
     x_inner = int(resolution.x / 2 + settings.r_inner * cos(theta))
     y_inner = int(resolution.y / 2 + settings.r_inner * sin(-theta))
@@ -23,6 +27,21 @@ def calculate_band_position(theta):
 
 
 def create(img, azimuth):
+    """Create the mask using the original image and the azimuth.
+
+    The mask consists of three parts:
+
+    * The circle bordering the hemispherical mirror.
+    * The shadow band.
+    * The camera and camera arm.
+
+    Args:
+        img (int): Image in NumPy format
+        azimuth (float): Azimuth of the sun, taken from the properties file
+
+    Returns:
+        int: The masked image of shape (x_resolution,y_resolution,3) for an RGB image
+    """
     mask = np.zeros(img.shape, dtype="uint8")
 
     # HEMISPHERE

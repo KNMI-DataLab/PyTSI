@@ -17,9 +17,7 @@ from shutil import copyfile
 
 
 def main():
-    # set/initialize the global variables
-    # settings.init()
-
+    """Call processing functions and write output to file"""
     # initiate variables
     # directory in which the data is located
     directory_in_str = settings.main_data

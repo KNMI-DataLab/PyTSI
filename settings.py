@@ -68,5 +68,5 @@ use_statistical_analysis = True
 plot_sky_cover_comparison = False
 plot_correction_result = False
 plot_overview = False
-plot_poster_images = True
+plot_poster_images = False
 use_project_3d = False

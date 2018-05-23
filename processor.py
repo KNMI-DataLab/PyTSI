@@ -1,5 +1,3 @@
-# DESCRIPTION: main processing function containing calls to many functions
-
 import createmask
 import ratio
 import createregions
@@ -14,6 +12,18 @@ import overview
 
 
 def processor(img, img_tsi, azimuth, altitude, filename):
+    """Call underlying processing routines and return the information to :meth:`main`.
+
+    Args:
+        img (int): Original image
+        img_tsi (int): Processed image from the tsi software
+        azimuth (float): azimuth of the sun, taken from the properties file
+        altitude (float): altitude of the sun, taken from the properties file
+        filename (str): Name of the file currently in use
+
+    Returns:
+        tuple: sky cover percentages, masked image, and pixel counts
+    """
     mask = createmask.create(img, azimuth)
     masked_img = cv2.bitwise_and(img, mask)
 
