@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="template module" href="template.html" /> 
+    <link rel="prev" title="statistical_analysis module" href="statistical_analysis.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -98,7 +98,6 @@
 <li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="template.html">template module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">thresholds module</a></li>
 </ul>
 </li>
@@ -173,22 +172,78 @@
 <dl class="function">
 <dt id="thresholds.fixed">
 <code class="descclassname">thresholds.</code><code class="descname">fixed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/thresholds.html#fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#thresholds.fixed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the fixed thresholds from the settings file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the fixed thresholds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="thresholds.flatten_clean_array">
 <code class="descclassname">thresholds.</code><code class="descname">flatten_clean_array</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/thresholds.html#flatten_clean_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#thresholds.flatten_clean_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convert 2D masked image to 1D flattened array to be used in MCE algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>img</strong> (<em>int</em>) – masked image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">normalized, 1D, flattened masked red/blue ratio array</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="thresholds.hybrid">
 <code class="descclassname">thresholds.</code><code class="descname">hybrid</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/thresholds.html#hybrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#thresholds.hybrid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Decide between fixed or MCE thresholding as part of hybrid thresholding algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>img</strong> (<em>int</em>) – masked image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">normalized 1D flattened masked red/blue ratio array, standard deviation of the image and hybrid threshold</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="thresholds.min_cross_entropy">
 <code class="descclassname">thresholds.</code><code class="descname">min_cross_entropy</code><span class="sig-paren">(</span><em>data</em>, <em>nbins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/thresholds.html#min_cross_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#thresholds.min_cross_entropy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Minimum cross entropy algorithm to determine the minimum of a histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>foat</em>) – the image data (e.g. blue/red ratio) to be used in the histogram</li>
+<li><strong>nbins</strong> (<em>int</em>) – number of histogram bins</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the MCE threshold</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -201,7 +256,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="template.html" class="btn btn-neutral" title="template module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="statistical_analysis.html" class="btn btn-neutral" title="statistical_analysis module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

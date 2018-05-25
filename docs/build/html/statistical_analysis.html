@@ -29,7 +29,6 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="template module" href="template.html" />
     <link rel="prev" title="skycover module" href="skycover.html" /> 
 
   
@@ -99,7 +98,6 @@
 <li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">statistical_analysis module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="template.html">template module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
 </ul>
 </li>
@@ -174,7 +172,22 @@
 <dl class="function">
 <dt id="statistical_analysis.work">
 <code class="descclassname">statistical_analysis.</code><code class="descname">work</code><span class="sig-paren">(</span><em>maskedImg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistical_analysis.html#work"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statistical_analysis.work" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the Grey Level Co-occurence Matrix (GLCM) and determine statistical features from it</p>
+<p>This strategy is proposed by Heinle et al 2010</p>
+<p>The statistical features can be used in machine learning algorithms such as k-nearest neighbor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>maskedImg</strong> (<em>int</em>) – masked RGB image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">energy, entropy, contrast, homogeneity</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -185,8 +198,6 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="template.html" class="btn btn-neutral float-right" title="template module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="skycover.html" class="btn btn-neutral" title="skycover module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

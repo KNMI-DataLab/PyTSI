@@ -153,6 +153,14 @@
 
 
 <div class="viewcode-block" id="red_blue"><a class="viewcode-back" href="../ratio.html#ratio.red_blue">[docs]</a><span class="k">def</span> <span class="nf">red_blue</span><span class="p">(</span><span class="n">maskedImg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the red/blue ratio per image pixel</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        maskedImg (int): masked image</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: red/blue ratio per image pixel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">])</span>
 
     <span class="n">blue_band</span> <span class="o">=</span> <span class="n">maskedImg</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>

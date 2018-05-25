@@ -19,5 +19,4 @@ cloudDetection
    settings
    skycover
    statistical_analysis
-   template
    thresholds

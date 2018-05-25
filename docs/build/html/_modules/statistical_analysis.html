@@ -158,6 +158,18 @@
 
 
 <div class="viewcode-block" id="work"><a class="viewcode-back" href="../statistical_analysis.html#statistical_analysis.work">[docs]</a><span class="k">def</span> <span class="nf">work</span><span class="p">(</span><span class="n">maskedImg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the Grey Level Co-occurence Matrix (GLCM) and determine statistical features from it</span>
+
+<span class="sd">    This strategy is proposed by Heinle et al 2010</span>
+
+<span class="sd">    The statistical features can be used in machine learning algorithms such as k-nearest neighbor</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        maskedImg (int): masked RGB image</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: energy, entropy, contrast, homogeneity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># set the number of grey levels used in the GLCM calculation</span>
     <span class="n">scaler</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">max_color_value</span> <span class="o">/</span> <span class="n">settings</span><span class="o">.</span><span class="n">grey_levels</span><span class="p">)</span>
 
