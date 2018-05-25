@@ -6,6 +6,14 @@ import resolution
 
 
 def red_blue(maskedImg):
+    """Calculate the red/blue ratio per image pixel
+
+    Args:
+        maskedImg (int): masked image
+
+    Returns:
+        float: red/blue ratio per image pixel
+    """
     red_blue_ratio = np.zeros([resolution.y, resolution.x])
 
     blue_band = maskedImg[:, :, 0].astype(int)

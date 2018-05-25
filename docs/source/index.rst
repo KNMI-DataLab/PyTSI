@@ -6,12 +6,14 @@
 Welcome to Documentation new TSI software's documentation!
 ==========================================================
 
+This website contains the (not yet fully complete) documentation for the new `Total Sky Imager softaware
+<https://github.com/KNMI-DataLab/cloudDetection>`_.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    intro
-   code_example
    modules
 
 Indices and tables

@@ -1,4 +1,4 @@
-cloudDetection
+Main modules
 ==============
 
 .. toctree::

@@ -86,7 +86,7 @@ def main():
 
                         # calculate statistical properties of the image
                         if settings.use_statistical_analysis:
-                            energy, entropy, contrast, homogeneity = statistical_analysis.work(
+                            energy, entropy, contrast, homogeneity = statistical_analysis.calculate_features(
                                 maskedImg)
                         else:
                             energy = entropy = contrast = homogeneity = 0

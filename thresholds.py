@@ -7,6 +7,12 @@ import resolution
 
 
 def fixed():
+    """Get the fixed thresholds from the settings file
+
+    Returns:
+        tuple: the fixed thresholds
+    """
+    # TODO: this might be unnecessary
     fixed_sunny_threshold = settings.fixed_sunny_threshold
     fixed_thin_threshold = settings.fixed_thin_threshold
 
@@ -14,6 +20,15 @@ def fixed():
 
 
 def min_cross_entropy(data, nbins):
+    """Minimum cross entropy algorithm to determine the minimum of a histogram
+
+    Args:
+        data (foat): the image data (e.g. blue/red ratio) to be used in the histogram
+        nbins (int): number of histogram bins
+
+    Returns:
+        float: the MCE threshold
+    """
     # create the histogram and determine length
     hist, bins = np.histogram(data, nbins)
     L = len(hist)
@@ -57,6 +72,15 @@ def min_cross_entropy(data, nbins):
 
 
 def flatten_clean_array(img):
+    """Convert 2D masked image to 1D flattened array to be used in MCE algorithm
+
+    Args:
+        img (int): masked image
+
+    Returns:
+        float: normalized, 1D, flattened masked red/blue ratio array
+    """
+    # TODO: clean up, can replace ratioBR with masked numpy arrays
     ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)
 
     # extract blue and red bands
@@ -96,6 +120,14 @@ def flatten_clean_array(img):
 
 
 def hybrid(img):
+    """Decide between fixed or MCE thresholding as part of hybrid thresholding algorithm
+
+    Args:
+        img (int): masked image
+
+    Returns:
+        tuple: normalized 1D flattened masked red/blue ratio array, standard deviation of the image and hybrid threshold
+    """
     ratioBR_norm_1d_nz = flatten_clean_array(img)
 
     # calculate standard deviation

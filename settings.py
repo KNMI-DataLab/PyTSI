@@ -1,4 +1,22 @@
 # DESCRIPTION: sets the global variables
+"""
+Set the global variables for:
+
+* Directories
+* Aerosol corrections
+* Colors
+* Masking
+* Image segments
+* Sun features
+* GLCM calculations
+* Thresholding
+* Plotting
+* Toggling functions
+"""
+import sys
+
+# import the path
+sys.path.append('./plotting')
 
 # data
 main_data = '/nobackup/users/mos/poster_data'

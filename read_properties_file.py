@@ -1,3 +1,5 @@
+# TODO: convert the old docstring style to Google docstring style (is now set by default in PyCharm)
+
 def get_altitude(lines):
     """
     Get the solar altitude from the TSI properties file
