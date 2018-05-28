@@ -1,5 +1,8 @@
 # cloudDetection
 
+For documentation on this project see [the documentation website](https://jobmos.github.io).
+
+<!---
 ## Comparison of the original image, old TSI software and the new software
 ![alt text](results/semi_clouds.png "Semi cloudy")
 
@@ -14,4 +17,4 @@
 
 ## TSI image showing the Python set outlines
 ![alt text](results/segmented_image.png "Segmented Image")
-
+-->
