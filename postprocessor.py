@@ -1,120 +1,124 @@
-# DESCRIPTION: cperform sun circle/horizon area corrections as postprocessing
-#              the approach by Long is used
-
 from myimports import *
 from numpy import genfromtxt
-from plotcorrectionresult import plotCorrectionResults
+from plotcorrectionresult import plot_correction_results
 import csv as csv
 
-def postProcessor():
-	# set thresholds/variables/limits
-	initialAdjustmentFactorLimit = 0.5 #0.5
-	stDevLimit = 0.09 #0.09
-	remainderStDevLimit = 0.05 #0.05
-	sunSkyCoverLimit = 0.3 #0.3
-	horizonSkyCoverLimit = 0.2 #0.2
-	remainderLimit = 0.2 #0.2
-	stDevWidth = 11 #11
-	smoothingWidth = 5 #5
 
-	# read columns of file
-	df = genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv',skip_header=1,delimiter='\t')
+def aerosol_correction():
+    """Perform the horizon area/sun circle correction.
 
-	azimuth = df[:,2]
-	outsideC = df[:,14] ; outsideS = df[:,15]
-	horizonC = df[:,16] ; horizonS = df[:,17]
-	innerC   = df[:,18] ; innerS   = df[:,19]
-	sunC     = df[:,20] ; sunS     = df[:,21]
+    The data from the main processing loop is used which is then subjected to a few steps. The approach by Long 2010
+    is used. Several statistical features of the segmetns are tested against a set of thresholds defined in
+    :meth:`settings`. Subsequently, the corrected sky cover percentages are written to a file.
+    """
+    # read columns of file
+    df = genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv', skip_header=1, delimiter='\t')
 
-	nSamples = len(df[:,0])
+    azimuth = df[:, 2]
+    outside_c = df[:, 14]
+    outside_s = df[:, 15]
+    horizon_c = df[:, 16]
+    horizon_s = df[:, 17]
+    inner_c = df[:, 18]
+    inner_s = df[:, 19]
+    sun_c = df[:, 20]
+    sun_s = df[:, 21]
 
-	# total amount of sun and cloud pixels
-	sun   = np.add(sunS, np.add(horizonS, np.add(innerS, outsideS)))
-	cloud = np.add(sunC, np.add(horizonC, np.add(innerC, outsideC)))
+    n_samples = len(df[:, 0])
 
-	# total sky cover before corrections
-	originalSkyCover = np.divide(cloud, (sun + cloud))
+    # total amount of sun and cloud pixels
+    sun = np.add(sun_s, np.add(horizon_s, np.add(inner_s, outside_s)))
+    cloud = np.add(sun_c, np.add(horizon_c, np.add(inner_c, outside_c)))
 
-	# individual sky covers of different parts
-	sunSkyCoverIndiv = np.divide(sunC, (sunS + sunC))
-	horizonSkyCoverIndiv = np.divide(horizonC, (horizonS + horizonC))
+    # total sky cover before corrections
+    original_sky_cover = np.divide(cloud, (sun + cloud))
 
-	# what part of the total sky cover is made up of sun and horizon areas
-	sunSkyCoverPartial = np.divide(sunC, (sun + cloud))
-	horizonSkyCoverPartial = np.divide(horizonC, (sun + cloud))
+    # individual sky covers of different parts
+    sun_sky_cover_indiv = np.divide(sun_c, (sun_s + sun_c))
+    horizon_sky_cover_indiv = np.divide(horizon_c, (horizon_s + horizon_c))
 
-	# first guess
-	remainderSkyCover = np.subtract(originalSkyCover, np.add(sunSkyCoverPartial, horizonSkyCoverPartial))
+    # what part of the total sky cover is made up of sun and horizon areas
+    sun_sky_cover_partial = np.divide(sun_c, (sun + cloud))
+    horizon_sky_cover_partial = np.divide(horizon_c, (sun + cloud))
 
-	initialAdjustmentFactor = np.subtract(1, remainderSkyCover)
+    # first guess
+    remainder_sky_cover = np.subtract(original_sky_cover, np.add(sun_sky_cover_partial, horizon_sky_cover_partial))
 
+    initial_adjustment_factor = np.subtract(1, remainder_sky_cover)
 
-	initialAdjustmentFactor = np.where(initialAdjustmentFactor>initialAdjustmentFactorLimit,
-			 				  initialAdjustmentFactorLimit,
-			 			  	  initialAdjustmentFactor)
+    initial_adjustment_factor = np.where(initial_adjustment_factor > settings.initial_adjustment_factor_limit,
+                                         settings.initial_adjustment_factor_limit,
+                                         initial_adjustment_factor)
 
-	firstGuess = np.multiply(sunC, initialAdjustmentFactor)
+    first_guess = np.multiply(sun_c, initial_adjustment_factor)
 
-	# calculate standard deviations
-	sunStDev = np.zeros(nSamples)
-	remainderStDev = np.zeros(nSamples)
-	horizonStDev = np.zeros(nSamples)
-	for i in range(0+stDevWidth,nSamples-stDevWidth):
-		sunStDev[i] = np.std(sunSkyCoverIndiv[i-stDevWidth:i+stDevWidth])
-		remainderStDev[i] = np.std(remainderSkyCover[i-stDevWidth:i+stDevWidth])
-		horizonStDev[i] = np.std(horizonSkyCoverIndiv[i-stDevWidth:i+stDevWidth])
+    # calculate standard deviations
+    sun_st_dev = np.zeros(n_samples)
+    remainder_st_dev = np.zeros(n_samples)
+    horizon_st_dev = np.zeros(n_samples)
+    for i in range(0 + settings.st_dev_width, n_samples - settings.st_dev_width):
+        sun_st_dev[i] = np.std(sun_sky_cover_indiv[i - settings.st_dev_width:i + settings.st_dev_width])
+        remainder_st_dev[i] = np.std(remainder_sky_cover[i - settings.st_dev_width:i + settings.st_dev_width])
+        horizon_st_dev[i] = np.std(horizon_sky_cover_indiv[i - settings.st_dev_width:i + settings.st_dev_width])
 
-	cloudCorrected = np.copy(cloud)
-	sunCorrected = np.copy(sun)
+    cloud_corrected = np.copy(cloud)
+    sun_corrected = np.copy(sun)
 
-	#carry out corrections if criterions match
-	# sun circle
-	cloudCorrected = np.where(np.logical_and(sunStDev<stDevLimit,
-							  np.logical_and(sunSkyCoverIndiv>sunSkyCoverLimit,
-							  np.logical_and(remainderSkyCover<remainderLimit,
-							  remainderStDev<remainderStDevLimit))),
-							  cloudCorrected - sunC, cloudCorrected - firstGuess)
+    # carry out corrections if criteria match
+    # sun circle
+    cloud_corrected = np.where(np.logical_and(sun_st_dev < settings.st_dev_limit,
+                                              np.logical_and(sun_sky_cover_indiv > settings.sun_sky_cover_limit,
+                                                             np.logical_and(
+                                                                 remainder_sky_cover < settings.remainder_limit,
+                                                                 remainder_st_dev < settings.remainder_st_dev_limit))),
+                               cloud_corrected - sun_c, cloud_corrected - first_guess)
 
-	sunCorrected = np.where(np.logical_and(sunStDev<stDevLimit,
-							  np.logical_and(sunSkyCoverIndiv>sunSkyCoverLimit,
-							  np.logical_and(remainderSkyCover<remainderLimit,
-							  remainderStDev<remainderStDevLimit))),
-							  sunCorrected + sunC, sunCorrected + firstGuess)
+    sun_corrected = np.where(np.logical_and(sun_st_dev < settings.st_dev_limit,
+                                            np.logical_and(sun_sky_cover_indiv > settings.sun_sky_cover_limit,
+                                                           np.logical_and(
+                                                               remainder_sky_cover < settings.remainder_limit,
+                                                               remainder_st_dev < settings.remainder_st_dev_limit))),
+                             sun_corrected + sun_c, sun_corrected + first_guess)
 
-	# horizon area
-	cloudCorrected = np.where(np.logical_and(horizonStDev<stDevLimit,
-							  np.logical_and(horizonSkyCoverIndiv>horizonSkyCoverLimit,
-							  np.logical_and(remainderSkyCover<remainderLimit,
-							  remainderStDev<remainderStDevLimit))),
-							  cloudCorrected - horizonC, cloudCorrected)
+    # horizon area
+    cloud_corrected = np.where(np.logical_and(horizon_st_dev < settings.st_dev_limit,
+                                              np.logical_and(horizon_sky_cover_indiv > settings.horizon_sky_cover_limit,
+                                                             np.logical_and(
+                                                                 remainder_sky_cover < settings.remainder_limit,
+                                                                 remainder_st_dev < settings.remainder_st_dev_limit))),
+                               cloud_corrected - horizon_c, cloud_corrected)
 
-	sunCorrected = np.where(np.logical_and(horizonStDev<stDevLimit,
-							  np.logical_and(horizonSkyCoverIndiv>horizonSkyCoverLimit,
-							  np.logical_and(remainderSkyCover<remainderLimit,
-							  remainderStDev<remainderStDevLimit))),
-							  sunCorrected + horizonC, sunCorrected)
+    sun_corrected = np.where(np.logical_and(horizon_st_dev < settings.st_dev_limit,
+                                            np.logical_and(horizon_sky_cover_indiv > settings.horizon_sky_cover_limit,
+                                                           np.logical_and(
+                                                               remainder_sky_cover < settings.remainder_limit,
+                                                               remainder_st_dev < settings.remainder_st_dev_limit))),
+                             sun_corrected + horizon_c, sun_corrected)
 
-	# corrected sky cover
-	correctedSkyCover = np.divide(cloudCorrected, (sunCorrected + cloudCorrected))
+    # corrected sky cover
+    corrected_sky_cover = np.divide(cloud_corrected, (sun_corrected + cloud_corrected))
 
-	difference = np.subtract(originalSkyCover, correctedSkyCover)
+    difference = np.subtract(original_sky_cover, corrected_sky_cover)
 
-	# smoothing
-	runningMean = np.copy(difference)
+    # smoothing
+    running_mean = np.copy(difference)
 
-	for i in range(0+smoothingWidth,nSamples-smoothingWidth):
-		runningMean[i] = np.mean(difference[i-smoothingWidth:i+smoothingWidth])
+    for i in range(0 + settings.smoothing_width, n_samples - settings.smoothing_width):
+        running_mean[i] = np.mean(difference[i - settings.smoothing_width:i + settings.smoothing_width])
 
-	smoothCorrectedSkyCover = originalSkyCover - runningMean
+    smooth_corrected_sky_cover = original_sky_cover - running_mean
 
-	# plot
-	plotCorrectionResults(azimuth,correctedSkyCover,smoothCorrectedSkyCover,stDevWidth)
+    smooth_corrected_sky_cover[smooth_corrected_sky_cover < 0] = 0
 
-	# zip data and put into file
-	rows = zip(azimuth,correctedSkyCover,smoothCorrectedSkyCover)
+    # plot
+    if settings.plot_correction_result:
+        plot_correction_results(corrected_sky_cover, smooth_corrected_sky_cover)
 
-	with open('corrections.csv', 'w') as f:
-		writer = csv.writer(f, delimiter='\t')
-		writer.writerow(['azimuth','correctedSkyCover','smoothCorrectedSkyCover'])
-		for row in rows:
-			writer.writerow(row)
+    # zip data and put into file
+    rows = zip(azimuth, corrected_sky_cover, smooth_corrected_sky_cover)
+
+    with open('corrections.csv', 'w') as f:
+        writer = csv.writer(f, delimiter='\t')
+        writer.writerow(['azimuth', 'corrected_sky_cover', 'smooth_corrected_sky_cover'])
+        for row in rows:
+            writer.writerow(row)

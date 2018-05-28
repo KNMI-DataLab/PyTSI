@@ -1,64 +1,66 @@
-# DESCRIPTION: main processing function containing calls to many functions
+import createmask
+import ratio
+import createregions
+import poster_images
+import skycover
+import thresholds
+import settings
+import cv2
+import overlay
+import labelled_image
+import overview
 
-from myimports import *
 
-from createmask import createmask
-from overviewplot import overviewPlot
-from calculateratio import calculateRatio
-from plotratio import plotRatio
-from calculateskycover import calculateSkyCover
-from setthresholds import setThresholds
-from project3d import project3d
-from createregions import createRegions
-from overview_with_segments import saveOutputToFigures
-from overlay_outlines_on_image import overlayOutlinesOnImage
-from presolarcorrection import preSolarCorrection
-from calculateskycoverHYTA import calculateSkyCoverWithHYTA
-from set_hyta_threshold import setHYTAThreshold
-from overlay_outlines_on_HYTA_image import overlayOutlinesOnHYTAImage
-from completeplot import completeplot
+def processor(img, img_tsi, azimuth, altitude, filename):
+    """Call underlying processing routines and return the information to :meth:`main`.
 
-def processor(img, imgTSI, azimuth, altitude, filename):
-	# create mask
-	mask = createmask(img, azimuth, altitude)
+    Args:
+        img (int): Original image
+        img_tsi (int): Processed image from the tsi software
+        azimuth (float): azimuth of the sun, taken from the properties file
+        altitude (float): altitude of the sun, taken from the properties file
+        filename (str): Name of the file currently in use
 
-	# apply the mask and display the result
-	maskedImg = cv2.bitwise_and(img, mask)
+    Returns:
+        tuple: sky cover percentages, masked image, and pixel counts
+    """
+    mask = createmask.create(img, azimuth)
+    masked_img = cv2.bitwise_and(img, mask)
 
-	# plot the data onto a 3d projected plane
-	#project3d(maskedImg)
+    fixed_sunny_threshold, fixed_thin_threshold = thresholds.fixed()
+    ratioBR_norm_1d_nz, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
 
-	# plot the overview showing the image, mask, and histogram
-	#overviewPlot(img,mask,maskedImg)
+    # calculate red/blue ratio per pixel
+    red_blue_ratio = ratio.red_blue(masked_img)
 
-	# set thresholds for plotting and sky cover calculations
-	sunnyThreshold,thinThreshold = setThresholds()
-	HYTAThreshold,HYTACloud,HYTASun,flatNormalizedRatioBRNoZeros,stDev = setHYTAThreshold(maskedImg)
+    # create the segments for solar correction
+    regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth, altitude)
 
-	# calculate red/blue ratio per pixel
-	redBlueRatio = calculateRatio(maskedImg)
+    # calculate fractional skycover
+    cover_thin_fixed, cover_opaque_fixed, cover_total_fixed = skycover.fixed(red_blue_ratio, fixed_sunny_threshold,
+                                                                             fixed_thin_threshold)
+    cover_total_hybrid = skycover.hybrid(ratioBR_norm_1d_nz, hybrid_threshold)
 
-	# create the segments for solar correction
-	regions, outlines, labels, stencil, imageWithOutlines = createRegions(img, imgTSI, azimuth, altitude, filename)
+    # overlay outlines on image(s)
+    image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil, fixed_sunny_threshold,
+                                              fixed_thin_threshold)
+    image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold)
 
-	# plot the reb/blue ratios
-	#plotRatio(img,redBlueRatio, sunnyThreshold, thinThreshold, filename)
+    # get some data before doing actual solar/horizon area corrections
+    outside_c, outside_s, horizon_c, horizon_s, inner_c, inner_s, sun_c, sun_s = labelled_image.calculate_pixels(labels,
+                                                                                                                 red_blue_ratio,
+                                                                                                                 fixed_sunny_threshold)
 
-	# calculate fractional skycover
-	thinSkyCover, opaqueSkyCover, fractionalSkyCover = calculateSkyCover(redBlueRatio, sunnyThreshold, thinThreshold)
-	fractionalSkyCoverHYTA = calculateSkyCoverWithHYTA(HYTACloud,HYTASun)
+    # plot overview with outlines
+    # saveOutputToFigures(filename,img,img_tsi,regions,image_with_outlines_fixed,image_with_outlines_hybrid)
 
-	# overlay outlines on image(s)
-	imageWithOutlines = overlayOutlinesOnImage(redBlueRatio,outlines,stencil)
-	imageWithOutlinesHYTA = overlayOutlinesOnHYTAImage(maskedImg,outlines,stencil,HYTAThreshold,filename)
+    if settings.plot_overview:
+        # plot complete overview with 5 different images, histogram and cloud cover comparisons
+        overview.plot(img, img_tsi, regions, image_with_outlines_fixed, image_with_outlines_hybrid, azimuth,
+                      ratioBR_norm_1d_nz, hybrid_threshold, st_dev)
 
-	# get some data before doing actual solar/horizon area corrections
-	outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS = preSolarCorrection(labels, redBlueRatio, sunnyThreshold)
+    if settings.plot_poster_images:
+        # plot images for use in poster
+        poster_images.plot(filename, img, img_tsi, image_with_outlines_fixed)
 
-	# plot overview with outlines
-	#saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA)
-
-	# plot complete overview with 5 different images, histogram and cloud cover comparisons
-	completeplot(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flatNormalizedRatioBRNoZeros,HYTAThreshold,stDev)
-
-	return thinSkyCover, opaqueSkyCover, fractionalSkyCover,fractionalSkyCoverHYTA, maskedImg, outsideC, outsideS, horizonC, horizonS, innerC, innerS, sunC, sunS
+    return cover_thin_fixed, cover_opaque_fixed, cover_total_fixed, cover_total_hybrid, masked_img, outside_c, outside_s, horizon_c, horizon_s, inner_c, inner_s, sun_c, sun_s
