@@ -39,7 +39,7 @@ def fixed(img, outlines, stencil, fixed_sunny_threshold, fixed_thin_threshold):
     """Preprocess image to be compatible with :meth:`overlay.outlines_over_image` using fixed thresholding
 
     Args:
-        img (int): image in NumPy format
+        img: image in NumPy format
         outlines (int): RGB array of the segment outlines
         stencil (int): stencil array in RGB format
         fixed_sunny_threshold (float): threshold for sun/cloud
@@ -69,7 +69,7 @@ def hybrid(img, outlines, stencil, threshold):
     """Preprocess image to be compatible with :meth:`overlay.outlines_over_image` using the hybrid threshold
 
     Args:
-        img (int): image in NumPy format
+        img: image in NumPy format
         outlines (int): RGB array of the segment outlines
         stencil (int): stencil array in RGB format
         threshold (float): threshold for sun/cloud determined by HYbrid Thresholding Algorithm (HYTA)

@@ -5,18 +5,21 @@
 
 import numpy as np
 import settings
-from math import log10
+from math import log10, sqrt
 from skimage.feature import greycomatrix
 import color_bands
+import resolution
+import cv2
 
 
 # TODO: mask GLCM matrices properly with NumPy
+# TODO: color_bands.extract and scaler calc is called two times separately in fucntions, can i avoid this?
 
-def calculate_greymatrix(masked_img):
+def calculate_greymatrix(img):
     """Calculate the Grey Level Co-occurence Matrix (GLCM)
 
     Args:
-        masked_img (int): masked RGB image (NumPy array)
+        img (int): masked RGB image (NumPy array)
 
     Returns:
         float: grey level co-occurrence matrix
@@ -25,7 +28,7 @@ def calculate_greymatrix(masked_img):
     scaler = int(settings.max_color_value / settings.grey_levels)
 
     # extract the individual color bands as greyscale
-    blue_band, green_band, red_band = color_bands.extract(scaler, masked_img)
+    blue_band, green_band, red_band = color_bands.extract(scaler, img)
 
     blue_band = blue_band.astype(int)
     # Grey Level Co-occurrence Matrices (GLCM)
@@ -39,17 +42,17 @@ def calculate_greymatrix(masked_img):
     return GLCM2D
 
 
-def calculate_features(masked_img):
+def textural_features(img):
     """Determine statistical features from grey level co-occurrence matrix
 
     Args:
-         masked_img (int): masked RGB image (NumPy array)
+         img (int): masked RGB image (NumPy array)
 
     Returns:
         tuple: energy, entropy, contrast, homogeneity
     """
 
-    GLCM = calculate_greymatrix(masked_img)
+    GLCM = calculate_greymatrix(img)
 
     energy = entropy = contrast = homogeneity = 0
 
@@ -68,3 +71,29 @@ def calculate_features(masked_img):
                 pass
 
     return energy, entropy, contrast, homogeneity
+
+
+def spectral_features(img):
+    # set the number of grey levels used in the GLCM calculation
+    scaler = int(settings.max_color_value / settings.grey_levels)
+
+    av1 = np.mean(img[:,:,1])
+
+    # extract the individual color bands as greyscale
+    blue_band, green_band, red_band = color_bands.extract(scaler, img)
+
+    av2 = np.mean(green_band)
+
+    print(abs(av1-av2))
+
+    n = resolution.x * resolution.y
+    mean_r = np.sum(red_band) / n
+    mean_g = np.sum(green_band) / n
+    mean_b = np.sum(blue_band) / n
+    st_dev = sqrt(np.sum(np.square(np.subtract(blue_band, mean_b))) / (n - 1))
+    skewness = np.sum(np.power(np.divide(np.subtract(blue_band, mean_b), st_dev), 3)) / n
+    diffRG = mean_r - mean_g
+    diffRB = mean_r - mean_b
+    diffGB = mean_g - mean_b
+
+    return mean_r, mean_g, mean_b, st_dev, skewness, diffRG, diffRB, diffGB

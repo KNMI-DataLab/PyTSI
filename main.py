@@ -14,10 +14,27 @@ import resolution
 import settings
 import read_properties_file
 from shutil import copyfile
+import write_to_csv
+import sys
+import loop
 
 
 def main():
     """Call processing functions and write output to file"""
+    with open(settings.output_data, 'w') as fd:
+        # TODO: make delimiter a variable, set it in the if/else and delcare writer only one time underneath it
+        if settings.data_type == 'SWIMSEG':
+            writer = csv.writer(fd, delimiter=',')
+        else:
+            writer = csv.writer(fd, delimiter='\t')
+        write_to_csv.headers(writer)
+
+        loop.structure(writer)
+
+        #write_to_csv.output_data(writer)
+
+    sys.exit('')
+
     # initiate variables
     # directory in which the data is located
     directory_in_str = settings.main_data
@@ -28,13 +45,8 @@ def main():
     # alphabetically sort the files in the directory
     sorted_directory = sorted(os.listdir(directory))
 
-    # the '0' is added to exclude some files in the directory
-    properties_extension = '0.properties.gz'
-    jpg_extension = '0.jpg'
-    png_extension = '0.png'
-
     # open the data file
-    with open('data.csv', 'w') as fd:
+    with open(settings.output_data, 'w') as fd:
         writer = csv.writer(fd, delimiter='\t')
         # write headers to file
         writer.writerow(['filename', 'altitude', 'azimuth',
@@ -50,7 +62,7 @@ def main():
             # decode the filename from bytes to string
             filename = os.fsdecode(file)
             # search for all files ending with particular extension
-            if filename.endswith(properties_extension):
+            if filename.endswith(settings.properties_extension):
                 # unzip the gzip file, open the file as rt=read text
                 with gzip.open(directory_in_str + '/' + filename, 'rt') as f:
                     lines = []
@@ -70,9 +82,9 @@ def main():
 
                         # read the image
                         img = cv2.imread(
-                            directory_in_str + '/' + filename.replace(properties_extension, jpg_extension))
+                            directory_in_str + '/' + filename.replace(settings.properties_extension, settings.jpg_extension))
                         img_tsi = cv2.imread(
-                            directory_in_str + '/' + filename.replace(properties_extension, png_extension))
+                            directory_in_str + '/' + filename.replace(settings.properties_extension, settings.png_extension))
 
                         # get the resolution of the image
                         resolution.get_resolution(img)
@@ -82,17 +94,17 @@ def main():
                          fractional_sky_cover_hybrid, maskedImg, outsideC,
                          outsideS, horizonC, horizonS,
                          innerC, innerS, sunC, sunS) = processor(img, img_tsi, azimuth, altitude,
-                                                                 filename.replace(properties_extension, ''))
+                                                                 filename.replace(settings.properties_extension, ''))
 
                         # calculate statistical properties of the image
                         if settings.use_statistical_analysis:
-                            energy, entropy, contrast, homogeneity = statistical_analysis.calculate_features(
+                            energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(
                                 maskedImg)
                         else:
                             energy = entropy = contrast = homogeneity = 0
 
                         # write data to file
-                        writer.writerow((filename.replace(properties_extension, ''),
+                        writer.writerow((filename.replace(settings.properties_extension, ''),
                                          altitude, azimuth,
                                          thin_sky_cover, opaque_sky_cover, fractionalSkyCover,
                                          fractional_sky_cover_hybrid,
@@ -103,7 +115,7 @@ def main():
                                          ))
 
     # rename file
-    copyfile('data.csv', 'data_for_completeplot.csv')
+    copyfile(settings.output_data, settings.output_data_for_movie)
 
     # postprocessing step which carries out corrections for solar/horizon area
     if settings.use_postprocessing:

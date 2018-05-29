@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 def plot(img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flatNormalizedRatioBRNoZeros,threshold,stDev):
 	currentAzimuth = azimuth
 
-	data = np.genfromtxt('data_for_completeplot.csv', delimiter='\t', names=True)
+	data = np.genfromtxt('output_data_movie.csv', delimiter='\t', names=True)
 	corrections = np.genfromtxt('corrections.csv', delimiter='\t', names=True)
 	mobotix = np.genfromtxt('/nobackup/users/mos/testing/mobotix/mobotix_cloud_cover.csv', delimiter='\t')
 

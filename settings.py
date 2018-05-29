@@ -19,9 +19,22 @@ import sys
 sys.path.append('./plotting')
 
 # data
-main_data = '/nobackup/users/mos/poster_data'
+# main_data = '/nobackup/users/mos/poster_data'
+main_data = '/nobackup/users/mos/SEG_data/swimcat/'
+output_data = 'data.csv'
+output_data_for_movie = 'data_for_movie.csv'
+data_type = 'SWIMSEG'  # data_type = 'SWIMSEG'
 
-# variables
+# image extensions
+if data_type == 'TSI':
+    # the '0' is added to exclude some files in the directory
+    properties_extension = '0.properties.gz'
+    jpg_extension = '0.jpg'
+    png_extension = '0.png'
+elif data_type == 'SWIMSEG':
+    jpg_extension = '.jpg'
+    png_extension = '.png'
+
 # aerosol correction
 initial_adjustment_factor_limit = 0.5
 st_dev_limit = 0.09
@@ -63,7 +76,7 @@ minimum_altitude = 10
 # GLCM
 dx = 1
 dy = 1
-grey_levels = 16
+grey_levels = 256
 
 # thresholds
 # fixed
