@@ -19,11 +19,12 @@ import sys
 sys.path.append('./plotting')
 
 # data
-# main_data = '/nobackup/users/mos/poster_data'
-main_data = '/nobackup/users/mos/SEG_data/swimcat/'
+main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
+# main_data = '/nobackup/users/mos/SEG_data/swimcat/'
 output_data = 'data.csv'
 output_data_for_movie = 'data_for_movie.csv'
-data_type = 'SWIMSEG'  # data_type = 'SWIMSEG'
+data_type = 'TSI'
+#data_type = 'SWIMSEG'
 
 # image extensions
 if data_type == 'TSI':
@@ -80,8 +81,11 @@ grey_levels = 256
 
 # thresholds
 # fixed
+fixed_SWIMSEG_threshold = 0.92
 fixed_sunny_threshold = 0.795
 fixed_thin_threshold = 0.9
+use_single_threshold = True # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
+use_hybrid_SWIMSEG = False # if True: use hybrid thresholding for SWIMSEG database (not recommended)
 
 # hybrid algorithm
 # setups: 1) devThr: 0.065, fixThr: 0.20

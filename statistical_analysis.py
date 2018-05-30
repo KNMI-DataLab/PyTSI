@@ -1,15 +1,9 @@
-# DESCRIPTION: calculates various statistical properties of the image.
-#              the statistical features provide information about the type
-#              of cloud (texture). these properties are used in the
-#              machine learning algorithm to examine accuracy
-
 import numpy as np
 import settings
 from math import log10, sqrt
 from skimage.feature import greycomatrix
 import color_bands
 import resolution
-import cv2
 
 
 # TODO: mask GLCM matrices properly with NumPy
@@ -74,17 +68,19 @@ def textural_features(img):
 
 
 def spectral_features(img):
+    """Calculate spectral features from image
+
+    Args:
+        img: input image
+
+    Returns:
+        tuple: spectral features
+    """
     # set the number of grey levels used in the GLCM calculation
     scaler = int(settings.max_color_value / settings.grey_levels)
 
-    av1 = np.mean(img[:,:,1])
-
     # extract the individual color bands as greyscale
     blue_band, green_band, red_band = color_bands.extract(scaler, img)
-
-    av2 = np.mean(green_band)
-
-    print(abs(av1-av2))
 
     n = resolution.x * resolution.y
     mean_r = np.sum(red_band) / n

@@ -21,6 +21,14 @@ import numpy as np
 
 
 def type_TSI(writer):
+    """Loop TSI data structure and features
+
+    Args:
+        writer: csv writing object
+
+    Returns:
+
+    """
     # converts the directory from string into 'bytes'
     directory = os.fsencode(settings.main_data)
 
@@ -66,7 +74,7 @@ def type_TSI(writer):
                     ratio_br_norm_1d_nz, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
 
                     # calculate red/blue ratio per pixel
-                    red_blue_ratio = ratio.red_blue(masked_img)
+                    red_blue_ratio = ratio.red_blue_v2(masked_img)
 
                     # create the segments for solar correction
                     regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
@@ -133,9 +141,17 @@ def type_TSI(writer):
 
 
 def type_SWIMSEG(writer):
+    """Loop SWIMSEG data structure and features
+
+    Args:
+        writer: csv writing object
+
+    Returns:
+
+    """
     dir_list = []
-    # dir_list.append(settings.main_data + 'A-sky/images')
-    # dir_list.append(settings.main_data + 'B-pattern/images/')
+    dir_list.append(settings.main_data + 'A-sky/images')
+    dir_list.append(settings.main_data + 'B-pattern/images/')
     # dir_list.append(settings.main_data + 'C-thick-dark/images/')
     dir_list.append(settings.main_data + 'D-thick-white/images/')
     dir_list.append(settings.main_data + 'E-veil/images/')
@@ -157,8 +173,17 @@ def type_SWIMSEG(writer):
             mean_r, mean_g, mean_b, st_dev, skewness, diffRG, diffRB, diffGB = statistical_analysis.spectral_features(
                 img)
 
-            ratio_br_norm_1d_nz, st_dev, threshold = thresholds.hybrid(img)
-            cloud_cover = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
+            if settings.use_hybrid_SWIMSEG:
+                ratio_br_norm_1d_nz, st_dev, threshold = thresholds.hybrid(img)
+                cloud_cover = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
+            else:
+                red_blue_ratio = ratio.red_blue_v2(img)
+                threshold = settings.fixed_SWIMSEG_threshold
+                tmp, tmp, cloud_cover = skycover.fixed(red_blue_ratio, threshold, threshold)
+                # print(filename)
+                # ret, t1 = cv2.threshold(red_blue_ratio, threshold, 255, cv2.THRESH_BINARY)
+                # plt.imshow(t1,cmap='Blues_r')
+                # plt.show()
 
             data_row = (filename,
                         mean_r,
@@ -179,7 +204,16 @@ def type_SWIMSEG(writer):
 
             write_to_csv.output_data(writer, data_row)
 
+
 def structure(writer):
+    """Determine and call loop for type of data
+
+    Args:
+        writer: csv writing object
+
+    Returns:
+
+    """
     if settings.data_type == 'TSI':
         type_TSI(writer)
 

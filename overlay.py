@@ -77,7 +77,8 @@ def hybrid(img, outlines, stencil, threshold):
     Returns:
         int: image with outlines
     """
-    # TODO clean this up (a.k.a. remove double cacluations of ratio etc)
+    # TODO: clean this up (a.k.a. remove double cacluations of ratio etc)
+    # TODO: remove for-loops, replace with masked numpy operations
     imgRGB = np.zeros(outlines.shape, np.uint8)
 
     ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)

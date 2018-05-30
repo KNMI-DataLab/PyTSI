@@ -4,6 +4,7 @@ import settings
 import sys
 from math import log10
 import resolution
+import ratio
 
 
 def fixed():
@@ -16,8 +17,10 @@ def fixed():
     fixed_sunny_threshold = settings.fixed_sunny_threshold
     fixed_thin_threshold = settings.fixed_thin_threshold
 
-    return fixed_sunny_threshold, fixed_thin_threshold
-
+    if settings.use_single_threshold:
+        return fixed_sunny_threshold, fixed_sunny_threshold
+    else:
+        return fixed_sunny_threshold, fixed_thin_threshold
 
 def min_cross_entropy(data, nbins):
     """Minimum cross entropy algorithm to determine the minimum of a histogram
@@ -81,42 +84,49 @@ def flatten_clean_array(img):
         float: normalized, 1D, flattened masked red/blue ratio array
     """
     # TODO: clean up, can replace ratioBR with masked numpy arrays
-    ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)
+    # ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)
 
-    # extract blue and red bands
-    B = np.zeros((resolution.x, resolution.y), dtype=int)
-    R = np.zeros((resolution.x, resolution.y), dtype=int)
-    B = img[:, :, 0].astype(int)
-    R = img[:, :, 2].astype(int)
+    # # extract blue and red bands
+    # B = np.zeros((resolution.x, resolution.y), dtype=int)
+    # R = np.zeros((resolution.x, resolution.y), dtype=int)
+    # B = img[:, :, 0].astype(int)
+    # R = img[:, :, 2].astype(int)
+    #
+    # # calculate the blue/red ratio
+    # for i in range(0, resolution.y):
+    #     for j in range(0, resolution.x):
+    #         if R[i, j] != 0 and B[i, j] != 0:
+    #             ratioBR[i, j] = B[i, j] / R[i, j]
 
-    # calculate the blue/red ratio
-    for i in range(0, resolution.y):
-        for j in range(0, resolution.x):
-            if R[i, j] != 0 and B[i, j] != 0:
-                ratioBR[i, j] = B[i, j] / R[i, j]
+    blue_red_ratio = ratio.blue_red(img)
 
     # normalized B/R ratio
-    ratioBR_norm = np.zeros(ratioBR.shape, dtype=float)
+    blue_red_ratio_norm = np.zeros(blue_red_ratio.shape, dtype=float)
 
     # catch Nan
-    if np.argwhere(np.isnan(ratioBR_norm)).any() == True:
+    if np.argwhere(np.isnan(blue_red_ratio_norm)).any() == True:
         sys.exit('NaN found in B/R ratios')
 
-    for i in range(0, resolution.y):
-        for j in range(0, resolution.x):
-            if ratioBR[i, j] != 0:
-                ratioBR_norm[i, j] = (ratioBR[i, j] - 1) / (ratioBR[i, j] + 1)
+    # for i in range(0, resolution.y):
+    #     for j in range(0, resolution.x):
+    #         if blue_red_ratio[i, j] != 0:
+    #             blue_red_ratio_norm[i, j] = (blue_red_ratio[i, j] - 1) / (blue_red_ratio[i, j] + 1)
+
+    mask = blue_red_ratio > 0
+
+    blue_red_ratio_norm[mask] = np.divide(blue_red_ratio[mask]-1,blue_red_ratio[mask]+1)
+
     # catch Nan
-    if np.argwhere(np.isnan(ratioBR_norm)).any() == True:
+    if np.argwhere(np.isnan(blue_red_ratio_norm)).any() == True:
         sys.exit('NaN found in normalized B/R ratios')
 
     # convert 2D array to 1D array
-    ratioBR_norm_1d = ratioBR_norm.flatten()
+    blue_red_ratio_norm_1d = blue_red_ratio_norm.flatten()
 
     # remove zeros from 1D array
-    ratioBR_norm_1d_nz = ratioBR_norm_1d[np.nonzero(ratioBR_norm_1d)]
+    blue_red_ratio_norm_1d_nz = blue_red_ratio_norm_1d[np.nonzero(blue_red_ratio_norm_1d)]
 
-    return ratioBR_norm_1d_nz
+    return blue_red_ratio_norm_1d_nz
 
 
 def hybrid(img):
@@ -128,10 +138,10 @@ def hybrid(img):
     Returns:
         tuple: normalized 1D flattened masked red/blue ratio array, standard deviation of the image and hybrid threshold
     """
-    ratioBR_norm_1d_nz = flatten_clean_array(img)
+    blue_red_ratio_norm_1d_nz = flatten_clean_array(img)
 
     # calculate standard deviation
-    stDev = np.std(ratioBR_norm_1d_nz)
+    stDev = np.std(blue_red_ratio_norm_1d_nz)
 
     # decide which thresholding needs to be used
     if stDev <= settings.deviation_threshold:
@@ -139,6 +149,6 @@ def hybrid(img):
         threshold = settings.fixed_threshold
     else:
         # MCE thresholding
-        threshold = min_cross_entropy(ratioBR_norm_1d_nz, settings.nbins_hybrid)
+        threshold = min_cross_entropy(blue_red_ratio_norm_1d_nz, settings.nbins_hybrid)
 
-    return ratioBR_norm_1d_nz, stDev, threshold
+    return blue_red_ratio_norm_1d_nz, stDev, threshold
