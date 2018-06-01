@@ -1,4 +1,3 @@
-import resolution
 import settings
 from math import cos, sin, tan, pi
 import numpy as np
@@ -18,10 +17,10 @@ def calculate_band_position(theta):
        tuple: X and y locations of the inner and outer points of the shadow band
     """
 
-    x_inner = int(resolution.x / 2 + settings.r_inner * cos(theta))
-    y_inner = int(resolution.y / 2 + settings.r_inner * sin(-theta))
-    x_outer = int(resolution.x / 2 + settings.r_outer * cos(theta))
-    y_outer = int(resolution.y / 2 + settings.r_outer * sin(-theta))
+    x_inner = int(settings.x / 2 + settings.r_inner * cos(theta))
+    y_inner = int(settings.y / 2 + settings.r_inner * sin(-theta))
+    x_outer = int(settings.x / 2 + settings.r_outer * cos(theta))
+    y_outer = int(settings.y / 2 + settings.r_outer * sin(-theta))
 
     return x_inner, y_inner, x_outer, y_outer
 
@@ -36,7 +35,7 @@ def create(img, azimuth):
     * The camera and camera arm.
 
     Args:
-        img (int): Image in NumPy format
+        img: Image in NumPy format
         azimuth (float): Azimuth of the sun, taken from the properties file
 
     Returns:
@@ -46,7 +45,7 @@ def create(img, azimuth):
 
     # HEMISPHERE
     # draw a white circle on the mask
-    cv2.circle(mask, (int(resolution.x / 2), int(resolution.y / 2)), settings.radius_circle, settings.white, -1)
+    cv2.circle(mask, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, settings.white, -1)
 
     # SHADOWBAND
     # first calculate the position of the shadow band
@@ -66,6 +65,6 @@ def create(img, azimuth):
     # ARM + CAMERA
     cv2.rectangle(mask, (141, 190), (154, 153), (0, 0, 0), -1)
     cv2.rectangle(mask, (145, 154), (152, 91), (0, 0, 0), -1)
-    cv2.rectangle(mask, (int(resolution.x / 2), 91), (152, 26), (0, 0, 0), -1)
+    cv2.rectangle(mask, (int(settings.x / 2), 91), (152, 26), (0, 0, 0), -1)
 
     return mask

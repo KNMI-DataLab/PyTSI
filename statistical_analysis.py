@@ -82,14 +82,14 @@ def spectral_features(img):
     # extract the individual color bands as greyscale
     blue_band, green_band, red_band = color_bands.extract(scaler, img)
 
-    n = resolution.x * resolution.y
+    n = settings.x * settings.y
     mean_r = np.sum(red_band) / n
     mean_g = np.sum(green_band) / n
     mean_b = np.sum(blue_band) / n
     st_dev = sqrt(np.sum(np.square(np.subtract(blue_band, mean_b))) / (n - 1))
     skewness = np.sum(np.power(np.divide(np.subtract(blue_band, mean_b), st_dev), 3)) / n
-    diffRG = mean_r - mean_g
-    diffRB = mean_r - mean_b
-    diffGB = mean_g - mean_b
+    diff_rg = mean_r - mean_g
+    diff_rb = mean_r - mean_b
+    diff_gb = mean_g - mean_b
 
-    return mean_r, mean_g, mean_b, st_dev, skewness, diffRG, diffRB, diffGB
+    return mean_r, mean_g, mean_b, st_dev, skewness, diff_rg, diff_rb, diff_gb

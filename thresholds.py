@@ -84,17 +84,17 @@ def flatten_clean_array(img):
         float: normalized, 1D, flattened masked red/blue ratio array
     """
     # TODO: clean up, can replace ratioBR with masked numpy arrays
-    # ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)
+    # ratioBR = np.zeros([settings.y, settings.x], dtype=float)
 
     # # extract blue and red bands
-    # B = np.zeros((resolution.x, resolution.y), dtype=int)
-    # R = np.zeros((resolution.x, resolution.y), dtype=int)
+    # B = np.zeros((settings.x, settings.y), dtype=int)
+    # R = np.zeros((settings.x, settings.y), dtype=int)
     # B = img[:, :, 0].astype(int)
     # R = img[:, :, 2].astype(int)
     #
     # # calculate the blue/red ratio
-    # for i in range(0, resolution.y):
-    #     for j in range(0, resolution.x):
+    # for i in range(0, settings.y):
+    #     for j in range(0, settings.x):
     #         if R[i, j] != 0 and B[i, j] != 0:
     #             ratioBR[i, j] = B[i, j] / R[i, j]
 
@@ -107,8 +107,8 @@ def flatten_clean_array(img):
     if np.argwhere(np.isnan(blue_red_ratio_norm)).any() == True:
         sys.exit('NaN found in B/R ratios')
 
-    # for i in range(0, resolution.y):
-    #     for j in range(0, resolution.x):
+    # for i in range(0, settings.y):
+    #     for j in range(0, settings.x):
     #         if blue_red_ratio[i, j] != 0:
     #             blue_red_ratio_norm[i, j] = (blue_red_ratio[i, j] - 1) / (blue_red_ratio[i, j] + 1)
 
@@ -141,14 +141,14 @@ def hybrid(img):
     blue_red_ratio_norm_1d_nz = flatten_clean_array(img)
 
     # calculate standard deviation
-    stDev = np.std(blue_red_ratio_norm_1d_nz)
+    st_dev = np.std(blue_red_ratio_norm_1d_nz)
 
     # decide which thresholding needs to be used
-    if stDev <= settings.deviation_threshold:
+    if st_dev <= settings.deviation_threshold:
         # fixed thresholding
         threshold = settings.fixed_threshold
     else:
         # MCE thresholding
         threshold = min_cross_entropy(blue_red_ratio_norm_1d_nz, settings.nbins_hybrid)
 
-    return blue_red_ratio_norm_1d_nz, stDev, threshold
+    return blue_red_ratio_norm_1d_nz, st_dev, threshold

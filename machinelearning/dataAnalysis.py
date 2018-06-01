@@ -93,13 +93,13 @@ def calculateSpectralFeatures(redBand, greenBand, blueBand, N):
     meanR = np.sum(redBand) / N
     meanG = np.sum(greenBand) / N
     meanB = np.sum(blueBand) / N
-    stDev = sqrt(np.sum(np.square(np.subtract(blueBand, meanB))) / (N - 1))
-    skewness = np.sum(np.power(np.divide(np.subtract(blueBand, meanB), stDev), 3)) / N
+    st_dev = sqrt(np.sum(np.square(np.subtract(blueBand, meanB))) / (N - 1))
+    skewness = np.sum(np.power(np.divide(np.subtract(blueBand, meanB), st_dev), 3)) / N
     diffRG = meanR - meanG
     diffRB = meanR - meanB
     diffGB = meanG - meanB
 
-    return meanR, meanG, meanB, stDev, skewness, diffRG, diffRB, diffGB
+    return meanR, meanG, meanB, st_dev, skewness, diffRG, diffRB, diffGB
 
 
 # energy,entropy,contrast,homogeneity
@@ -171,7 +171,7 @@ def calculateSkyCover(img, cloudyThreshold, filename):
     return fractionalSkyCover
 
 
-# write to file: id,mean,stdev,skew,diff,energy,entropy,contrast,homogeneity,cloudcover,class
+# write to file: id,mean,st_dev,skew,diff,energy,entropy,contrast,homogeneity,cloudcover,class
 # classes:
 # - 0: sky
 # - 1: pattern
@@ -205,7 +205,7 @@ def main():
         writer = csv.writer(csvfile, delimiter=',')
         # write the headers to the file
         csvfile.write(
-            'filename,meanR,meanG,meanB,stDev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudCover,cloudClass\n')
+            'filename,meanR,meanG,meanB,st_dev,skewness,diffRG,diffRB,diffGB,energy,entropy,contrast,homogeneity,cloudCover,cloudClass\n')
         for cloudClass, dirName in enumerate(tqdm(dirList)):
             dirName = os.fsencode(dirList[cloudClass])
             dirName = os.listdir(dirName)
@@ -227,7 +227,7 @@ def main():
                                     levels=greyLevels)
                 # GLCM = calculateGLCM(blueBand,greyLevels)
                 # calculate the spectral features
-                meanR, meanG, meanB, stDev, skewness, diffRG, diffRB, diffGB = calculateSpectralFeatures(redBand,
+                meanR, meanG, meanB, st_dev, skewness, diffRG, diffRB, diffGB = calculateSpectralFeatures(redBand,
                                                                                                          greenBand,
                                                                                                          blueBand, N)
                 # calculate the textural features
@@ -236,7 +236,7 @@ def main():
                 cloudCover = calculateSkyCover(img, cloudyThreshold, filename)
                 # write the data to a file
                 writer.writerow((
-                                filename, meanR, meanG, meanB, stDev, skewness, diffRG, diffRB, diffGB, energy, entropy,
+                                filename, meanR, meanG, meanB, st_dev, skewness, diffRG, diffRB, diffGB, energy, entropy,
                                 contrast, homogeneity, cloudCover, cloudClass))
 
     print('END')

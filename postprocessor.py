@@ -1,7 +1,7 @@
-from myimports import *
-from numpy import genfromtxt
+import numpy as np
 from plotcorrectionresult import plot_correction_results
 import csv as csv
+import settings
 
 
 def aerosol_correction():
@@ -12,7 +12,7 @@ def aerosol_correction():
     :meth:`settings`. Subsequently, the corrected sky cover percentages are written to a file.
     """
     # read columns of file
-    df = genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv', skip_header=1, delimiter='\t')
+    df = np.genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv', skip_header=1, delimiter='\t')
 
     azimuth = df[:, 2]
     outside_c = df[:, 14]

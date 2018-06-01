@@ -1,4 +1,4 @@
-import resolution
+import settings
 import numpy as np
 import math
 
@@ -33,7 +33,7 @@ def fixed(red_blue_ratio, fixed_sunny_threshold, fixed_thin_threshold):
         print('R/B ratio NaN found')
         sys.exit('')
 
-    if sunny_pixels + cloudy_pixels > resolution.y * resolution.x:
+    if sunny_pixels + cloudy_pixels > settings.y * settings.x:
         print('Total amount of non-mask pixels error: ', sunny_pixels, cloudy_pixels)
         sys.exit('')
 

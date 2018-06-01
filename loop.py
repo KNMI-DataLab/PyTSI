@@ -16,8 +16,6 @@ import os
 from tqdm import tqdm
 import gzip
 import statistical_analysis
-from matplotlib import pyplot as plt
-import numpy as np
 
 
 def type_TSI(writer):
@@ -140,8 +138,8 @@ def type_TSI(writer):
                     write_to_csv.output_data(writer, data_row)
 
 
-def type_SWIMSEG(writer):
-    """Loop SWIMSEG data structure and features
+def type_SEG(writer):
+    """Loop SEG data structure and features
 
     Args:
         writer: csv writing object
@@ -170,15 +168,15 @@ def type_SWIMSEG(writer):
 
             # GLCM = statistical_analysis.calculate_greymatrix(img)
             energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
-            mean_r, mean_g, mean_b, st_dev, skewness, diffRG, diffRB, diffGB = statistical_analysis.spectral_features(
+            mean_r, mean_g, mean_b, st_dev, skewness, diff_rg, diff_rb, diff_gb = statistical_analysis.spectral_features(
                 img)
 
-            if settings.use_hybrid_SWIMSEG:
+            if settings.use_hybrid_SEG:
                 ratio_br_norm_1d_nz, st_dev, threshold = thresholds.hybrid(img)
                 cloud_cover = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
             else:
                 red_blue_ratio = ratio.red_blue_v2(img)
-                threshold = settings.fixed_SWIMSEG_threshold
+                threshold = settings.fixed_SEG_threshold
                 tmp, tmp, cloud_cover = skycover.fixed(red_blue_ratio, threshold, threshold)
                 # print(filename)
                 # ret, t1 = cv2.threshold(red_blue_ratio, threshold, 255, cv2.THRESH_BINARY)
@@ -191,9 +189,9 @@ def type_SWIMSEG(writer):
                         mean_b,
                         st_dev,
                         skewness,
-                        diffRG,
-                        diffRB,
-                        diffGB,
+                        diff_rg,
+                        diff_rb,
+                        diff_gb,
                         energy,
                         entropy,
                         contrast,
@@ -217,8 +215,8 @@ def structure(writer):
     if settings.data_type == 'TSI':
         type_TSI(writer)
 
-    elif settings.data_type == 'SWIMSEG':
-        type_SWIMSEG(writer)
+    elif settings.data_type == 'SEG':
+        type_SEG(writer)
 
     elif settings.data_type == '':
         pass

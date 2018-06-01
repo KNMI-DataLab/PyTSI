@@ -43,7 +43,7 @@ for i,file in enumerate(sorted(os.listdir(path))):
 
 		#img = cv2.imread(directory_in_str+'/'+filename+'.jpg')
 
-		#x, y, nColors = img.shape
+		#x, y, n_colors = img.shape
 
 		azimuth[i]  = get_azimuth(lat, lon, date)+360
 		altitude[i] = get_altitude(lat, lon, date)

@@ -33,9 +33,9 @@ ratioBR = np.divide(B,R)
 normalizedRatioBR = np.divide(ratioBR-1,ratioBR+1)
 
 # StdDev
-stDev = np.std(normalizedRatioBR)
+st_dev = np.std(normalizedRatioBR)
 deviationThreshold = 0.03
-print('Standard deviation of the image', file,'is',stDev)
+print('Standard deviation of the image', file,'is',st_dev)
 print('The deviation threshold is set to', deviationThreshold)
 
 mean = np.mean(normalizedRatioBR)
@@ -80,7 +80,7 @@ def determineMCEThreshold(data):
 	threshold = bins[np.argmin(thresholdList)]
 	return threshold
 
-if stDev <= deviationThreshold:
+if st_dev <= deviationThreshold:
 	# fixed thresholding
 	threshold = 0.250
 	print('Threshold type: fixed')

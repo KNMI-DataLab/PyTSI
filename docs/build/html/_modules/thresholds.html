@@ -278,17 +278,17 @@
     <span class="n">ratioBR_norm_1d_nz</span> <span class="o">=</span> <span class="n">flatten_clean_array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
     <span class="c1"># calculate standard deviation</span>
-    <span class="n">stDev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">)</span>
+    <span class="n">st_dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">)</span>
 
     <span class="c1"># decide which thresholding needs to be used</span>
-    <span class="k">if</span> <span class="n">stDev</span> <span class="o">&lt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">deviation_threshold</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">st_dev</span> <span class="o">&lt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">deviation_threshold</span><span class="p">:</span>
         <span class="c1"># fixed thresholding</span>
         <span class="n">threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># MCE thresholding</span>
         <span class="n">threshold</span> <span class="o">=</span> <span class="n">min_cross_entropy</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">nbins_hybrid</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">stDev</span><span class="p">,</span> <span class="n">threshold</span></div>
+    <span class="k">return</span> <span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">threshold</span></div>
 </pre></div>
 
            </div>

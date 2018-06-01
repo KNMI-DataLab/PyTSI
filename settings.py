@@ -19,20 +19,28 @@ import sys
 sys.path.append('./plotting')
 
 # data
-main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
-# main_data = '/nobackup/users/mos/SEG_data/swimcat/'
+#main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
+main_data = '/nobackup/users/mos/data/SEG/swimcat/'
 output_data = 'data.csv'
 output_data_for_movie = 'data_for_movie.csv'
-data_type = 'TSI'
-#data_type = 'SWIMSEG'
+tsi_str = 'TSI'
+seg_str = 'SEG'
+
+if main_data.find(tsi_str, 0, len(main_data)) != -1:
+    data_type = tsi_str
+elif main_data.find(seg_str, 0, len(main_data)) != -1:
+    data_type = seg_str
+else:
+    raise Exception('Data type not found')
 
 # image extensions
 if data_type == 'TSI':
     # the '0' is added to exclude some files in the directory
     properties_extension = '0.properties.gz'
-    jpg_extension = '0.jpg'
+    jpg_extension = '0.jpg
     png_extension = '0.png'
-elif data_type == 'SWIMSEG':
+elif data_type == 'SEG':
+    properties_extension = None
     jpg_extension = '.jpg'
     png_extension = '.png'
 
@@ -45,6 +53,10 @@ horizon_sky_cover_limit = 0.2
 remainder_limit = 0.2
 st_dev_width = 11
 smoothing_width = 5
+
+x = None
+y = None
+n_colors = None
 
 # colors
 max_color_value = 256
@@ -81,11 +93,11 @@ grey_levels = 256
 
 # thresholds
 # fixed
-fixed_SWIMSEG_threshold = 0.92
+fixed_SEG_threshold = 0.92
 fixed_sunny_threshold = 0.795
 fixed_thin_threshold = 0.9
 use_single_threshold = True # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
-use_hybrid_SWIMSEG = False # if True: use hybrid thresholding for SWIMSEG database (not recommended)
+use_hybrid_SEG = False # if True: use hybrid thresholding for SEG database (not recommended)
 
 # hybrid algorithm
 # setups: 1) devThr: 0.065, fixThr: 0.20

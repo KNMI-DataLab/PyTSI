@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def plot(img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flatNormalizedRatioBRNoZeros,threshold,stDev):
+def plot(img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flatNormalizedRatioBRNoZeros,threshold,st_dev):
 	currentAzimuth = azimuth
 
 	data = np.genfromtxt('output_data_movie.csv', delimiter='\t', names=True)
@@ -55,7 +55,7 @@ def plot(img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA,azimuth,flat
 	ax5.imshow(imageWithOutlinesHYTA)
 
 	nbins=100
-	ax6.set_title('Histogram StDev='+str(stDev))
+	ax6.set_title('Histogram st_dev='+str(st_dev))
 	ax6.set_ylabel('Frequency')
 	ax6.set_xlabel('Normalized B/R Ratio')
 	ax6.set_ylim([0,30])

@@ -42,7 +42,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 		img = cv2.imread(directory_in_str+filename)
 		img = img[75:2047,210:2225,:]
 
-		xres,yres,nColors = img.shape
+		xres,yres,n_colors = img.shape
 		mask = np.zeros(img.shape, dtype='uint8')
 		cv2.circle(mask, (int(xres/2),int(yres/2)), radiusMask, white, -1)
 
@@ -62,7 +62,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 
 		sunPixels = cloudPixels = 0
 
-		skycoverimage = np.zeros((xres,yres,nColors),dtype='uint8')
+		skycoverimage = np.zeros((xres,yres,n_colors),dtype='uint8')
 		#1 is cloud, 0.5 is sun, 0 is mask
 		skycoverimage = np.where(RBRatio>0,
 							 	np.where(RBRatio>=threshold,1,0.5),0)

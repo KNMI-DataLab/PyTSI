@@ -15,10 +15,9 @@ def get_altitude(lines):
 
             # convert string to float
             altitude = float(altitude)
+            return altitude
         else:
             pass
-
-    return altitude
 
 
 def get_azimuth(lines):
@@ -36,10 +35,9 @@ def get_azimuth(lines):
 
             # convert string to float
             azimuth = float(azimuth)
+            return azimuth
         else:
             pass
-
-    return azimuth
 
 
 def get_fractional_sky_cover_tsi(lines):

@@ -1,14 +1,14 @@
-import resolution
 import numpy as np
 import cv2
 import settings
+import sys
 
 
 def outlines_over_image(img, outlines, stencil):
     """Overlay outlines on image by converting to BW and performing several other operations
 
     Args:
-        img (int): image in NumPy format
+        img: image in NumPy format
         outlines (int): RGB array of the segment outlines
         stencil (int): stencil array in RGB format
 
@@ -22,7 +22,7 @@ def outlines_over_image(img, outlines, stencil):
     mask_inv = cv2.bitwise_not(mask)
 
     # black out area of outlines
-    img_bg = cv2.bitwise_and(img[0:resolution.y, 0:resolution.x], img[0:resolution.y, 0:resolution.x],
+    img_bg = cv2.bitwise_and(img[0:settings.y, 0:settings.x], img[0:settings.y, 0:settings.x],
                              mask=mask_inv)
 
     # take only region of outlines from outlines image
@@ -40,7 +40,7 @@ def fixed(img, outlines, stencil, fixed_sunny_threshold, fixed_thin_threshold):
 
     Args:
         img: image in NumPy format
-        outlines (int): RGB array of the segment outlines
+        outlines: RGB array of the segment outlines
         stencil (int): stencil array in RGB format
         fixed_sunny_threshold (float): threshold for sun/cloud
         fixed_thin_threshold (float): threshold for thin/opaque cloud
@@ -70,7 +70,7 @@ def hybrid(img, outlines, stencil, threshold):
 
     Args:
         img: image in NumPy format
-        outlines (int): RGB array of the segment outlines
+        outlines: RGB array of the segment outlines
         stencil (int): stencil array in RGB format
         threshold (float): threshold for sun/cloud determined by HYbrid Thresholding Algorithm (HYTA)
 
@@ -81,10 +81,10 @@ def hybrid(img, outlines, stencil, threshold):
     # TODO: remove for-loops, replace with masked numpy operations
     imgRGB = np.zeros(outlines.shape, np.uint8)
 
-    ratioBR = np.zeros([resolution.y, resolution.x], dtype=float)
+    ratioBR = np.zeros([settings.y, settings.x], dtype=float)
     # extract blue and red bands
-    B = np.zeros((resolution.x, resolution.y), dtype=int)
-    R = np.zeros((resolution.x, resolution.y), dtype=int)
+    B = np.zeros((settings.x, settings.y), dtype=int)
+    R = np.zeros((settings.x, settings.y), dtype=int)
     B = img[:, :, 0].astype(int)
     R = img[:, :, 2].astype(int)
 
@@ -93,8 +93,8 @@ def hybrid(img, outlines, stencil, threshold):
     R[R == 0] = settings.mask_value
 
     # calculate the blue/red ratio
-    for i in range(0, resolution.y):
-        for j in range(0, resolution.x):
+    for i in range(0, settings.y):
+        for j in range(0, settings.x):
             if R[i, j] != settings.mask_value and B[i, j] != settings.mask_value:
                 ratioBR[i, j] = B[i, j] / R[i, j]
             else:
@@ -104,8 +104,8 @@ def hybrid(img, outlines, stencil, threshold):
     if np.argwhere(np.isnan(ratioBR)).any():
         sys.exit('NaN found in B/R ratios')
 
-    for i in range(0, resolution.y):
-        for j in range(0, resolution.x):
+    for i in range(0, settings.y):
+        for j in range(0, settings.x):
             if ratioBR[i, j] != settings.mask_value:
                 ratioBR[i, j] = (ratioBR[i, j] - 1) / (ratioBR[i, j] + 1)
 

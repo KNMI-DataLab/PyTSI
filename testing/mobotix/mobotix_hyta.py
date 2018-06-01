@@ -118,20 +118,20 @@ def setHYTAThreshold(img,xres,yres):
 	flatNormalizedRatioBRNoZeros = flatNormalizedRatioBR[np.nonzero(flatNormalizedRatioBR)]
 
 	# calculate standard deviation
-	stDev = np.std(flatNormalizedRatioBRNoZeros)
+	st_dev = np.std(flatNormalizedRatioBRNoZeros)
 
 	# calculate mean
 	mean = np.mean(flatNormalizedRatioBRNoZeros)
 
 	# decide which thresholding needs to be used
-	if stDev <= deviationThreshold:
+	if st_dev <= deviationThreshold:
 		# fixed thresholding
 		threshold = fixedThreshold
 	else:
 		# MCE thresholding
 		threshold = determineMCEThreshold(flatNormalizedRatioBRNoZeros,nbins)
 
-	return maskValue,threshold,normalizedRatioBR,flatNormalizedRatioBRNoZeros,stDev
+	return maskValue,threshold,normalizedRatioBR,flatNormalizedRatioBRNoZeros,st_dev
 
 directory_in_str = '/nobackup/users/mos/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/02/allday/'
 #directory_in_str = '/nobackup/users/mos/mobotix_test_images/'
@@ -199,7 +199,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 		img = cv2.imread(directory_in_str+filename)
 		img = img[75:2047,210:2225,:]
 
-		xres,yres,nColors = img.shape
+		xres,yres,n_colors = img.shape
 		mask = np.zeros(img.shape, dtype='uint8')
 		cv2.circle(mask, (int(xres/2),int(yres/2)), radiusMask, white, -1)
 
@@ -209,7 +209,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 
 		cv2.line(masked, (828,457), (693,96), black, 35)
 
-		maskValue,threshold,normalizedRatioBR,flatNormalizedRatioBRNoZeros,stDev = setHYTAThreshold(masked,xres,yres)
+		maskValue,threshold,normalizedRatioBR,flatNormalizedRatioBRNoZeros,st_dev = setHYTAThreshold(masked,xres,yres)
 
 		sunpixels = ma.masked_less(normalizedRatioBR,threshold,copy=True).count()
 		cldpixels = ma.masked_greater_equal(normalizedRatioBR,threshold,copy=True).count()
@@ -246,7 +246,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 			ax4.set_adjustable('box-forced')
 
 			ax4.axvline(threshold,label='threshold,'+str(threshold),color='black')
-			ax4.axvline(threshold,label='stDev,'+str(stDev),color='black')
+			ax4.axvline(threshold,label='st_dev,'+str(st_dev),color='black')
 
 			ax4.legend()
 
@@ -255,7 +255,7 @@ for i,file in enumerate(tqdm(sorted(os.listdir(path)))):
 			ax2.imshow(normalizedRatioBR)
 			ax2.set_title('normalized R/B ratio')
 			ax3.imshow(skycoverimage)
-			ax3.set_title('HYTA,'+str(stDev))
+			ax3.set_title('HYTA,'+str(st_dev))
 			ax4.hist(flatNormalizedRatioBRNoZeros,bins=200,range=(-0.5,1),normed=True)
 			plt.tight_layout()
 			plt.savefig('/nobackup/users/mos/results/mobotix_hyta/'+filename)

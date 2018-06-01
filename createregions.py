@@ -11,16 +11,16 @@ def large_circle(regions, labels, outlines):
     This circle has a radius slightly smaller than that of the mirror.
 
     Args:
-        regions (int): RGB representation of the segmented image
-        labels (int): Scalar (1,2,3,4) representation of the segmented image
-        outlines (int): RGB array of the segment outlines
+        regions: RGB representation of the segmented image
+        labels: Scalar (1,2,3,4) representation of the segmented image
+        outlines: RGB array of the segment outlines
 
     Returns:
         tuple: regions, labels, outlines
     """
-    cv2.circle(regions, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_circle, settings.red, -1)
-    cv2.circle(labels, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_circle, 1, -1)
-    cv2.circle(outlines, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_circle, settings.red,
+    cv2.circle(regions, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.red, -1)
+    cv2.circle(labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, 1, -1)
+    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.red,
                settings.outline_thickness)
 
     return regions, labels, outlines
@@ -41,16 +41,16 @@ def draw_horizon_area(azimuth, regions, labels, outlines):
     # angle from the east in stead of north
     azimuth_from_east = azimuth - 90
     # distance of the three of the four points from the center
-    r = int(resolution.x / 2)
+    r = int(settings.x / 2)
     # angle from degrees to radians
     theta = azimuth_from_east * pi / 180
     # horizon width from degrees to radians
     width = settings.width_horizon_area_degrees * pi / 180
     # four points at vertices of polygon
-    p1 = [int(int(resolution.x / 2)), int(int(resolution.y / 2))]
-    p2 = [int(int(resolution.x / 2)) + r * cos(theta - width), int(int(resolution.y / 2)) + r * sin(theta - width)]
-    p3 = [int(int(resolution.x / 2)) + r * cos(theta), int(int(resolution.y / 2)) + r * sin(theta)]
-    p4 = [int(int(resolution.x / 2)) + r * cos(theta + width), int(int(resolution.y / 2)) + r * sin(theta + width)]
+    p1 = [int(int(settings.x / 2)), int(int(settings.y / 2))]
+    p2 = [int(int(settings.x / 2)) + r * cos(theta - width), int(int(settings.y / 2)) + r * sin(theta - width)]
+    p3 = [int(int(settings.x / 2)) + r * cos(theta), int(int(settings.y / 2)) + r * sin(theta)]
+    p4 = [int(int(settings.x / 2)) + r * cos(theta + width), int(int(settings.y / 2)) + r * sin(theta + width)]
     horizon_area = np.array([p1, p2, p3, p4], dtype=int)
     # draw the polygon
     cv2.fillConvexPoly(regions, horizon_area, color=settings.cyan)
@@ -74,10 +74,10 @@ def inner_circle(regions, labels, outlines):
     Returns:
         tuple: regions, labels, outlines
     """
-    cv2.circle(regions, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_inner_circle, settings.green, -1)
-    cv2.circle(labels, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_inner_circle, 3, -1)
-    cv2.circle(outlines, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_inner_circle, (0, 0, 0), -1)
-    cv2.circle(outlines, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_inner_circle, settings.green,
+    cv2.circle(regions, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, settings.green, -1)
+    cv2.circle(labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, 3, -1)
+    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, (0, 0, 0), -1)
+    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, settings.green,
                settings.outline_thickness)
 
     return regions, labels, outlines
@@ -112,8 +112,8 @@ def sun_circle(altitude, regions, labels, outlines, theta):
     d = b ** 2 - 4 * a * c
     r = settings.radius_mirror * (-b - sqrt(d)) / (2 * a) / 2
     # x and y position of the sun
-    x_sun = int(int(resolution.x / 2) + r * cos(theta))
-    y_sun = int(int(resolution.y / 2) + r * sin(theta))
+    x_sun = int(int(settings.x / 2) + r * cos(theta))
+    y_sun = int(int(settings.y / 2) + r * sin(theta))
     # draw the circle
     cv2.circle(regions, (x_sun, y_sun), settings.radius_sun_circle, settings.yellow, -1)
     cv2.circle(labels, (x_sun, y_sun), settings.radius_sun_circle, 4, -1)
@@ -127,14 +127,14 @@ def create_stencil(stencil, stencil_labels):
     """Create the stencil which is used to mask the outside of the large circle
 
     Args:
-        stencil (int): empty stencil array in RGB format
-        stencil_labels (int): empty stencil array in scalar format
+        stencil: empty stencil array in RGB format
+        stencil_labels: empty stencil array in scalar format
 
     Returns:
         tuple: stencil in both RGB and scalar format
     """
-    cv2.circle(stencil, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_circle, settings.white, -1)
-    cv2.circle(stencil_labels, (int(int(resolution.x / 2)), int(int(resolution.y / 2))), settings.radius_circle, 1, -1)
+    cv2.circle(stencil, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.white, -1)
+    cv2.circle(stencil_labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, 1, -1)
 
     return stencil, stencil_labels
 
@@ -176,7 +176,7 @@ def overlay_outlines_on_image(img, outlines, stencil):
     mask_inv = cv2.bitwise_not(mask)
 
     # black out area of outlines
-    img_bg = cv2.bitwise_and(img[0:resolution.y, 0:resolution.x], img[0:resolution.y, 0:resolution.x], mask=mask_inv)
+    img_bg = cv2.bitwise_and(img[0:settings.y, 0:settings.x], img[0:settings.y, 0:settings.x], mask=mask_inv)
 
     # take only region of outlines from outlines image
     outlines_fg = cv2.bitwise_and(outlines, outlines, mask=mask)
@@ -202,13 +202,13 @@ def draw_arm(regions, labels, image_with_outlines):
     """
     cv2.rectangle(regions, (141, 190), (154, 153), settings.black, -1)
     cv2.rectangle(regions, (145, 154), (152, 91), settings.black, -1)
-    cv2.rectangle(regions, (int(resolution.x / 2), 91), (152, 26), settings.black, -1)
+    cv2.rectangle(regions, (int(settings.x / 2), 91), (152, 26), settings.black, -1)
     cv2.rectangle(labels, (141, 190), (154, 153), 0, -1)
     cv2.rectangle(labels, (145, 154), (152, 91), 0, -1)
-    cv2.rectangle(labels, (int(resolution.x / 2), 91), (152, 26), 0, -1)
+    cv2.rectangle(labels, (int(settings.x / 2), 91), (152, 26), 0, -1)
     cv2.rectangle(image_with_outlines, (141, 190), (154, 153), settings.black, -1)
     cv2.rectangle(image_with_outlines, (145, 154), (152, 91), settings.black, -1)
-    cv2.rectangle(image_with_outlines, (int(resolution.x / 2), 91), (152, 26), settings.black, -1)
+    cv2.rectangle(image_with_outlines, (int(settings.x / 2), 91), (152, 26), settings.black, -1)
 
     return regions, labels, image_with_outlines
 
@@ -225,10 +225,10 @@ def draw_band(regions, labels, image_with_outlines, theta):
     Returns:
         regions, labels, image_with_outlines
     """
-    x_inner = int(resolution.x / 2 + settings.r_inner * cos(theta))
-    y_inner = int(resolution.y / 2 + settings.r_inner * sin(theta))
-    x_outer = int(resolution.x / 2 + settings.r_outer * cos(theta))
-    y_outer = int(resolution.y / 2 + settings.r_outer * sin(theta))
+    x_inner = int(settings.x / 2 + settings.r_inner * cos(theta))
+    y_inner = int(settings.y / 2 + settings.r_inner * sin(theta))
+    x_outer = int(settings.x / 2 + settings.r_outer * cos(theta))
+    y_outer = int(settings.y / 2 + settings.r_outer * sin(theta))
     cv2.line(regions, (x_inner, y_inner), (x_outer, y_outer), settings.black, settings.band_thickness)
     cv2.line(labels, (x_inner, y_inner), (x_outer, y_outer), 0, settings.band_thickness)
     cv2.line(image_with_outlines, (x_inner, y_inner), (x_outer, y_outer), 0, settings.band_thickness)
@@ -248,9 +248,9 @@ def create(img, azimuth, altitude):
         tuple: regions, outlines, labels, stencil, image_with_outlines
     """
     # variable assignment
-    labels = np.zeros((resolution.y, resolution.x))
-    regions = np.zeros((resolution.y, resolution.x, resolution.nColors), dtype="uint8")
-    outlines = np.zeros((resolution.y, resolution.x, resolution.nColors), dtype="uint8")
+    labels = np.zeros((settings.y, settings.x))
+    regions = np.zeros((settings.y, settings.x, settings.n_colors), dtype="uint8")
+    outlines = np.zeros((settings.y, settings.x, settings.n_colors), dtype="uint8")
     stencil = np.zeros(regions.shape, dtype="uint8")
     stencil_labels = np.zeros(labels.shape, dtype="uint8")
     # convert from BGR -> RGB

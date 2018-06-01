@@ -7,18 +7,22 @@ def get_resolution(img):
     Order (x,y) can be swapped/reversed because the image format of TSI jpg files is reversed (for some reason).
     Resolution in both directions is then set as global so that it can be called like::
 
-        print(resolution.x)
-        print(resolution.y)
+        print(settings.x)
+        print(settings.y)
 
     Args:
-        img (int): Original unprocessed image
+        img: Original unprocessed image
 
     Returns:
 
     """
-    global x, y, nColors
+    global x, y, n_colors
 
     if settings.data_type == 'TSI':
-        y, x, nColors = img.shape
+        y, x, n_colors = img.shape
     else:
-        x, y, nColors = img.shape
+        x, y, n_colors = img.shape
+
+    settings.x = x
+    settings.y = y
+    settings.n_colors = n_colors
