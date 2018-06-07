@@ -19,27 +19,39 @@ import sys
 sys.path.append('./plotting')
 
 # data
-#main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
-main_data = '/nobackup/users/mos/data/SEG/swimcat/'
-output_data = 'data.csv'
-output_data_for_movie = 'data_for_movie.csv'
+# main data
+# main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
+# main_data = '/nobackup/users/mos/data/SEG/swimcat/'
+# main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/'
+# main_data = '/nobackup/users/mos/data/mobotix/development_images/'
+main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/16/09'
+
+# data type
 tsi_str = 'TSI'
 seg_str = 'SEG'
+mob_str = 'mobotix'
 
 if main_data.find(tsi_str, 0, len(main_data)) != -1:
     data_type = tsi_str
 elif main_data.find(seg_str, 0, len(main_data)) != -1:
     data_type = seg_str
+elif main_data.find(mob_str, 0, len(main_data)) != -1:
+    data_type = mob_str
+    output_folder = '/nobackup/users/mos/results/'+mob_str
 else:
-    raise Exception('Data type not found')
+    raise Exception('Data type not found in string: '+str(main_data))
+
+# output
+output_data = 'data.csv'
+output_data_for_movie = 'data_for_movie.csv'
 
 # image extensions
 if data_type == 'TSI':
     # the '0' is added to exclude some files in the directory
     properties_extension = '0.properties.gz'
-    jpg_extension = '0.jpg
+    jpg_extension = '0.jpg'
     png_extension = '0.png'
-elif data_type == 'SEG':
+else:
     properties_extension = None
     jpg_extension = '.jpg'
     png_extension = '.png'
@@ -54,6 +66,7 @@ remainder_limit = 0.2
 st_dev_width = 11
 smoothing_width = 5
 
+# resolutions of the system are set using get_resolution, initialize with None
 x = None
 y = None
 n_colors = None
@@ -82,6 +95,7 @@ band_thickness = 35
 width_horizon_area_degrees = 50
 r_inner = 40
 r_outer = 140
+radius_mobotix_circle = 850
 
 # sun position
 minimum_altitude = 10
@@ -103,13 +117,23 @@ use_hybrid_SEG = False # if True: use hybrid thresholding for SEG database (not 
 # setups: 1) devThr: 0.065, fixThr: 0.20
 #         2) devThr: 0.03 , fixThr: 0.20
 #         2) devThr: 0.03 , fixThr: 0.25
-deviation_threshold = 0.065  # original was 0.03, 'high:0.065'
-fixed_threshold = 0.20  # original was 0.250, 'high:0.20'
 nbins_hybrid = 100
+if data_type == 'TSI' or data_type == 'SEG':
+    deviation_threshold = 0.065  # original was 0.03, 'high:0.065'
+    fixed_threshold = 0.20  # original was 0.250, 'high:0.20'
+elif data_type == 'mobotix':
+    deviation_threshold = 0.07
+    fixed_threshold = 0.15
+
+# machine learning
+use_knn = False
+use_kmeans = False
 
 # core functionality
+use_processing_loop = True
 use_postprocessing = True
 use_statistical_analysis = True
+use_machine_learning = False
 
 # plotting
 plot_sky_cover_comparison = False

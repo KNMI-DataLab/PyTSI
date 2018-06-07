@@ -7,7 +7,10 @@ Main modules
    color_bands
    createmask
    createregions
+   crop
    labelled_image
+   loop
+   machine_learning
    main
    myimports
    overlay
@@ -20,3 +23,4 @@ Main modules
    skycover
    statistical_analysis
    thresholds
+   write_to_csv

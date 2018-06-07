@@ -45,6 +45,13 @@ def headers(writer):
                          'cloud_type'
                          ])
 
+    elif settings.data_type == 'mobotix':
+        writer.writerow(['filename',
+                         'azimuth',
+                         'altitude',
+                         'cloud_cover'
+                         ])
+
 
 def output_data(writer, data_row):
     # if settings.data_type == 'TSI':

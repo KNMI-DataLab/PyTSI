@@ -67,7 +67,10 @@ def blue_red(img):
     # rule out zeros
     mask = np.logical_and(blue_band > 0, red_band > 0)
 
-    blue_red_ratio = np.zeros([settings.y, settings.x])
+    if settings.data_type == 'TSI':
+        blue_red_ratio = np.zeros([settings.y, settings.x])
+    else:
+        blue_red_ratio = np.zeros([settings.x, settings.y])
     blue_red_ratio[mask] = np.divide(blue_band[mask],red_band[mask])
 
     return blue_red_ratio

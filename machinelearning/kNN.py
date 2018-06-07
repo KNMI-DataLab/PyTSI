@@ -1,8 +1,6 @@
 import numpy as np
 from sklearn import preprocessing, model_selection, neighbors
-from sklearn.model_selection import LeaveOneOut
 import pandas as pd
-import sys
 from tqdm import tqdm
 
 df = pd.read_csv('/home/mos/Documents/TSI/machinelearning/data_tsi_256levels.csv')

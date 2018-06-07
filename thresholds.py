@@ -3,8 +3,8 @@ import numpy as np
 import settings
 import sys
 from math import log10
-import resolution
 import ratio
+import matplotlib.pyplot as plt
 
 
 def fixed():
@@ -68,9 +68,15 @@ def min_cross_entropy(data, nbins):
 
     # catch miscalculation
     if threshold <= 0:
-        print('histogram data:', hist)
-        print('ERROR threshold (', threshold, ') smaller or equal to 0')
-
+        pass
+        #print('histogram data:', hist)
+        #print('ERROR threshold (', threshold, ') smaller or equal to 0')
+        #print('minimum is in bin:',np.argmin(thresholdList))
+        #print('bins:',bins)
+        #print('******************************************************')
+        #plt.hist(data, settings.nbins_hybrid)
+        #plt.show()
+        #raise Exception('Error in threshold')
     return threshold
 
 
@@ -78,55 +84,29 @@ def flatten_clean_array(img):
     """Convert 2D masked image to 1D flattened array to be used in MCE algorithm
 
     Args:
-        img (int): masked image
+        img: masked image
 
     Returns:
-        float: normalized, 1D, flattened masked red/blue ratio array
+        tuple: 1D (only nonzeros) and 2D array of normalized blue/red ratios
     """
-    # TODO: clean up, can replace ratioBR with masked numpy arrays
-    # ratioBR = np.zeros([settings.y, settings.x], dtype=float)
-
-    # # extract blue and red bands
-    # B = np.zeros((settings.x, settings.y), dtype=int)
-    # R = np.zeros((settings.x, settings.y), dtype=int)
-    # B = img[:, :, 0].astype(int)
-    # R = img[:, :, 2].astype(int)
-    #
-    # # calculate the blue/red ratio
-    # for i in range(0, settings.y):
-    #     for j in range(0, settings.x):
-    #         if R[i, j] != 0 and B[i, j] != 0:
-    #             ratioBR[i, j] = B[i, j] / R[i, j]
-
     blue_red_ratio = ratio.blue_red(img)
 
+    # all values equal to zero black outsides + Cabauw tower
+    mask_inv = blue_red_ratio == 0
+
     # normalized B/R ratio
-    blue_red_ratio_norm = np.zeros(blue_red_ratio.shape, dtype=float)
+    blue_red_ratio_norm = np.divide(blue_red_ratio - 1, blue_red_ratio + 1)
+    blue_red_ratio_norm[mask_inv] = settings.mask_value
+
+    blue_red_ratio_1d = blue_red_ratio.flatten()
+    blue_red_ratio_1d_nz = blue_red_ratio_1d[blue_red_ratio_1d > 0]
+    blue_red_ratio_1d_nz_norm = np.divide(blue_red_ratio_1d_nz -1, blue_red_ratio_1d_nz + 1)
 
     # catch Nan
-    if np.argwhere(np.isnan(blue_red_ratio_norm)).any() == True:
-        sys.exit('NaN found in B/R ratios')
+    if np.argwhere(np.isnan(blue_red_ratio_norm)).any():
+        raise Exception('NaN found in B/R ratios')
 
-    # for i in range(0, settings.y):
-    #     for j in range(0, settings.x):
-    #         if blue_red_ratio[i, j] != 0:
-    #             blue_red_ratio_norm[i, j] = (blue_red_ratio[i, j] - 1) / (blue_red_ratio[i, j] + 1)
-
-    mask = blue_red_ratio > 0
-
-    blue_red_ratio_norm[mask] = np.divide(blue_red_ratio[mask]-1,blue_red_ratio[mask]+1)
-
-    # catch Nan
-    if np.argwhere(np.isnan(blue_red_ratio_norm)).any() == True:
-        sys.exit('NaN found in normalized B/R ratios')
-
-    # convert 2D array to 1D array
-    blue_red_ratio_norm_1d = blue_red_ratio_norm.flatten()
-
-    # remove zeros from 1D array
-    blue_red_ratio_norm_1d_nz = blue_red_ratio_norm_1d[np.nonzero(blue_red_ratio_norm_1d)]
-
-    return blue_red_ratio_norm_1d_nz
+    return blue_red_ratio_1d_nz_norm, blue_red_ratio_norm
 
 
 def hybrid(img):
@@ -138,7 +118,7 @@ def hybrid(img):
     Returns:
         tuple: normalized 1D flattened masked red/blue ratio array, standard deviation of the image and hybrid threshold
     """
-    blue_red_ratio_norm_1d_nz = flatten_clean_array(img)
+    blue_red_ratio_norm_1d_nz, blue_red_ratio_norm_nz = flatten_clean_array(img)
 
     # calculate standard deviation
     st_dev = np.std(blue_red_ratio_norm_1d_nz)
@@ -151,4 +131,4 @@ def hybrid(img):
         # MCE thresholding
         threshold = min_cross_entropy(blue_red_ratio_norm_1d_nz, settings.nbins_hybrid)
 
-    return blue_red_ratio_norm_1d_nz, st_dev, threshold
+    return blue_red_ratio_norm_1d_nz, blue_red_ratio_norm_nz, st_dev, threshold

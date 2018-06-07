@@ -44,12 +44,13 @@ def hybrid(ratioBR_norm_1d_nz, hybrid_threshold):
     """Calculate the fractional sky cover based on hybrid thresholding.
 
     Args:
-        ratioBR_norm_1d_nz (float): normalized, masked, flattened red/blue ratio
+        ratioBR_norm_1d_nz: normalized, masked, flattened red/blue ratio
         hybrid_threshold (float): clear sky/cloud threshold determined by the hybrid algorithm
 
     Returns:
         float: fractional sky cover as determined by the hybrid thresholding algorithm
     """
+
     sun_pixels = np.sum(ratioBR_norm_1d_nz > hybrid_threshold)
     cloud_pixels = np.sum(ratioBR_norm_1d_nz < hybrid_threshold)
 

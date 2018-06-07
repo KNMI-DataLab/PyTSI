@@ -14,8 +14,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection_backup/cloudDetection'))
-sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection_backup/cloudDetection/plotting'))
+sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection/cloudDetection'))
+sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection/cloudDetection/plotting'))
 
 
 # -- Project information -----------------------------------------------------

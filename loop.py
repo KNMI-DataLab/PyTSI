@@ -13,9 +13,14 @@ import read_properties_file
 import resolution
 import write_to_csv
 import os
+import math
 from tqdm import tqdm
 import gzip
 import statistical_analysis
+import ephem
+import numpy as np
+import matplotlib.pyplot as plt
+import plot
 
 
 def type_TSI(writer):
@@ -23,9 +28,6 @@ def type_TSI(writer):
 
     Args:
         writer: csv writing object
-
-    Returns:
-
     """
     # converts the directory from string into 'bytes'
     directory = os.fsencode(settings.main_data)
@@ -69,7 +71,7 @@ def type_TSI(writer):
                     masked_img = cv2.bitwise_and(img, mask)
 
                     fixed_sunny_threshold, fixed_thin_threshold = thresholds.fixed()
-                    ratio_br_norm_1d_nz, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
+                    ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
 
                     # calculate red/blue ratio per pixel
                     red_blue_ratio = ratio.red_blue_v2(masked_img)
@@ -143,9 +145,6 @@ def type_SEG(writer):
 
     Args:
         writer: csv writing object
-
-    Returns:
-
     """
     dir_list = []
     dir_list.append(settings.main_data + 'A-sky/images')
@@ -172,16 +171,12 @@ def type_SEG(writer):
                 img)
 
             if settings.use_hybrid_SEG:
-                ratio_br_norm_1d_nz, st_dev, threshold = thresholds.hybrid(img)
+                ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(img)
                 cloud_cover = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
             else:
                 red_blue_ratio = ratio.red_blue_v2(img)
                 threshold = settings.fixed_SEG_threshold
                 tmp, tmp, cloud_cover = skycover.fixed(red_blue_ratio, threshold, threshold)
-                # print(filename)
-                # ret, t1 = cv2.threshold(red_blue_ratio, threshold, 255, cv2.THRESH_BINARY)
-                # plt.imshow(t1,cmap='Blues_r')
-                # plt.show()
 
             data_row = (filename,
                         mean_r,
@@ -203,14 +198,89 @@ def type_SEG(writer):
             write_to_csv.output_data(writer, data_row)
 
 
+def type_mobotix(writer):
+    """Processing loop for mobotix type images/data structure
+
+    Args:
+        writer: csv writing object
+    """
+    # initialize the observer object
+    camera = ephem.Observer()
+
+    # location and elevation of the Mobotix camera at Cabauw
+    camera.lat = '51.968243'
+    camera.lon = '4.927675'
+    camera.elevation = 1  # meter
+
+    write_to_csv.headers(writer)
+
+    for subdir, dirs, files in tqdm(os.walk(settings.main_data)):
+        dirs.sort()
+        files.sort()
+        for filename in files:
+            print(filename)
+            year = int('20' + filename[1:3])
+            month = int(filename[3:5])
+            day = int(filename[5:7])
+            hour = int(filename[7:9])
+            minute = int(filename[9:11])
+            second = int(filename[11:13])
+
+            # TODO: things WILL go wrong with UTC/CEST time zones
+            # set time of observer object
+            camera.date = str(year) + '/' + \
+                          str(month) + '/' + \
+                          str(day) + ' ' + \
+                          str(hour - 2) + ':' + \
+                          str(minute) + ':' + \
+                          str(second)
+
+            # make sun object
+            solar_position = ephem.Sun(camera)
+
+            azimuth = math.degrees(float(repr(solar_position.az)))
+            altitude = math.degrees(float(repr(solar_position.alt)))
+
+            if altitude < settings.minimum_altitude:
+                continue
+
+            if filename.endswith(settings.jpg_extension):
+                img = cv2.imread(os.path.join(subdir, filename))
+
+                img = img[105:2000, 335:2375, :]
+
+                resolution.get_resolution(img)
+
+                mask = np.zeros(img.shape, dtype='uint8')
+                cv2.circle(mask, (int(settings.y / 2), int(settings.x / 2)), settings.radius_mobotix_circle,
+                           settings.white, -1)
+
+                #img = img[..., ::-1]
+
+                masked = cv2.bitwise_and(img, mask)
+
+                cv2.line(masked, (840, 475), (720, 70), settings.black, 35)
+
+                blue_red_ratio_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(masked)
+
+                plot.histogram(blue_red_ratio_norm_1d_nz, filename, 'Normalized B/R', 'Frequency', st_dev, threshold)
+                plot.binary(blue_red_ratio_norm, filename, threshold)
+
+                cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
+
+                data_row = (filename,
+                            azimuth,
+                            altitude,
+                            cloud_cover
+                            )
+
+                write_to_csv.output_data(writer,data_row)
+
 def structure(writer):
     """Determine and call loop for type of data
 
     Args:
         writer: csv writing object
-
-    Returns:
-
     """
     if settings.data_type == 'TSI':
         type_TSI(writer)
@@ -218,5 +288,5 @@ def structure(writer):
     elif settings.data_type == 'SEG':
         type_SEG(writer)
 
-    elif settings.data_type == '':
-        pass
+    elif settings.data_type == 'mobotix':
+        type_mobotix(writer)
