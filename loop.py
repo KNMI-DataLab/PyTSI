@@ -210,15 +210,15 @@ def type_mobotix(writer):
     # location and elevation of the Mobotix camera at Cabauw
     camera.lat = '51.968243'
     camera.lon = '4.927675'
-    camera.elevation = 1  # meter
+    camera.elevation = 1  # meter\
 
-    write_to_csv.headers(writer)
+    n_increment = 0
 
-    for subdir, dirs, files in tqdm(os.walk(settings.main_data)):
+    for subdir, dirs, files in os.walk(settings.main_data):
         dirs.sort()
         files.sort()
+
         for filename in files:
-            print(filename)
             year = int('20' + filename[1:3])
             month = int(filename[3:5])
             day = int(filename[5:7])
@@ -231,7 +231,7 @@ def type_mobotix(writer):
             camera.date = str(year) + '/' + \
                           str(month) + '/' + \
                           str(day) + ' ' + \
-                          str(hour - 2) + ':' + \
+                          str(hour) + ':' + \
                           str(minute) + ':' + \
                           str(second)
 
@@ -241,10 +241,14 @@ def type_mobotix(writer):
             azimuth = math.degrees(float(repr(solar_position.az)))
             altitude = math.degrees(float(repr(solar_position.alt)))
 
+            n_increment += 1
+
             if altitude < settings.minimum_altitude:
                 continue
 
-            if filename.endswith(settings.jpg_extension):
+            if filename.endswith(settings.jpg_extension) and not n_increment % 8:
+                print(camera.date)
+
                 img = cv2.imread(os.path.join(subdir, filename))
 
                 img = img[105:2000, 335:2375, :]
@@ -255,7 +259,7 @@ def type_mobotix(writer):
                 cv2.circle(mask, (int(settings.y / 2), int(settings.x / 2)), settings.radius_mobotix_circle,
                            settings.white, -1)
 
-                #img = img[..., ::-1]
+                # img = img[..., ::-1]
 
                 masked = cv2.bitwise_and(img, mask)
 
@@ -268,13 +272,20 @@ def type_mobotix(writer):
 
                 cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
 
+                energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
+
                 data_row = (filename,
                             azimuth,
                             altitude,
+                            energy,
+                            entropy,
+                            contrast,
+                            homogeneity,
                             cloud_cover
                             )
 
-                write_to_csv.output_data(writer,data_row)
+                write_to_csv.output_data(writer, data_row)
+
 
 def structure(writer):
     """Determine and call loop for type of data

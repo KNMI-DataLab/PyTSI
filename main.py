@@ -6,6 +6,7 @@ from shutil import copyfile
 import write_to_csv
 import loop
 import machine_learning
+import plot
 
 
 def main():
@@ -13,12 +14,7 @@ def main():
 
     if settings.use_processing_loop:
         with open(settings.output_data, 'w') as fd:
-            if settings.data_type == 'SEG':
-                delimiter = ','
-            else:
-                delimiter = '\t'
-
-            writer = csv.writer(fd, delimiter=delimiter)
+            writer = csv.writer(fd, delimiter=settings.delimiter)
 
             write_to_csv.headers(writer)
 
@@ -40,6 +36,9 @@ def main():
     # plot the sky cover comparison
     if settings.plot_sky_cover_comparison:
         plotskycover.plot()
+
+    if settings.plot_sky_cover_time_series:
+        plot.single_time_series('sky_cover_time_series', 'azimuth', 'cloud cover (%)')
 
 
 if __name__ == '__main__':

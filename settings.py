@@ -23,8 +23,8 @@ sys.path.append('./plotting')
 # main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
 # main_data = '/nobackup/users/mos/data/SEG/swimcat/'
 # main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/'
-# main_data = '/nobackup/users/mos/data/mobotix/development_images/'
-main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/16/09'
+# main_data = '/nobackup/users/mos/data/mobotix/development_images/subfolder/'
+main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/16'
 
 # data type
 tsi_str = 'TSI'
@@ -37,13 +37,18 @@ elif main_data.find(seg_str, 0, len(main_data)) != -1:
     data_type = seg_str
 elif main_data.find(mob_str, 0, len(main_data)) != -1:
     data_type = mob_str
-    output_folder = '/nobackup/users/mos/results/'+mob_str
+    output_folder = '/nobackup/users/mos/results/' + mob_str
 else:
-    raise Exception('Data type not found in string: '+str(main_data))
+    raise Exception('Data type not found in string: ' + str(main_data))
 
 # output
 output_data = 'data.csv'
 output_data_for_movie = 'data_for_movie.csv'
+# csv delimiter
+if data_type == 'SEG':
+    delimiter = ','
+else:
+    delimiter = '\t'
 
 # image extensions
 if data_type == 'TSI':
@@ -110,8 +115,8 @@ grey_levels = 256
 fixed_SEG_threshold = 0.92
 fixed_sunny_threshold = 0.795
 fixed_thin_threshold = 0.9
-use_single_threshold = True # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
-use_hybrid_SEG = False # if True: use hybrid thresholding for SEG database (not recommended)
+use_single_threshold = True  # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
+use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not recommended)
 
 # hybrid algorithm
 # setups: 1) devThr: 0.065, fixThr: 0.20
@@ -122,8 +127,8 @@ if data_type == 'TSI' or data_type == 'SEG':
     deviation_threshold = 0.065  # original was 0.03, 'high:0.065'
     fixed_threshold = 0.20  # original was 0.250, 'high:0.20'
 elif data_type == 'mobotix':
-    deviation_threshold = 0.07
-    fixed_threshold = 0.15
+    deviation_threshold = 0.065
+    fixed_threshold = 0.20
 
 # machine learning
 use_knn = False
@@ -137,6 +142,7 @@ use_machine_learning = False
 
 # plotting
 plot_sky_cover_comparison = False
+plot_sky_cover_time_series = True
 plot_correction_result = False
 plot_overview = False
 plot_poster_images = False

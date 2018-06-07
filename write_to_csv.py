@@ -49,6 +49,10 @@ def headers(writer):
         writer.writerow(['filename',
                          'azimuth',
                          'altitude',
+                         'energy',
+                         'entropy',
+                         'contrast',
+                         'homogeneity',
                          'cloud_cover'
                          ])
 
