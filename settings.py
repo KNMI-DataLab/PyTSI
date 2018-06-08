@@ -14,17 +14,22 @@ Set the global variables for:
 * Toggling functions
 """
 import sys
+import files_folders
 
 # import the path
 sys.path.append('./plotting')
 
 # data
+# project folder
+project_folder = '/nobackup/users/mos/'
+results_folder = project_folder + 'results/'
+
 # main data
-# main_data = '/nobackup/users/mos/data/TSI/DBASE/20180211_tsi-cabauw_realtime'
-# main_data = '/nobackup/users/mos/data/SEG/swimcat/'
-# main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/'
-# main_data = '/nobackup/users/mos/data/mobotix/development_images/subfolder/'
-main_data = '/nobackup/users/mos/data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/16'
+# main_data = 'data/TSI/DBASE/20180211_tsi-cabauw_realtime'
+# main_data = 'data/SEG/swimcat/'
+# main_data = '/data/mobotix/bbc.knmi.nl/'
+# main_data = 'data/mobotix/development_images/subfolder/'
+main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
 
 # data type
 tsi_str = 'TSI'
@@ -37,13 +42,15 @@ elif main_data.find(seg_str, 0, len(main_data)) != -1:
     data_type = seg_str
 elif main_data.find(mob_str, 0, len(main_data)) != -1:
     data_type = mob_str
-    output_folder = '/nobackup/users/mos/results/' + mob_str
 else:
     raise Exception('Data type not found in string: ' + str(main_data))
+
+output_folder = files_folders.set_output_folder()
 
 # output
 output_data = 'data.csv'
 output_data_for_movie = 'data_for_movie.csv'
+
 # csv delimiter
 if data_type == 'SEG':
     delimiter = ','
@@ -60,6 +67,9 @@ else:
     properties_extension = None
     jpg_extension = '.jpg'
     png_extension = '.png'
+
+# looping
+skip_loops = 16
 
 # aerosol correction
 initial_adjustment_factor_limit = 0.5
@@ -127,8 +137,8 @@ if data_type == 'TSI' or data_type == 'SEG':
     deviation_threshold = 0.065  # original was 0.03, 'high:0.065'
     fixed_threshold = 0.20  # original was 0.250, 'high:0.20'
 elif data_type == 'mobotix':
-    deviation_threshold = 0.065
-    fixed_threshold = 0.20
+    deviation_threshold = 0.08
+    fixed_threshold = 0.10
 
 # machine learning
 use_knn = False

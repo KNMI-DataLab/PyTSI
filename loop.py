@@ -42,7 +42,7 @@ def type_TSI(writer):
         # search for all files ending with particular extension
         if filename.endswith(settings.properties_extension):
             # unzip the gzip file, open the file as rt=read text
-            with gzip.open(settings.main_data + '/' + filename, 'rt') as f:
+            with gzip.open(settings.main_data + filename, 'rt') as f:
                 lines = []
                 # read the file and store line per line
                 for line in f:
@@ -61,8 +61,8 @@ def type_TSI(writer):
                     filename_no_ext = filename.replace(settings.properties_extension, '')
 
                     # read the image
-                    img = cv2.imread(settings.main_data + '/' + filename_jpg)
-                    img_tsi = cv2.imread(settings.main_data + '/' + filename_png)
+                    img = cv2.imread(settings.main_data + filename_jpg)
+                    img_tsi = cv2.imread(settings.main_data + filename_png)
 
                     # get the resolution of the image
                     resolution.get_resolution(img)
@@ -146,12 +146,11 @@ def type_SEG(writer):
     Args:
         writer: csv writing object
     """
-    dir_list = []
-    dir_list.append(settings.main_data + 'A-sky/images')
-    dir_list.append(settings.main_data + 'B-pattern/images/')
-    # dir_list.append(settings.main_data + 'C-thick-dark/images/')
-    dir_list.append(settings.main_data + 'D-thick-white/images/')
-    dir_list.append(settings.main_data + 'E-veil/images/')
+    dir_list = (settings.main_data + 'A-sky/images/',
+                settings.main_data + 'B-pattern/images/',
+                settings.main_data + 'C-thick-dark/images/',
+                settings.main_data + 'D-thick-white/images/',
+                settings.main_data + 'E-veil/images/')
 
     for cloud_type, dir_name in enumerate(tqdm(dir_list)):
         dir_name = os.fsencode(dir_list[cloud_type])
@@ -159,7 +158,7 @@ def type_SEG(writer):
         for file in tqdm(dir_name):
             filename = os.fsdecode(file)
             # absolute location of the file
-            file_location = dir_list[cloud_type] + '/' + filename
+            file_location = dir_list[cloud_type] + filename
             # read the image
             img = cv2.imread(file_location)
 
@@ -246,8 +245,8 @@ def type_mobotix(writer):
             if altitude < settings.minimum_altitude:
                 continue
 
-            if filename.endswith(settings.jpg_extension) and not n_increment % 8:
-                print(camera.date)
+            if filename.endswith(settings.jpg_extension) and not n_increment % settings.skip_loops:
+                filename_no_ext = filename.replace(settings.jpg_extension, '')
 
                 img = cv2.imread(os.path.join(subdir, filename))
 
@@ -267,14 +266,22 @@ def type_mobotix(writer):
 
                 blue_red_ratio_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(masked)
 
-                plot.histogram(blue_red_ratio_norm_1d_nz, filename, 'Normalized B/R', 'Frequency', st_dev, threshold)
-                plot.binary(blue_red_ratio_norm, filename, threshold)
+                # plot.histogram(blue_red_ratio_norm_1d_nz, filename, 'Normalized B/R', 'Frequency', st_dev, threshold)
+                # plot.binary(blue_red_ratio_norm, filename, threshold)
+
+                plot.original_and_binary_and_histogram(img, filename_no_ext,
+                                                       blue_red_ratio_norm, 'normalized blue/red ratio',
+                                                       blue_red_ratio_norm_1d_nz, 'blue/red norm histogram',
+                                                       'Normalized B/R', 'Frequency',
+                                                       st_dev, threshold)
 
                 cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
 
+                print(camera.date, 'azimuth:', azimuth, 'altitude:', altitude, 'cloud cover:',cloud_cover)
+
                 energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
 
-                data_row = (filename,
+                data_row = (filename_no_ext,
                             azimuth,
                             altitude,
                             energy,
