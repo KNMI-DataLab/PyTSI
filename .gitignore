@@ -7,28 +7,10 @@ template.py
 
 #text files
 *.txt
-*.csv
 
 #folders
 __pycache__
 .idea
-data072017
-processed_images
-data
-test
-correctionsoftware
-cleaning
-machinelearning/data
-machinelearning/results
-machinelearning/results_ratio
-results/regions
-results/test
-testing/solarcorrection/results
+results
+docs
 
-#test files
-test*.*
-
-#exceptions
-!results/*
-!testing/*/*.*
-!testing/*/*/*.*
