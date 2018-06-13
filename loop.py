@@ -116,8 +116,7 @@ def type_TSI(writer):
                     data_row = (filename_no_ext,
                                 altitude,
                                 azimuth,
-                                cover_thin_fixed,
-                                cover_opaque_fixed,
+                                cover_thin_fixed,                               cover_opaque_fixed,
                                 cover_total_fixed,
                                 cover_total_hybrid,
                                 cover_thin_tsi,
@@ -148,7 +147,7 @@ def type_SEG(writer):
     """
     dir_list = (settings.main_data + 'A-sky/images/',
                 settings.main_data + 'B-pattern/images/',
-                settings.main_data + 'C-thick-dark/images/',
+                # settings.main_data + 'C-thick-dark/images/',
                 settings.main_data + 'D-thick-white/images/',
                 settings.main_data + 'E-veil/images/')
 
@@ -207,9 +206,9 @@ def type_mobotix(writer):
     camera = ephem.Observer()
 
     # location and elevation of the Mobotix camera at Cabauw
-    camera.lat = '51.968243'
-    camera.lon = '4.927675'
-    camera.elevation = 1  # meter\
+    camera.lat = settings.camera_latitude
+    camera.lon = settings.camera_longitude
+    camera.elevation = settings.camera_elevation
 
     n_increment = 0
 

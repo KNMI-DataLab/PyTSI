@@ -68,6 +68,11 @@ else:
     jpg_extension = '.jpg'
     png_extension = '.png'
 
+# coordinates
+camera_latitude = '51.968243'
+camera_longitude = '4.927675'
+camera_elevation = 1
+
 # looping
 skip_loops = 16
 
