@@ -40,6 +40,9 @@ def main():
     if settings.plot_sky_cover_time_series:
         plot.single_time_series('sky_cover_time_series', 'azimuth', 'cloud cover (%)')
 
+    if settings.plot_comparion_scatter:
+        plot.comparison_scatter()
+
 
 if __name__ == '__main__':
     main()

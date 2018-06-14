@@ -25,11 +25,11 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-# main_data = 'data/TSI/DBASE/20180211_tsi-cabauw_realtime'
+main_data = project_folder + 'data/TSI/DBASE/201708/'
 # main_data = 'data/SEG/swimcat/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
-main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
+# main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
 
 # data type
 tsi_str = 'TSI'
@@ -48,7 +48,7 @@ else:
 output_folder = files_folders.set_output_folder()
 
 # output
-output_data = 'data.csv'
+output_data = project_folder + 'cloud_detection/cloudDetection/data.csv'
 output_data_for_movie = 'data_for_movie.csv'
 
 # csv delimiter
@@ -151,7 +151,7 @@ use_kmeans = False
 
 # core functionality
 use_processing_loop = True
-use_postprocessing = True
+use_postprocessing = False
 use_statistical_analysis = True
 use_machine_learning = False
 
@@ -162,3 +162,4 @@ plot_correction_result = False
 plot_overview = False
 plot_poster_images = False
 use_project_3d = False
+plot_comparion_scatter = True
