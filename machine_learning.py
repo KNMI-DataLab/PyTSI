@@ -5,12 +5,8 @@ import pandas as pd
 from tqdm import tqdm
 import settings
 import matplotlib.pyplot as plt
-from matplotlib import style
-from scipy.stats import gaussian_kde
-from sys import exit
-
-
 # style.use('ggplot')
+
 
 def knn():
     """K-Nearest Neighbor machine learning method. Takes the output data file as input and calculates accuarcy
@@ -63,7 +59,7 @@ def k_means():
     axis1 = 0
     axis2 = 2
 
-    kmeans = KMeans(n_clusters=4)
+    kmeans = KMeans(n_clusters=2)
     kmeans.fit(X)
 
     centroids = kmeans.cluster_centers_
@@ -74,10 +70,7 @@ def k_means():
     for i in range(len(X)):
         print('True:', y[i], 'Predicted:', labels[i])
 
-    plt.scatter(y, labels, s=500)
-    plt.show()
-
-    exit('MYSTOP')
+    quit()
 
     plt.subplot(2, 1, 1)
     plt.title('kmeans')

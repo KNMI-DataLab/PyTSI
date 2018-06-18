@@ -2,17 +2,17 @@ import settings
 
 
 def headers(writer):
-    if settings.data_type == 'TSI':
+    if settings.data_type == settings.tsi_str:
         writer.writerow(['filename',
                          'altitude',
                          'azimuth',
                          'thin_sky_cover',
                          'opaque_sky_cover',
-                         'fractional_sky_cover',
-                         'fractional_sky_cover_hybrid',
-                         'thin_sky_cover_TSI',
-                         'opaque_sky_cover_TSI',
-                         'fractional_sky_cover_TSI',
+                         'cloud_cover_fixed',
+                         'cloud_cover_hybrid',
+                         'thin_cloud_cover_TSI',
+                         'opaque_cloud_cover_TSI',
+                         'cloud_cover_TSI',
                          'energy',
                          'entropy',
                          'contrast',
@@ -27,7 +27,7 @@ def headers(writer):
                          'sun_s',
                          ])
 
-    elif settings.data_type == 'SEG':
+    elif settings.data_type == settings.cat_str:
         writer.writerow(['filename',
                          'mean_r',
                          'mean_g',
@@ -45,7 +45,14 @@ def headers(writer):
                          'cloud_type'
                          ])
 
-    elif settings.data_type == 'mobotix':
+    elif settings.data_type == settings.seg_str:
+        writer.writerow(['filename',
+                         'cloud_cover_GT',
+                         'cloud_cover_fixed',
+                         'cloud_cover_hybrid',
+                         ])
+
+    elif settings.data_type == settings.mob_str:
         writer.writerow(['filename',
                          'azimuth',
                          'altitude',

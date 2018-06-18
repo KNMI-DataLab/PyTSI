@@ -118,7 +118,7 @@ def aerosol_correction():
     rows = zip(azimuth, corrected_sky_cover, smooth_corrected_sky_cover)
 
     with open('corrections.csv', 'w') as f:
-        writer = csv.writer(f, delimiter='\t')
+        writer = csv.writer(f, delimiter=settings.delimiter)
         writer.writerow(['azimuth', 'corrected_sky_cover', 'smooth_corrected_sky_cover'])
         for row in rows:
             writer.writerow(row)

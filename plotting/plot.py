@@ -5,9 +5,12 @@ import cv2 as cv2
 from sklearn.metrics import r2_score
 from math import ceil
 from scipy.stats import gaussian_kde
+from matplotlib import colors
+import os
+from matplotlib.mlab import bivariate_normal
 
 
-def histogram(ax, data, plot_title, x_label, y_label, st_dev, threshold):
+def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
     """
 
     Args:
@@ -18,7 +21,7 @@ def histogram(ax, data, plot_title, x_label, y_label, st_dev, threshold):
         st_dev: standard deviation, used in histogram title
         threshold: calculated threshold value, plotted as line in histogram
     """
-    ax.set_title(str(plot_title) + ', st dev:' + str(st_dev))
+    ax.set_title(str(plot_title) + ', st dev:' + str(round(st_dev,4)))
     ax.axvline(threshold, color='k', linestyle='dashed', linewidth=2, label='threshold:' + str(round(threshold, 2)))
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -29,8 +32,31 @@ def histogram(ax, data, plot_title, x_label, y_label, st_dev, threshold):
 
     return out
 
+def difference_histogram():
+    data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-def binary(ax, data, plot_title, threshold):
+    nbins=20
+
+    plt.figure(figsize=(4, 3))
+    plt.xlim(-0.05, 1.05)
+    plt.xticks(np.arange(0,1.1, step=0.1))
+    plt.grid()
+
+    x = data['cloud_cover_GT']
+    y = data['cloud_cover_hybrid']
+    diff = abs(x - y)
+    plt.hist(diff, bins=nbins, label='Hybrid')
+
+    y = data['cloud_cover_fixed']
+    diff = abs(x - y)
+    plt.hist(diff, bins=nbins, label='Fixed', alpha=0.8)
+
+    plt.legend()
+    plt.show()
+    plt.close()
+
+
+def binary_obj(ax, data, plot_title, threshold):
     """
 
     Args:
@@ -80,8 +106,8 @@ def original_and_binary_and_histogram(img, filename, data1, title1, data2, title
 
     ax1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
-    binary(ax2, data1, title1, threshold)
-    histogram(ax3, data2, title2, x_label2, y_label2, st_dev, threshold)
+    binary_obj(ax2, data1, title1, threshold)
+    histogram_obj(ax3, data2, title2, x_label2, y_label2, st_dev, threshold)
 
     plt.tight_layout()
     plt.savefig(settings.output_folder + filename + '_comparison.png')
@@ -89,38 +115,96 @@ def original_and_binary_and_histogram(img, filename, data1, title1, data2, title
 
 
 def comparison_scatter():
-    data = np.genfromtxt('data.csv', delimiter='\t', names=True)
+    data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    cloud_cover_tsi = data['fractional_sky_cover_TSI']
-    cloud_cover_model = data['fractional_sky_cover_hybrid']
+    x = data['cloud_cover_GT']
+    y = data['cloud_cover_fixed']
+    names = data['filename']
+
+    # convert 1D filename array to string
+    # if there is an extension (.jpg/.png etc.) or the file name consists of a combination between letters and numbers
+    # the filenames are read as 'byte' type. In this case, a conversion ('decode') has to be carried out.
+    # in the case of an integer filename type (0001, 0002, 201805021645 etc.) a more simple conversion is applied
+    names_str = []
+    if names.dtype == np.dtype(int):
+        for name in names:
+            names_str.append(str(name))
+    else:
+        for name in names:
+            names_str.append(name.decode('UTF-8'))
+    names=names_str
 
     # Calculate the point density
-    xy = np.vstack([cloud_cover_tsi, cloud_cover_model])
-    z = gaussian_kde(xy)(xy)
+    xy = np.vstack([x, y])
+    c = gaussian_kde(xy)(xy)
 
-    r2score = r2_score(cloud_cover_tsi, cloud_cover_model)
-    a, b = np.polyfit(cloud_cover_tsi, cloud_cover_model, 1)
+    norm = colors.Normalize(0,2)
+    cmap = plt.cm.viridis
+
+    a, b = np.polyfit(x, y, 1)
 
     a = ceil(a * 100) / 100
     b = ceil(b * 100) / 100
 
-    x_fit = np.array([0, 1])
+    x_fit = np.array([-1, 2])
     y_fit = a * x_fit + b
 
-    plt.figure(figsize=(4,4))
+    fig, ax = plt.subplots(figsize=(6,6))
+    sc = ax.scatter(x, y, c=c, cmap=cmap, norm=norm, s=10)
 
-    plt.xlabel('TSI cloud cover')
-    plt.ylabel('Model cloud cover')
+    annot = ax.annotate("", xy=(0, 0), xytext=(20, 20), textcoords="offset points",
+                        bbox=dict(boxstyle="round", fc="w"),
+                        arrowprops=dict(arrowstyle="->"))
+    annot.set_visible(False)
 
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.gca().set_aspect('equal', adjustable='box')
+    def update_annot(ind):
 
-    plt.plot(x_fit, y_fit, c='tab:blue', linewidth=3, label='y='+str(a)+'x+'+str(b))
-    plt.plot([0, 1], c='tab:red', linewidth=3, label='y=x')
-    plt.scatter(cloud_cover_tsi, cloud_cover_model, c=z, s=10)
+        pos = sc.get_offsets()[ind["ind"][0]]
+        annot.xy = pos
+        text = "{}".format(" ".join([names[n] for n in ind["ind"]]))
+        annot.set_text(text)
+        annot.get_bbox_patch().set_facecolor(cmap(norm(c[ind["ind"][0]])))
+        annot.get_bbox_patch().set_alpha(0.4)
+
+    def hover(event):
+        vis = annot.get_visible()
+        if event.inaxes == ax:
+            cont, ind = sc.contains(event)
+            if cont:
+                update_annot(ind)
+                annot.set_visible(True)
+                fig.canvas.draw_idle()
+            else:
+                if vis:
+                    annot.set_visible(False)
+                    fig.canvas.draw_idle()
+
+    fig.canvas.mpl_connect("motion_notify_event", hover)
+
+    ax.set_xlim([-0.05, 1.05])
+    ax.set_ylim([-0.05, 1.05])
+
+    ax.plot(x_fit, y_fit, c='black', linewidth=3, label='y='+str(a)+'x+'+str(b), linestyle='--')
+    ax.plot([-1,2], [-1,2], c='tab:red', linewidth=3, label='y=x')
+    ax.legend()
+    ax.set_title('$r^2$ score:'+str(round(r2_score(x, y),2)))
     plt.grid()
-    plt.legend()
-    plt.tight_layout()
+    plt.xlabel('Ground truth/TSI cloud cover')
+    plt.ylabel('Model cloud cover')
     plt.show()
     plt.close()
+
+    # plt.figure(figsize=(4,4))
+    #
+    #
+    # plt.xlim([0, 1])
+    # plt.ylim([0, 1])
+    # plt.gca().set_aspect('equal', adjustable='box')
+    #
+    # plt.scatter(x, y, c=z, cmap=cmap, norm=norm, s=5)
+    # # plt.hist2d(x,y, (100,100), cmap='jet', norm=normalize)
+    # plt.grid()
+    # plt.legend()
+    # plt.tight_layout()
+    # plt.show()
+    # plt.close()

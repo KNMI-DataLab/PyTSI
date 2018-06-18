@@ -7,7 +7,7 @@ def fixed(red_blue_ratio, fixed_sunny_threshold, fixed_thin_threshold):
     """Calculate the fractional sky cover based on fixed thresholding.
 
     Args:
-        red_blue_ratio (float): Pixel per pixel representation of the red/blue ratio
+        red_blue_ratio: Pixel per pixel representation of the red/blue ratio
         fixed_sunny_threshold (float): clear sky/cloudy fixed threshold
         fixed_thin_threshold (float): thin/opaque fixed threshold
 

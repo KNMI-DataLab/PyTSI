@@ -25,21 +25,24 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/DBASE/201708/'
-# main_data = 'data/SEG/swimcat/'
+# main_data = project_folder + 'data/TSI/DBASE/201606/'
+main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
 
 # data type
 tsi_str = 'TSI'
-seg_str = 'SEG'
+seg_str = 'swimseg'
+cat_str = 'swimcat'
 mob_str = 'mobotix'
 
 if main_data.find(tsi_str, 0, len(main_data)) != -1:
     data_type = tsi_str
 elif main_data.find(seg_str, 0, len(main_data)) != -1:
     data_type = seg_str
+elif main_data.find(cat_str, 0, len(main_data)) != -1:
+    data_type = cat_str
 elif main_data.find(mob_str, 0, len(main_data)) != -1:
     data_type = mob_str
 else:
@@ -49,13 +52,10 @@ output_folder = files_folders.set_output_folder()
 
 # output
 output_data = project_folder + 'cloud_detection/cloudDetection/data.csv'
-output_data_for_movie = 'data_for_movie.csv'
+output_data_copy = output_data + '_' + data_type
 
 # csv delimiter
-if data_type == 'SEG':
-    delimiter = ','
-else:
-    delimiter = '\t'
+delimiter = ','
 
 # image extensions
 if data_type == 'TSI':
@@ -127,39 +127,43 @@ grey_levels = 256
 
 # thresholds
 # fixed
-fixed_SEG_threshold = 0.92
-fixed_sunny_threshold = 0.795
-fixed_thin_threshold = 0.9
+# TSI ######################
+fixed_sunny_threshold = 0.80  # working: 0.795
+fixed_thin_threshold = 0.9  # working: 0.9
+# swim #####################
+fixed_threshold_swim = 0.64
+
 use_single_threshold = True  # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
 use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not recommended)
 
-# hybrid algorithm
+# hybrid
 # setups: 1) devThr: 0.065, fixThr: 0.20
 #         2) devThr: 0.03 , fixThr: 0.20
 #         2) devThr: 0.03 , fixThr: 0.25
 nbins_hybrid = 100
-if data_type == 'TSI' or data_type == 'SEG':
-    deviation_threshold = 0.065  # original was 0.03, 'high:0.065'
-    fixed_threshold = 0.20  # original was 0.250, 'high:0.20'
-elif data_type == 'mobotix':
+if data_type == tsi_str or data_type == seg_str or data_type == cat_str:
+    deviation_threshold = 0.03  # original was 0.03, 'working:0.065'
+    fixed_threshold = 0.25  # original was 0.250, 'working:0.20'
+elif data_type == mob_str:
     deviation_threshold = 0.08
     fixed_threshold = 0.10
 
 # machine learning
 use_knn = False
-use_kmeans = False
+use_kmeans = True
 
 # core functionality
-use_processing_loop = True
+use_processing_loop = False
 use_postprocessing = False
-use_statistical_analysis = True
+use_statistical_analysis = False
 use_machine_learning = False
 
 # plotting
 plot_sky_cover_comparison = False
-plot_sky_cover_time_series = True
+plot_sky_cover_time_series = False
 plot_correction_result = False
 plot_overview = False
 plot_poster_images = False
 use_project_3d = False
-plot_comparion_scatter = True
+plot_comparion_scatter = False
+plot_difference_histogram = True

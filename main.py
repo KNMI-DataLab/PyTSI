@@ -20,8 +20,8 @@ def main():
 
             loop.structure(writer)
 
-    # rename file
-    copyfile(settings.output_data, settings.output_data_for_movie)
+            # rename file
+            copyfile(settings.output_data, settings.output_data_copy)
 
     # postprocessing step which carries out corrections for solar/horizon area
     if settings.use_postprocessing:
@@ -42,6 +42,9 @@ def main():
 
     if settings.plot_comparion_scatter:
         plot.comparison_scatter()
+
+    if settings.plot_difference_histogram:
+        plot.difference_histogram()
 
 
 if __name__ == '__main__':
