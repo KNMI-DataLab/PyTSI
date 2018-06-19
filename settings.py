@@ -25,8 +25,8 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-# main_data = project_folder + 'data/TSI/DBASE/201606/'
-main_data = project_folder + 'data/SWIM/swimseg/'
+main_data = project_folder + 'data/TSI/DBASE/201606/'
+# main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
@@ -165,5 +165,5 @@ plot_correction_result = False
 plot_overview = False
 plot_poster_images = False
 use_project_3d = False
-plot_comparion_scatter = False
+plot_comparion_scatter = True
 plot_difference_histogram = True

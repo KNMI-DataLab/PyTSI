@@ -31,12 +31,6 @@ def type_TSI(writer):
     Args:
         writer: csv writing object
     """
-    # converts the directory from string into 'bytes'
-    directory = os.fsencode(settings.main_data)
-
-    # alphabetically sort the files in the directory
-    sorted_directory = sorted(os.listdir(directory))
-
     filecounter = 0
 
     for subdir, dirs, files in os.walk(settings.main_data):

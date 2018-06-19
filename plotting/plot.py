@@ -35,23 +35,25 @@ def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
 def difference_histogram():
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    nbins=20
+    nbins=25
 
-    plt.figure(figsize=(4, 3))
-    plt.xlim(-0.05, 1.05)
-    plt.xticks(np.arange(0,1.1, step=0.1))
-    plt.grid()
+    plt.figure(figsize=(6, 4))
 
-    x = data['cloud_cover_GT']
-    y = data['cloud_cover_hybrid']
-    diff = abs(x - y)
-    plt.hist(diff, bins=nbins, label='Hybrid')
+    #plt.xticks(np.arange(-1.1,1.1, step=0.1))
 
+    x = data['cloud_cover_TSI']
     y = data['cloud_cover_fixed']
-    diff = abs(x - y)
-    plt.hist(diff, bins=nbins, label='Fixed', alpha=0.8)
+    diff1 = (y - x) * 100
+    y = data['cloud_cover_hybrid']
+    diff2 = (y - x) * 100
+    plt.hist([diff1, diff2], bins=nbins, label=['Fixed', 'Hybrid'], range=(-100,100), histtype='bar')
 
+    plt.ylabel('Frequency')
+    plt.xlabel('Difference (%)')
+
+    plt.title('Differences between model and grount truth/TSI')
     plt.legend()
+    plt.tight_layout()
     plt.show()
     plt.close()
 
@@ -117,8 +119,8 @@ def original_and_binary_and_histogram(img, filename, data1, title1, data2, title
 def comparison_scatter():
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    x = data['cloud_cover_GT']
-    y = data['cloud_cover_fixed']
+    x = data['cloud_cover_TSI']
+    y = data['cloud_cover_hybrid']
     names = data['filename']
 
     # convert 1D filename array to string
