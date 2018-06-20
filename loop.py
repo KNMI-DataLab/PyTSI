@@ -237,13 +237,15 @@ def type_swimseg(writer):
 
                     resolution.get_resolution(img)
 
-                    img_bw = np.empty((settings.x, settings.y))
 
-                    img_bw[img[:, :, 0] == 255] = 1
-                    img_bw[img[:, :, 0] == 0] = 0
+                    # Calculate counts of cloudy and clear sky pixels. In this case, the images that are loaded are
+                    # black/white (bw). Thus the only occurring RGB values are (255,255,255) and (0,0,0) for white and
+                    # black respectively. Checking if one of the bands is equal to either 255 or 0 is enough to
+                    # determine white or black pixel and subsequently if the ground truth map indicates clear sky
+                    # or clouds.
 
-                    cloud = np.sum(img_bw == 1)
-                    clear_sky = np.sum(img_bw == 0)
+                    cloud = np.sum(img[:, :, 0] == 255) # when one of the bands is 255, pixel is white
+                    clear_sky = np.sum(img[:, :, 0] == 0) # when one of the bands is 0, pixel is black
 
                     cloud_cover_GT.append(cloud / (cloud + clear_sky))
 
@@ -357,17 +359,20 @@ def type_mobotix(writer):
                 # plot.histogram(blue_red_ratio_norm_1d_nz, filename, 'Normalized B/R', 'Frequency', st_dev, threshold)
                 # plot.binary(blue_red_ratio_norm, filename, threshold)
 
-                plot.original_and_binary_and_histogram(img, filename_no_ext,
-                                                       blue_red_ratio_norm, 'normalized blue/red ratio',
-                                                       blue_red_ratio_norm_1d_nz, 'blue/red norm histogram',
-                                                       'Normalized B/R', 'Frequency',
-                                                       st_dev, threshold)
+                # plot.original_and_binary_and_histogram(img, filename_no_ext,
+                #                                        blue_red_ratio_norm, 'normalized blue/red ratio',
+                #                                        blue_red_ratio_norm_1d_nz, 'blue/red norm histogram',
+                #                                        'Normalized B/R', 'Frequency',
+                #                                        st_dev, threshold)
 
                 cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
 
                 print(camera.date, 'azimuth:', azimuth, 'altitude:', altitude, 'cloud cover:', cloud_cover)
 
-                energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
+                if settings.use_statistical_analysis:
+                    energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
+                else:
+                    energy = entropy = contrast = homogeneity = 0
 
                 data_row = (filename_no_ext,
                             azimuth,

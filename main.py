@@ -7,6 +7,7 @@ import write_to_csv
 import loop
 import machine_learning
 import plot
+import crop
 
 
 def main():
@@ -32,6 +33,9 @@ def main():
             machine_learning.knn()
         elif settings.use_kmeans:
             machine_learning.k_means()
+
+    if settings.crop_mobotix_images:
+        crop.mobotix()
 
     # plot the sky cover comparison
     if settings.plot_sky_cover_comparison:

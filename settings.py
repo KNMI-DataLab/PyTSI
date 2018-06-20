@@ -25,8 +25,8 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/DBASE/201606/'
-# main_data = project_folder + 'data/SWIM/swimseg/'
+# main_data = project_folder + 'data/TSI/DBASE/201606/'
+main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
@@ -52,7 +52,7 @@ output_folder = files_folders.set_output_folder()
 
 # output
 output_data = project_folder + 'cloud_detection/cloudDetection/data.csv'
-output_data_copy = output_data + '_' + data_type
+output_data_copy = project_folder + 'cloud_detection/cloudDetection/data' + data_type + '.csv'
 
 # csv delimiter
 delimiter = ','
@@ -74,7 +74,7 @@ camera_longitude = '4.927675'
 camera_elevation = 1
 
 # looping
-skip_loops = 16
+skip_loops = 120 # every 'x' files are used in stead of all files
 
 # aerosol correction
 initial_adjustment_factor_limit = 0.5
@@ -153,10 +153,11 @@ use_knn = False
 use_kmeans = True
 
 # core functionality
-use_processing_loop = False
+use_processing_loop = True
 use_postprocessing = False
 use_statistical_analysis = False
 use_machine_learning = False
+crop_mobotix_images = True
 
 # plotting
 plot_sky_cover_comparison = False
@@ -165,5 +166,5 @@ plot_correction_result = False
 plot_overview = False
 plot_poster_images = False
 use_project_3d = False
-plot_comparion_scatter = True
-plot_difference_histogram = True
+plot_comparion_scatter = False
+plot_difference_histogram = False
