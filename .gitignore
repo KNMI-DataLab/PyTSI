@@ -7,10 +7,11 @@ template.py
 
 #text files
 *.txt
+*.csv
 
 #folders
 __pycache__
 .idea
 results
-docs
+
 

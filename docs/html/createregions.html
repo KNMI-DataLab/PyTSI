@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>createregions module &mdash; Documentation new TSI software 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="crop module" href="crop.html" />
+    <link rel="prev" title="createmask module" href="createmask.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Documentation new TSI software
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Main modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="color_bands.html">color_bands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="createmask.html">createmask module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">createregions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="myimports.html">myimports module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overlay.html">overlay module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessor.html">postprocessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processor.html">processor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ratio.html">ratio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="read_properties_file.html">read_properties_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resolution.html">resolution module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html">settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Documentation new TSI software</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Main modules</a> &raquo;</li>
+        
+      <li>createregions module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/createregions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-createregions">
+<span id="createregions-module"></span><h1>createregions module<a class="headerlink" href="#module-createregions" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="createregions.create">
+<code class="descclassname">createregions.</code><code class="descname">create</code><span class="sig-paren">(</span><em>img</em>, <em>azimuth</em>, <em>altitude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the empty arrays and call drawing and masking functions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> (<em>int</em>) – image in NumPy format</li>
+<li><strong>azimuth</strong> (<em>float</em>) – azimuth of the sun, taken from the properties file</li>
+<li><strong>altitude</strong> (<em>float</em>) – altitude of the sun, taken from the properties file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, outlines, labels, stencil, image_with_outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.create_stencil">
+<code class="descclassname">createregions.</code><code class="descname">create_stencil</code><span class="sig-paren">(</span><em>stencil</em>, <em>stencil_labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#create_stencil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.create_stencil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the stencil which is used to mask the outside of the large circle</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stencil</strong> – empty stencil array in RGB format</li>
+<li><strong>stencil_labels</strong> – empty stencil array in scalar format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">stencil in both RGB and scalar format</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.draw_arm">
+<code class="descclassname">createregions.</code><code class="descname">draw_arm</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>image_with_outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#draw_arm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.draw_arm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the camera arm mask</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>image_with_outlines</strong> (<em>int</em>) – image with outlines as overlay</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, labels, image_with_outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.draw_band">
+<code class="descclassname">createregions.</code><code class="descname">draw_band</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>image_with_outlines</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#draw_band"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.draw_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the shadow band mask</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>image_with_outlines</strong> (<em>int</em>) – image with outlines as overlay</li>
+<li><strong>theta</strong> (<em>float</em>) – azimuth measured from the East</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">regions, labels, image_with_outlines</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.draw_horizon_area">
+<code class="descclassname">createregions.</code><code class="descname">draw_horizon_area</code><span class="sig-paren">(</span><em>azimuth</em>, <em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#draw_horizon_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.draw_horizon_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw polygon which (when combined with other segments) makes up the horizon area</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>azimuth</strong> (<em>float</em>) – solar azimuth in degrees from North</li>
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Regions, labels, outlines and angle <span class="math notranslate nohighlight">\(\theta\)</span> describing the azimuth measured from the East</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.inner_circle">
+<code class="descclassname">createregions.</code><code class="descname">inner_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#inner_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.inner_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the inner circle of the segmented image</p>
+<p>The radius is smaller than the radius used in <a class="reference internal" href="#createregions.large_circle" title="createregions.large_circle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">createregions.large_circle()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, labels, outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.large_circle">
+<code class="descclassname">createregions.</code><code class="descname">large_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#large_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.large_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a circle centered in the middle of the image.</p>
+<p>This circle has a radius slightly smaller than that of the mirror.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regions</strong> – RGB representation of the segmented image</li>
+<li><strong>labels</strong> – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>outlines</strong> – RGB array of the segment outlines</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, labels, outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.outer_circle">
+<code class="descclassname">createregions.</code><code class="descname">outer_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>outlines</em>, <em>stencil</em>, <em>stencil_labels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#outer_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.outer_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the outside of the large circle</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
+<li><strong>stencil_labels</strong> (<em>int</em>) – stencil array in scalar format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, labels, outlines, stencil (RGB), stencil (scalar)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.overlay_outlines_on_image">
+<code class="descclassname">createregions.</code><code class="descname">overlay_outlines_on_image</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#overlay_outlines_on_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.overlay_outlines_on_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlay outlines on image by converting to BW and performing several other operations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> (<em>int</em>) – image in NumPy format</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines as overlay</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="createregions.sun_circle">
+<code class="descclassname">createregions.</code><code class="descname">sun_circle</code><span class="sig-paren">(</span><em>altitude</em>, <em>regions</em>, <em>labels</em>, <em>outlines</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#sun_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.sun_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the sun cirlce segment</p>
+<p>The position of the sun in the image plane is calculated using an approximation of the mirror. The function that is
+used to estimate the mirror geometry is <span class="math notranslate nohighlight">\(y = -0.23x+1.25\)</span>.</p>
+<p>The radial distance from the center of the image to the center of the sun can subsequently be calculated using
+the quadratic equation (abc formula).</p>
+<p>Using the description of a circle (<a class="reference internal" href="createmask.html#createmask.calculate_band_position" title="createmask.calculate_band_position"><code class="xref py py-meth docutils literal notranslate"><span class="pre">createmask.calculate_band_position()</span></code></a>), the solar position is calculated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>altitude</strong> (<em>float</em>) – altitude of the sun, taken from the properties file</li>
+<li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
+<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+<li><strong>theta</strong> (<em>float</em>) – azimuth measured from the East</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">regions, labels, outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="crop.html" class="btn btn-neutral float-right" title="crop module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="createmask.html" class="btn btn-neutral" title="createmask module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

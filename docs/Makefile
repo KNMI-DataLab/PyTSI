@@ -7,10 +7,10 @@ SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = DocumentationnewTSIsoftware
 SOURCEDIR     = source
 # Edited this for gh-pages
-BUILDDIR      = ../../doc-website/
-PDFBUILDDIR   = /tmp
+#BUILDDIR      = ../../doc-website/
+PDFBUILDDIR   = ../
 PDF           = ../manual.pdf
-#BUILDDIR      = .
+BUILDDIR      = .
 
 # Put it first so that "make" without argument is like "make help".
 help:
