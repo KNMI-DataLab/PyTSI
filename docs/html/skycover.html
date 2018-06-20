@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; New TSI docs 1.0.0 documentation</title>
+  <title>skycover module &mdash; New TSI docs 1.0.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -77,12 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">cloudDetection</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">skycover module</a></li>
 </ul>
-
+</div>
             
           
         </div>
@@ -126,12 +125,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>skycover module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/skycover.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -143,19 +144,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="module-skycover">
+<span id="skycover-module"></span><h1>skycover module<a class="headerlink" href="#module-skycover" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="skycover.fixed">
+<code class="descclassname">skycover.</code><code class="descname">fixed</code><span class="sig-paren">(</span><em>red_blue_ratio</em>, <em>fixed_sunny_threshold</em>, <em>fixed_thin_threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skycover.html#fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skycover.fixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fractional sky cover based on fixed thresholding.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>red_blue_ratio</strong> – Pixel per pixel representation of the red/blue ratio</li>
+<li><strong>fixed_sunny_threshold</strong> (<em>float</em>) – clear sky/cloudy fixed threshold</li>
+<li><strong>fixed_thin_threshold</strong> (<em>float</em>) – thin/opaque fixed threshold</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">thin sky cover, opaque sky cover and fractional sky cover</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-  
-  <div id="search-results">
-  
-  </div>
+<dl class="function">
+<dt id="skycover.hybrid">
+<code class="descclassname">skycover.</code><code class="descname">hybrid</code><span class="sig-paren">(</span><em>ratioBR_norm_1d_nz</em>, <em>hybrid_threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/skycover.html#hybrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skycover.hybrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fractional sky cover based on hybrid thresholding.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ratioBR_norm_1d_nz</strong> – normalized, masked, flattened red/blue ratio</li>
+<li><strong>hybrid_threshold</strong> (<em>float</em>) – clear sky/cloud threshold determined by the hybrid algorithm</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fractional sky cover as determined by the hybrid thresholding algorithm</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
 
            </div>
            
@@ -201,7 +242,6 @@
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -214,14 +254,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
-   
-
+  </script> 
 
 </body>
 </html>

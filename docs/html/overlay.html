@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>overlay module &mdash; New TSI docs 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> New TSI docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">overlay module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">New TSI docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>overlay module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/overlay.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-overlay">
+<span id="overlay-module"></span><h1>overlay module<a class="headerlink" href="#module-overlay" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="overlay.fixed">
+<code class="descclassname">overlay.</code><code class="descname">fixed</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em>, <em>fixed_sunny_threshold</em>, <em>fixed_thin_threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.fixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess image to be compatible with <a class="reference internal" href="#overlay.outlines_over_image" title="overlay.outlines_over_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">overlay.outlines_over_image()</span></code></a> using fixed thresholding</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> – image in NumPy format</li>
+<li><strong>outlines</strong> – RGB array of the segment outlines</li>
+<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
+<li><strong>fixed_sunny_threshold</strong> (<em>float</em>) – threshold for sun/cloud</li>
+<li><strong>fixed_thin_threshold</strong> (<em>float</em>) – threshold for thin/opaque cloud</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="overlay.hybrid">
+<code class="descclassname">overlay.</code><code class="descname">hybrid</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em>, <em>threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#hybrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.hybrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess image to be compatible with <a class="reference internal" href="#overlay.outlines_over_image" title="overlay.outlines_over_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">overlay.outlines_over_image()</span></code></a> using the hybrid threshold</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> – image in NumPy format</li>
+<li><strong>outlines</strong> – RGB array of the segment outlines</li>
+<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
+<li><strong>threshold</strong> (<em>float</em>) – threshold for sun/cloud determined by HYbrid Thresholding Algorithm (HYTA)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="overlay.outlines_over_image">
+<code class="descclassname">overlay.</code><code class="descname">outlines_over_image</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#outlines_over_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.outlines_over_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlay outlines on image by converting to BW and performing several other operations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> – image in NumPy format</li>
+<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
+<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines as overlay</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; New TSI docs 1.0.0 documentation</title>
+  <title>processor module &mdash; New TSI docs 1.0.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -77,12 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">cloudDetection</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">processor module</a></li>
 </ul>
-
+</div>
             
           
         </div>
@@ -126,12 +125,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>processor module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/processor.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -143,19 +144,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="module-processor">
+<span id="processor-module"></span><h1>processor module<a class="headerlink" href="#module-processor" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="processor.processor">
+<code class="descclassname">processor.</code><code class="descname">processor</code><span class="sig-paren">(</span><em>img</em>, <em>img_tsi</em>, <em>azimuth</em>, <em>altitude</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/processor.html#processor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#processor.processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call underlying processing routines and return the information to <a class="reference internal" href="main.html#module-main" title="main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">main()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img</strong> (<em>int</em>) – Original image</li>
+<li><strong>img_tsi</strong> (<em>int</em>) – Processed image from the tsi software</li>
+<li><strong>azimuth</strong> (<em>float</em>) – azimuth of the sun, taken from the properties file</li>
+<li><strong>altitude</strong> (<em>float</em>) – altitude of the sun, taken from the properties file</li>
+<li><strong>filename</strong> (<em>str</em>) – Name of the file currently in use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">sky cover percentages, masked image, and pixel counts</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-  
-  <div id="search-results">
-  
-  </div>
+</div>
+
 
            </div>
            
@@ -201,7 +220,6 @@
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -214,14 +232,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
-   
-
+  </script> 
 
 </body>
 </html>

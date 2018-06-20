@@ -13,7 +13,9 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-# import sys
+import sys
+sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection/cloudDetection'))
+sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection/cloudDetection/plotting'))
 # sys.path.insert(0, os.path.abspath('.'))
 
 

@@ -1,0 +1,621 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>loop &mdash; New TSI docs 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> New TSI docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">New TSI docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>loop</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for loop</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">createmask</span>
+<span class="kn">import</span> <span class="nn">ratio</span>
+<span class="kn">import</span> <span class="nn">createregions</span>
+<span class="kn">import</span> <span class="nn">poster_images</span>
+<span class="kn">import</span> <span class="nn">skycover</span>
+<span class="kn">import</span> <span class="nn">thresholds</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">overlay</span>
+<span class="kn">import</span> <span class="nn">labelled_image</span>
+<span class="kn">import</span> <span class="nn">overview</span>
+<span class="kn">import</span> <span class="nn">read_properties_file</span>
+<span class="kn">import</span> <span class="nn">resolution</span>
+<span class="kn">import</span> <span class="nn">write_to_csv</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">statistical_analysis</span>
+<span class="kn">import</span> <span class="nn">ephem</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">plot</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<div class="viewcode-block" id="type_TSI"><a class="viewcode-back" href="../loop.html#loop.type_TSI">[docs]</a><span class="k">def</span> <span class="nf">type_TSI</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loop TSI data structure and features</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        writer: csv writing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filecounter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">subdir</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">main_data</span><span class="p">):</span>
+        <span class="n">dirs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">properties_extension</span><span class="p">):</span>
+                <span class="c1"># unzip the gzip file, open the file as rt=read text</span>
+                <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="c1"># read the file and store line per line</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="c1"># get the altitude and azimuth from the defs</span>
+                    <span class="n">altitude</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_altitude</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                    <span class="n">azimuth</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_azimuth</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">altitude</span> <span class="o">&gt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">minimum_altitude</span><span class="p">:</span>
+                        <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># get the fractional sky cover from &#39;old&#39; TSI software</span>
+                        <span class="n">cover_thin_tsi</span><span class="p">,</span> <span class="n">cover_opaque_tsi</span><span class="p">,</span> <span class="n">cover_total_tsi</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_fractional_sky_cover_tsi</span><span class="p">(</span>
+                            <span class="n">lines</span><span class="p">)</span>
+
+                        <span class="n">filename_jpg</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">properties_extension</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">jpg_extension</span><span class="p">)</span>
+                        <span class="n">filename_png</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">properties_extension</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">png_extension</span><span class="p">)</span>
+                        <span class="n">filename_no_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">properties_extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                        <span class="n">year</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                        <span class="n">month</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+                        <span class="n">day</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+                        <span class="n">hour</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+                        <span class="n">minute</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+                        <span class="n">second</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span>
+
+                        <span class="nb">print</span><span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">month</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">year</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">minute</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">second</span><span class="p">)</span>
+
+                        <span class="c1"># read the image</span>
+                        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename_jpg</span><span class="p">))</span>
+                        <span class="n">img_tsi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename_png</span><span class="p">))</span>
+
+                        <span class="c1"># get the resolution of the image</span>
+                        <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+                        <span class="n">mask</span> <span class="o">=</span> <span class="n">createmask</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">)</span>
+                        <span class="n">masked_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+                        <span class="n">fixed_sunny_threshold</span><span class="p">,</span> <span class="n">fixed_thin_threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">fixed</span><span class="p">()</span>
+                        <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">blue_red_ratio_norm</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">hybrid_threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span>
+                            <span class="n">masked_img</span><span class="p">)</span>
+
+                        <span class="c1"># calculate red/blue ratio per pixel</span>
+                        <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">masked_img</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_postprocessing</span><span class="p">:</span>
+                            <span class="c1"># create the segments for solar correction</span>
+                            <span class="n">regions</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">createregions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span>
+                                                                                                           <span class="n">altitude</span><span class="p">)</span>
+                            <span class="c1"># get some data before doing actual solar/horizon area corrections</span>
+                            <span class="n">outside_c</span><span class="p">,</span> <span class="n">outside_s</span><span class="p">,</span> <span class="n">horizon_c</span><span class="p">,</span> <span class="n">horizon_s</span><span class="p">,</span> <span class="n">inner_c</span><span class="p">,</span> <span class="n">inner_s</span><span class="p">,</span> <span class="n">sun_c</span><span class="p">,</span> <span class="n">sun_s</span> <span class="o">=</span> <span class="n">labelled_image</span><span class="o">.</span><span class="n">calculate_pixels</span><span class="p">(</span>
+                                <span class="n">labels</span><span class="p">,</span>
+                                <span class="n">red_blue_ratio</span><span class="p">,</span>
+                                <span class="n">fixed_sunny_threshold</span><span class="p">)</span>
+
+                            <span class="c1"># overlay outlines on image(s)</span>
+                            <span class="n">image_with_outlines_fixed</span> <span class="o">=</span> <span class="n">overlay</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span>
+                                                                      <span class="n">fixed_sunny_threshold</span><span class="p">,</span>
+                                                                      <span class="n">fixed_thin_threshold</span><span class="p">)</span>
+                            <span class="n">image_with_outlines_hybrid</span> <span class="o">=</span> <span class="n">overlay</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">masked_img</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_overview</span><span class="p">:</span>
+                                <span class="c1"># plot complete overview with 5 different images, histogram and cloud cover comparisons</span>
+                                <span class="n">overview</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">img_tsi</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">image_with_outlines_fixed</span><span class="p">,</span>
+                                              <span class="n">image_with_outlines_hybrid</span><span class="p">,</span>
+                                              <span class="n">azimuth</span><span class="p">,</span>
+                                              <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_poster_images</span><span class="p">:</span>
+                                <span class="c1"># plot images for use in poster</span>
+                                <span class="n">poster_images</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">filename_no_ext</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">img_tsi</span><span class="p">,</span> <span class="n">image_with_outlines_fixed</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">outside_c</span> <span class="o">=</span> <span class="n">outside_s</span> <span class="o">=</span> <span class="n">horizon_c</span> <span class="o">=</span> <span class="n">horizon_s</span> <span class="o">=</span> <span class="n">inner_c</span> <span class="o">=</span> <span class="n">inner_s</span> <span class="o">=</span> <span class="n">sun_c</span> <span class="o">=</span> <span class="n">sun_s</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="c1"># calculate fractional skycover</span>
+                        <span class="n">cover_thin_fixed</span><span class="p">,</span> <span class="n">cover_opaque_fixed</span><span class="p">,</span> <span class="n">cover_total_fixed</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span>
+                                                                                                 <span class="n">fixed_sunny_threshold</span><span class="p">,</span>
+                                                                                                 <span class="n">fixed_thin_threshold</span><span class="p">)</span>
+                        <span class="n">cover_total_hybrid</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+
+                        <span class="c1"># calculate statistical properties of the image</span>
+                        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_statistical_analysis</span><span class="p">:</span>
+                            <span class="n">energy</span><span class="p">,</span> <span class="n">entropy</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">homogeneity</span> <span class="o">=</span> <span class="n">statistical_analysis</span><span class="o">.</span><span class="n">textural_features</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">energy</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">=</span> <span class="n">homogeneity</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">data_row</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename_no_ext</span><span class="p">,</span>
+                                    <span class="n">altitude</span><span class="p">,</span>
+                                    <span class="n">azimuth</span><span class="p">,</span>
+                                    <span class="n">cover_thin_fixed</span><span class="p">,</span> <span class="n">cover_opaque_fixed</span><span class="p">,</span>
+                                    <span class="n">cover_total_fixed</span><span class="p">,</span>
+                                    <span class="n">cover_total_hybrid</span><span class="p">,</span>
+                                    <span class="n">cover_thin_tsi</span><span class="p">,</span>
+                                    <span class="n">cover_opaque_tsi</span><span class="p">,</span>
+                                    <span class="n">cover_total_tsi</span><span class="p">,</span>
+                                    <span class="n">energy</span><span class="p">,</span>
+                                    <span class="n">entropy</span><span class="p">,</span>
+                                    <span class="n">contrast</span><span class="p">,</span>
+                                    <span class="n">homogeneity</span><span class="p">,</span>
+                                    <span class="n">outside_c</span><span class="p">,</span>
+                                    <span class="n">outside_s</span><span class="p">,</span>
+                                    <span class="n">horizon_c</span><span class="p">,</span>
+                                    <span class="n">horizon_s</span><span class="p">,</span>
+                                    <span class="n">inner_c</span><span class="p">,</span>
+                                    <span class="n">inner_s</span><span class="p">,</span>
+                                    <span class="n">sun_c</span><span class="p">,</span>
+                                    <span class="n">sun_s</span>
+                                    <span class="p">)</span>
+
+                        <span class="n">write_to_csv</span><span class="o">.</span><span class="n">output_data</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">data_row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filecounter</span></div>
+
+
+<div class="viewcode-block" id="type_swimcat"><a class="viewcode-back" href="../loop.html#loop.type_swimcat">[docs]</a><span class="k">def</span> <span class="nf">type_swimcat</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loop swimcat data structure and features</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        writer: csv writing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dir_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">main_data</span> <span class="o">+</span> <span class="s1">&#39;A-sky/images/&#39;</span><span class="p">,</span>
+                <span class="c1"># settings.main_data + &#39;B-pattern/images/&#39;,</span>
+                <span class="c1"># settings.main_data + &#39;C-thick-dark/images/&#39;,</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">main_data</span> <span class="o">+</span> <span class="s1">&#39;D-thick-white/images/&#39;</span><span class="p">)</span>
+                <span class="c1"># settings.main_data + &#39;E-veil/images/&#39;)</span>
+
+    <span class="n">filecounter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">cloud_type</span><span class="p">,</span> <span class="n">dir_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">dir_list</span><span class="p">)):</span>
+        <span class="n">dir_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsencode</span><span class="p">(</span><span class="n">dir_list</span><span class="p">[</span><span class="n">cloud_type</span><span class="p">])</span>
+        <span class="n">dir_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">dir_name</span><span class="p">):</span>
+            <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="c1"># absolute location of the file</span>
+            <span class="n">file_location</span> <span class="o">=</span> <span class="n">dir_list</span><span class="p">[</span><span class="n">cloud_type</span><span class="p">]</span> <span class="o">+</span> <span class="n">filename</span>
+            <span class="c1"># read the image</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file_location</span><span class="p">)</span>
+
+            <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+            <span class="c1"># GLCM = statistical_analysis.calculate_greymatrix(img)</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">entropy</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">homogeneity</span> <span class="o">=</span> <span class="n">statistical_analysis</span><span class="o">.</span><span class="n">textural_features</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+            <span class="n">mean_r</span><span class="p">,</span> <span class="n">mean_g</span><span class="p">,</span> <span class="n">mean_b</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">skewness</span><span class="p">,</span> <span class="n">diff_rg</span><span class="p">,</span> <span class="n">diff_rb</span><span class="p">,</span> <span class="n">diff_gb</span> <span class="o">=</span> <span class="n">statistical_analysis</span><span class="o">.</span><span class="n">spectral_features</span><span class="p">(</span>
+                <span class="n">img</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_hybrid_SEG</span><span class="p">:</span>
+                <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">blue_red_ratio_norm</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                <span class="n">cloud_cover</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                <span class="n">threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold_swim</span>
+                <span class="n">tmp</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">cloud_cover</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+            <span class="n">data_row</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+                        <span class="n">mean_r</span><span class="p">,</span>
+                        <span class="n">mean_g</span><span class="p">,</span>
+                        <span class="n">mean_b</span><span class="p">,</span>
+                        <span class="n">st_dev</span><span class="p">,</span>
+                        <span class="n">skewness</span><span class="p">,</span>
+                        <span class="n">diff_rg</span><span class="p">,</span>
+                        <span class="n">diff_rb</span><span class="p">,</span>
+                        <span class="n">diff_gb</span><span class="p">,</span>
+                        <span class="n">energy</span><span class="p">,</span>
+                        <span class="n">entropy</span><span class="p">,</span>
+                        <span class="n">contrast</span><span class="p">,</span>
+                        <span class="n">homogeneity</span><span class="p">,</span>
+                        <span class="n">cloud_cover</span><span class="p">,</span>
+                        <span class="n">cloud_type</span>
+                        <span class="p">)</span>
+
+            <span class="n">write_to_csv</span><span class="o">.</span><span class="n">output_data</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">data_row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filecounter</span></div>
+
+
+<div class="viewcode-block" id="type_swimseg"><a class="viewcode-back" href="../loop.html#loop.type_swimseg">[docs]</a><span class="k">def</span> <span class="nf">type_swimseg</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loop swimseg data structure and features</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        writer: csv writing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cloud_cover_GT</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">filecounter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">subdir</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">main_data</span><span class="p">):</span>
+        <span class="n">dirs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">png_extension</span><span class="p">):</span>
+                <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;GT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+                    <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+
+                    <span class="c1"># Calculate counts of cloudy and clear sky pixels. In this case, the images that are loaded are</span>
+                    <span class="c1"># black/white (bw). Thus the only occurring RGB values are (255,255,255) and (0,0,0) for white and</span>
+                    <span class="c1"># black respectively. Checking if one of the bands is equal to either 255 or 0 is enough to</span>
+                    <span class="c1"># determine white or black pixel and subsequently if the ground truth map indicates clear sky</span>
+                    <span class="c1"># or clouds.</span>
+
+                    <span class="n">cloud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">255</span><span class="p">)</span> <span class="c1"># when one of the bands is 255, pixel is white</span>
+                    <span class="n">clear_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># when one of the bands is 0, pixel is black</span>
+
+                    <span class="n">cloud_cover_GT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cloud</span> <span class="o">/</span> <span class="p">(</span><span class="n">cloud</span> <span class="o">+</span> <span class="n">clear_sky</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">filename_no_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">png_extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+                    <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+                    <span class="c1"># fixed sky cover</span>
+                    <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                    <span class="n">cloud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold_swim</span><span class="p">)</span>
+                    <span class="n">clear_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold_swim</span><span class="p">)</span>
+
+                    <span class="n">img_bw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">settings</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                    <span class="n">img_bw</span><span class="p">[</span><span class="n">red_blue_ratio</span> <span class="o">&gt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold_swim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">img_bw</span><span class="p">[</span><span class="n">red_blue_ratio</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixed_threshold_swim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="n">cloud_cover_fixed</span> <span class="o">=</span> <span class="n">cloud</span> <span class="o">/</span> <span class="p">(</span><span class="n">cloud</span> <span class="o">+</span> <span class="n">clear_sky</span><span class="p">)</span>
+
+                    <span class="c1"># hybrid sky cover</span>
+                    <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">blue_red_ratio_norm</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                    <span class="n">cloud_cover_hybrid</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+                    <span class="n">data_row</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename_no_ext</span><span class="p">,</span> <span class="n">cloud_cover_GT</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cloud_cover_fixed</span><span class="p">,</span> <span class="n">cloud_cover_hybrid</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">filename_no_ext</span><span class="p">,</span> <span class="n">cloud_cover_GT</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cloud_cover_fixed</span><span class="p">,</span> <span class="n">cloud_cover_hybrid</span><span class="p">)</span>
+
+                    <span class="c1">#plot.original_and_binary_and_histogram(img, filename,</span>
+                    <span class="c1">#                                       blue_red_ratio_norm, &#39;blue/red ratio&#39;,</span>
+                    <span class="c1">#                                       ratio_br_norm_1d_nz, &#39;blue/red norm histogram&#39;,</span>
+                    <span class="c1">#                                      &#39;Normalized B/R&#39;, &#39;Frequency&#39;,</span>
+                    <span class="c1">#                                       st_dev, threshold)</span>
+
+                    <span class="n">write_to_csv</span><span class="o">.</span><span class="n">output_data</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">data_row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filecounter</span></div>
+
+
+<div class="viewcode-block" id="type_mobotix"><a class="viewcode-back" href="../loop.html#loop.type_mobotix">[docs]</a><span class="k">def</span> <span class="nf">type_mobotix</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Processing loop for mobotix type images/data structure</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        writer: csv writing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initialize the observer object</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="n">ephem</span><span class="o">.</span><span class="n">Observer</span><span class="p">()</span>
+
+    <span class="c1"># location and elevation of the Mobotix camera at Cabauw</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">camera_latitude</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">lon</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">camera_longitude</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">elevation</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">camera_elevation</span>
+
+    <span class="n">n_increment</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">filecounter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">subdir</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">main_data</span><span class="p">):</span>
+        <span class="n">dirs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;20&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+            <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+            <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+            <span class="n">second</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">13</span><span class="p">])</span>
+
+            <span class="c1"># TODO: things WILL go wrong with UTC/CEST time zones</span>
+            <span class="c1"># set time of observer object</span>
+            <span class="n">camera</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> \
+                          <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> \
+                          <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> \
+                          <span class="nb">str</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> \
+                          <span class="nb">str</span><span class="p">(</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> \
+                          <span class="nb">str</span><span class="p">(</span><span class="n">second</span><span class="p">)</span>
+
+            <span class="c1"># make sun object</span>
+            <span class="n">solar_position</span> <span class="o">=</span> <span class="n">ephem</span><span class="o">.</span><span class="n">Sun</span><span class="p">(</span><span class="n">camera</span><span class="p">)</span>
+
+            <span class="n">azimuth</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">solar_position</span><span class="o">.</span><span class="n">az</span><span class="p">)))</span>
+            <span class="n">altitude</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">solar_position</span><span class="o">.</span><span class="n">alt</span><span class="p">)))</span>
+
+            <span class="n">n_increment</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">altitude</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">minimum_altitude</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">jpg_extension</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">n_increment</span> <span class="o">%</span> <span class="n">settings</span><span class="o">.</span><span class="n">skip_loops</span><span class="p">:</span>
+                <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">filename_no_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">jpg_extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+                <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">105</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">335</span><span class="p">:</span><span class="mi">2375</span><span class="p">,</span> <span class="p">:]</span>
+
+                <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_mobotix_circle</span><span class="p">,</span>
+                           <span class="n">settings</span><span class="o">.</span><span class="n">white</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># img = img[..., ::-1]</span>
+
+                <span class="n">masked</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+                <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">masked</span><span class="p">,</span> <span class="p">(</span><span class="mi">840</span><span class="p">,</span> <span class="mi">475</span><span class="p">),</span> <span class="p">(</span><span class="mi">720</span><span class="p">,</span> <span class="mi">70</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>
+
+                <span class="n">blue_red_ratio_norm_1d_nz</span><span class="p">,</span> <span class="n">blue_red_ratio_norm</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">masked</span><span class="p">)</span>
+
+                <span class="c1"># plot.histogram(blue_red_ratio_norm_1d_nz, filename, &#39;Normalized B/R&#39;, &#39;Frequency&#39;, st_dev, threshold)</span>
+                <span class="c1"># plot.binary(blue_red_ratio_norm, filename, threshold)</span>
+
+                <span class="c1"># plot.original_and_binary_and_histogram(img, filename_no_ext,</span>
+                <span class="c1">#                                        blue_red_ratio_norm, &#39;normalized blue/red ratio&#39;,</span>
+                <span class="c1">#                                        blue_red_ratio_norm_1d_nz, &#39;blue/red norm histogram&#39;,</span>
+                <span class="c1">#                                        &#39;Normalized B/R&#39;, &#39;Frequency&#39;,</span>
+                <span class="c1">#                                        st_dev, threshold)</span>
+
+                <span class="n">cloud_cover</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">blue_red_ratio_norm_1d_nz</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;azimuth:&#39;</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="s1">&#39;altitude:&#39;</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span> <span class="s1">&#39;cloud cover:&#39;</span><span class="p">,</span> <span class="n">cloud_cover</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_statistical_analysis</span><span class="p">:</span>
+                    <span class="n">energy</span><span class="p">,</span> <span class="n">entropy</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">homogeneity</span> <span class="o">=</span> <span class="n">statistical_analysis</span><span class="o">.</span><span class="n">textural_features</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">energy</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">=</span> <span class="n">homogeneity</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">data_row</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename_no_ext</span><span class="p">,</span>
+                            <span class="n">azimuth</span><span class="p">,</span>
+                            <span class="n">altitude</span><span class="p">,</span>
+                            <span class="n">energy</span><span class="p">,</span>
+                            <span class="n">entropy</span><span class="p">,</span>
+                            <span class="n">contrast</span><span class="p">,</span>
+                            <span class="n">homogeneity</span><span class="p">,</span>
+                            <span class="n">cloud_cover</span>
+                            <span class="p">)</span>
+
+                <span class="n">write_to_csv</span><span class="o">.</span><span class="n">output_data</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">data_row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filecounter</span></div>
+
+
+<div class="viewcode-block" id="structure"><a class="viewcode-back" href="../loop.html#loop.structure">[docs]</a><span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine and call loop for type of data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        writer: csv writing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">settings</span><span class="o">.</span><span class="n">tsi_str</span><span class="p">:</span>
+        <span class="n">n_files</span> <span class="o">=</span> <span class="n">type_TSI</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">settings</span><span class="o">.</span><span class="n">cat_str</span><span class="p">:</span>
+        <span class="n">n_files</span> <span class="o">=</span> <span class="n">type_swimcat</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">settings</span><span class="o">.</span><span class="n">seg_str</span><span class="p">:</span>
+        <span class="n">n_files</span> <span class="o">=</span> <span class="n">type_swimseg</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">settings</span><span class="o">.</span><span class="n">mob_str</span><span class="p">:</span>
+        <span class="n">n_files</span> <span class="o">=</span> <span class="n">type_mobotix</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Main loop time: </span><span class="si">%s</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">),</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average time per image: </span><span class="si">%s</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_files</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
