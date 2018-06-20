@@ -1,6 +1,3 @@
-#python files
-template.py
-
 #images
 *.png
 *.jpg
@@ -13,5 +10,5 @@ template.py
 __pycache__
 .idea
 results
-
+docs_full
 
