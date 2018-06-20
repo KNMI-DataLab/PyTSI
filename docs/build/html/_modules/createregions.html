@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>createregions &mdash; Documentation new TSI software 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Documentation new TSI software
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_example.html">Code example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Documentation new TSI software</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>createregions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for createregions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span> <span class="k">as</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">tan</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">resolution</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+
+
+<div class="viewcode-block" id="large_circle"><a class="viewcode-back" href="../createregions.html#createregions.large_circle">[docs]</a><span class="k">def</span> <span class="nf">large_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw a circle centered in the middle of the image.</span>
+
+<span class="sd">    This circle has a radius slightly smaller than that of the mirror.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, labels, outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">red</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_circle</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">red</span><span class="p">,</span>
+               <span class="n">settings</span><span class="o">.</span><span class="n">outline_thickness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span></div>
+
+
+<div class="viewcode-block" id="draw_horizon_area"><a class="viewcode-back" href="../createregions.html#createregions.draw_horizon_area">[docs]</a><span class="k">def</span> <span class="nf">draw_horizon_area</span><span class="p">(</span><span class="n">azimuth</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw polygon which (when combined with other segments) makes up the horizon area</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        azimuth (float): solar azimuth in degrees from North</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Regions, labels, outlines and angle :math:`\\theta` describing the azimuth measured from the East</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># angle from the east in stead of north</span>
+    <span class="n">azimuth_from_east</span> <span class="o">=</span> <span class="n">azimuth</span> <span class="o">-</span> <span class="mi">90</span>
+    <span class="c1"># distance of the three of the four points from the center</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># angle from degrees to radians</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">azimuth_from_east</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="c1"># horizon width from degrees to radians</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">width_horizon_area_degrees</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="c1"># four points at vertices of polygon</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))]</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">width</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">width</span><span class="p">)]</span>
+    <span class="n">p3</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)]</span>
+    <span class="n">p4</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="n">width</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="n">width</span><span class="p">)]</span>
+    <span class="n">horizon_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="c1"># draw the polygon</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">fillConvexPoly</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">horizon_area</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cyan</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">fillConvexPoly</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">horizon_area</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">fillConvexPoly</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">horizon_area</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">polylines</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">[</span><span class="n">horizon_area</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">cyan</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">outline_thickness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">theta</span></div>
+
+
+<div class="viewcode-block" id="inner_circle"><a class="viewcode-back" href="../createregions.html#createregions.inner_circle">[docs]</a><span class="k">def</span> <span class="nf">inner_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw the inner circle of the segmented image</span>
+
+<span class="sd">    The radius is smaller than the radius used in :meth:`createregions.large_circle`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, labels, outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_inner_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">green</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_inner_circle</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_inner_circle</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_inner_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">green</span><span class="p">,</span>
+               <span class="n">settings</span><span class="o">.</span><span class="n">outline_thickness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span></div>
+
+
+<div class="viewcode-block" id="sun_circle"><a class="viewcode-back" href="../createregions.html#createregions.sun_circle">[docs]</a><span class="k">def</span> <span class="nf">sun_circle</span><span class="p">(</span><span class="n">altitude</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw the sun cirlce segment</span>
+
+<span class="sd">    The position of the sun in the image plane is calculated using an approximation of the mirror. The function that is</span>
+<span class="sd">    used to estimate the mirror geometry is :math:`y = -0.23x+1.25`.</span>
+
+<span class="sd">    The radial distance from the center of the image to the center of the sun can subsequently be calculated using</span>
+<span class="sd">    the quadratic equation (abc formula).</span>
+
+<span class="sd">    Using the description of a circle (:meth:`createmask.calculate_band_position`), the solar position is calculated.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        altitude (float): altitude of the sun, taken from the properties file</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+<span class="sd">        theta (float): azimuth measured from the East</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, labels, outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># altitude from degrees to radians</span>
+    <span class="n">altitude_radians</span> <span class="o">=</span> <span class="n">altitude</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.23</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="n">tan</span><span class="p">(</span><span class="n">altitude_radians</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mf">1.25</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">b</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_mirror</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="c1"># x and y position of the sun</span>
+    <span class="n">x_sun</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">y_sun</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="c1"># draw the circle</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="n">x_sun</span><span class="p">,</span> <span class="n">y_sun</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_sun_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">yellow</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">x_sun</span><span class="p">,</span> <span class="n">y_sun</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_sun_circle</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">(</span><span class="n">x_sun</span><span class="p">,</span> <span class="n">y_sun</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_sun_circle</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="p">(</span><span class="n">x_sun</span><span class="p">,</span> <span class="n">y_sun</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_sun_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">yellow</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">outline_thickness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span></div>
+
+
+<div class="viewcode-block" id="create_stencil"><a class="viewcode-back" href="../createregions.html#createregions.create_stencil">[docs]</a><span class="k">def</span> <span class="nf">create_stencil</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create the stencil which is used to mask the outside of the large circle</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stencil (int): empty stencil array in RGB format</span>
+<span class="sd">        stencil_labels (int): empty stencil array in scalar format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: stencil in both RGB and scalar format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_circle</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">white</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">stencil_labels</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))),</span> <span class="n">settings</span><span class="o">.</span><span class="n">radius_circle</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span></div>
+
+
+<div class="viewcode-block" id="outer_circle"><a class="viewcode-back" href="../createregions.html#createregions.outer_circle">[docs]</a><span class="k">def</span> <span class="nf">outer_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mask the outside of the large circle</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+<span class="sd">        stencil (int): stencil array in RGB format</span>
+<span class="sd">        stencil_labels (int): stencil array in scalar format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, labels, outlines, stencil (RGB), stencil (scalar)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regions</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">stencil</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">stencil_labels</span><span class="p">)</span>
+    <span class="n">outlines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span></div>
+
+
+<div class="viewcode-block" id="overlay_outlines_on_image"><a class="viewcode-back" href="../createregions.html#createregions.overlay_outlines_on_image">[docs]</a><span class="k">def</span> <span class="nf">overlay_outlines_on_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overlay outlines on image by converting to BW and performing several other operations</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img (int): image in NumPy format</span>
+<span class="sd">        outlines (int): RGB array of the segment outlines</span>
+<span class="sd">        stencil (int): stencil array in RGB format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: image with outlines as overlay</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create mask of outlines and create inverse mask</span>
+    <span class="n">img2gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">img2gray</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">max_color_value</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+    <span class="n">mask_inv</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_not</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+    <span class="c1"># black out area of outlines</span>
+    <span class="n">img_bg</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask_inv</span><span class="p">)</span>
+
+    <span class="c1"># take only region of outlines from outlines image</span>
+    <span class="n">outlines_fg</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">img_bg</span><span class="p">,</span> <span class="n">outlines_fg</span><span class="p">)</span>
+
+    <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">stencil</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">image_with_outlines</span></div>
+
+
+
+<div class="viewcode-block" id="draw_arm"><a class="viewcode-back" href="../createregions.html#createregions.draw_arm">[docs]</a><span class="k">def</span> <span class="nf">draw_arm</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw the camera arm mask</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        image_with_outlines (int): image with outlines as overlay</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, labels, image_with_outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="mi">141</span><span class="p">,</span> <span class="mi">190</span><span class="p">),</span> <span class="p">(</span><span class="mi">154</span><span class="p">,</span> <span class="mi">153</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="mi">145</span><span class="p">,</span> <span class="mi">154</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">91</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">91</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">26</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="mi">141</span><span class="p">,</span> <span class="mi">190</span><span class="p">),</span> <span class="p">(</span><span class="mi">154</span><span class="p">,</span> <span class="mi">153</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="mi">145</span><span class="p">,</span> <span class="mi">154</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">91</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">91</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">26</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">image_with_outlines</span><span class="p">,</span> <span class="p">(</span><span class="mi">141</span><span class="p">,</span> <span class="mi">190</span><span class="p">),</span> <span class="p">(</span><span class="mi">154</span><span class="p">,</span> <span class="mi">153</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">image_with_outlines</span><span class="p">,</span> <span class="p">(</span><span class="mi">145</span><span class="p">,</span> <span class="mi">154</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">91</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">image_with_outlines</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">91</span><span class="p">),</span> <span class="p">(</span><span class="mi">152</span><span class="p">,</span> <span class="mi">26</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span></div>
+
+
+<div class="viewcode-block" id="draw_band"><a class="viewcode-back" href="../createregions.html#createregions.draw_band">[docs]</a><span class="k">def</span> <span class="nf">draw_band</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Draw the shadow band mask</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regions (int): RGB representation of the segmented image</span>
+<span class="sd">        labels (int): Scalar (1,2,3,4) representation of the segmented image</span>
+<span class="sd">        image_with_outlines (int): image with outlines as overlay</span>
+<span class="sd">        theta (float): azimuth measured from the East</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        regions, labels, image_with_outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_inner</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">r_inner</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">y_inner</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">r_inner</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">x_outer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">r_outer</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">y_outer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">r_outer</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="p">(</span><span class="n">x_inner</span><span class="p">,</span> <span class="n">y_inner</span><span class="p">),</span> <span class="p">(</span><span class="n">x_outer</span><span class="p">,</span> <span class="n">y_outer</span><span class="p">),</span> <span class="n">settings</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">band_thickness</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">x_inner</span><span class="p">,</span> <span class="n">y_inner</span><span class="p">),</span> <span class="p">(</span><span class="n">x_outer</span><span class="p">,</span> <span class="n">y_outer</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">band_thickness</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image_with_outlines</span><span class="p">,</span> <span class="p">(</span><span class="n">x_inner</span><span class="p">,</span> <span class="n">y_inner</span><span class="p">),</span> <span class="p">(</span><span class="n">x_outer</span><span class="p">,</span> <span class="n">y_outer</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">band_thickness</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span></div>
+
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../createregions.html#createregions.create">[docs]</a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create the empty arrays and call drawing and masking functions</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img (int): image in NumPy format</span>
+<span class="sd">        azimuth (float): azimuth of the sun, taken from the properties file</span>
+<span class="sd">        altitude (float): altitude of the sun, taken from the properties file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: regions, outlines, labels, stencil, image_with_outlines</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># variable assignment</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">regions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">n_colors</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+    <span class="n">outlines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">resolution</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">resolution</span><span class="o">.</span><span class="n">n_colors</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+    <span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">regions</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+    <span class="n">stencil_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+    <span class="c1"># convert from BGR -&gt; RGB</span>
+    <span class="c1"># conversion needs to be centralized in one place.</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># drawing the shapes on arrays</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span> <span class="o">=</span> <span class="n">large_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">draw_horizon_area</span><span class="p">(</span><span class="n">azimuth</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span> <span class="o">=</span> <span class="n">inner_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span> <span class="o">=</span> <span class="n">sun_circle</span><span class="p">(</span><span class="n">altitude</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span> <span class="o">=</span> <span class="n">create_stencil</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span> <span class="o">=</span> <span class="n">outer_circle</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">stencil_labels</span><span class="p">)</span>
+    <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">overlay_outlines_on_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">draw_arm</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span><span class="p">)</span>
+    <span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">draw_band</span><span class="p">(</span><span class="n">regions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">image_with_outlines</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">regions</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">image_with_outlines</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
