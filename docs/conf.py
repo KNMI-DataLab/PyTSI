@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('/nobackup/users/mos/cloud_detection/cloudDet
 
 # -- Project information -----------------------------------------------------
 
-project = 'New TSI docs'
+project = 'PyTSI'
 copyright = '2018, Job Mos'
 author = 'Job Mos'
 
