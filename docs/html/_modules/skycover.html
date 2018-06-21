@@ -80,7 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
 </ul>
 
             
@@ -162,28 +162,26 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: replace red_blue ratio with masked numpy version to clean up code below this comment, similar to hybrid below</span>
     <span class="c1"># calculate number of sunny/thin and opaque pixels</span>
-    <span class="n">sunny_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">red_blue_ratio</span> <span class="o">&lt;=</span> <span class="n">fixed_sunny_threshold</span><span class="p">))</span>
-    <span class="n">thin_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">clear_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">red_blue_ratio</span> <span class="o">&lt;=</span> <span class="n">fixed_sunny_threshold</span><span class="p">))</span>
+    <span class="n">thin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span>
                                         <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="n">fixed_sunny_threshold</span><span class="p">,</span>
                                                        <span class="n">red_blue_ratio</span> <span class="o">&lt;=</span> <span class="n">fixed_thin_threshold</span><span class="p">)))</span>
-    <span class="n">opaque_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="n">fixed_thin_threshold</span><span class="p">))</span>
+    <span class="n">opaque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">red_blue_ratio</span> <span class="o">&gt;</span> <span class="n">fixed_thin_threshold</span><span class="p">))</span>
 
-    <span class="n">cloudy_pixels</span> <span class="o">=</span> <span class="n">thin_pixels</span> <span class="o">+</span> <span class="n">opaque_pixels</span>
+    <span class="n">cloud</span> <span class="o">=</span> <span class="n">thin</span> <span class="o">+</span> <span class="n">opaque</span>
 
-    <span class="n">thin_sky_cover</span> <span class="o">=</span> <span class="n">thin_pixels</span> <span class="o">/</span> <span class="p">(</span><span class="n">sunny_pixels</span> <span class="o">+</span> <span class="n">cloudy_pixels</span><span class="p">)</span>
-    <span class="n">opaque_sky_cover</span> <span class="o">=</span> <span class="n">opaque_pixels</span> <span class="o">/</span> <span class="p">(</span><span class="n">sunny_pixels</span> <span class="o">+</span> <span class="n">cloudy_pixels</span><span class="p">)</span>
-    <span class="n">fractional_sky_cover</span> <span class="o">=</span> <span class="n">thin_sky_cover</span> <span class="o">+</span> <span class="n">opaque_sky_cover</span>
+    <span class="n">cloud_cover_thin</span> <span class="o">=</span> <span class="n">thin</span> <span class="o">/</span> <span class="p">(</span><span class="n">clear_sky</span> <span class="o">+</span> <span class="n">cloud</span><span class="p">)</span>
+    <span class="n">cloud_cover_opaque</span> <span class="o">=</span> <span class="n">opaque</span> <span class="o">/</span> <span class="p">(</span><span class="n">clear_sky</span> <span class="o">+</span> <span class="n">cloud</span><span class="p">)</span>
+    <span class="n">cloud_cover_total</span> <span class="o">=</span> <span class="n">cloud_cover_thin</span> <span class="o">+</span> <span class="n">cloud_cover_opaque</span>
 
     <span class="c1"># check for NaN and odd values</span>
     <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;R/B ratio NaN found&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;R/B ratio NaN found&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">sunny_pixels</span> <span class="o">+</span> <span class="n">cloudy_pixels</span> <span class="o">&gt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">settings</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Total amount of non-mask pixels error: &#39;</span><span class="p">,</span> <span class="n">sunny_pixels</span><span class="p">,</span> <span class="n">cloudy_pixels</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">clear_sky</span> <span class="o">+</span> <span class="n">cloud</span> <span class="o">&gt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">settings</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Total amount of non-mask pixels error: &#39;</span><span class="p">,</span> <span class="n">clear_sky</span><span class="p">,</span> <span class="n">cloud</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">thin_sky_cover</span><span class="p">,</span> <span class="n">opaque_sky_cover</span><span class="p">,</span> <span class="n">fractional_sky_cover</span></div>
+    <span class="k">return</span> <span class="n">cloud_cover_thin</span><span class="p">,</span> <span class="n">cloud_cover_opaque</span><span class="p">,</span> <span class="n">cloud_cover_total</span></div>
 
 
 <div class="viewcode-block" id="hybrid"><a class="viewcode-back" href="../skycover.html#skycover.hybrid">[docs]</a><span class="k">def</span> <span class="nf">hybrid</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">):</span>
@@ -197,12 +195,12 @@
 <span class="sd">        float: fractional sky cover as determined by the hybrid thresholding algorithm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">sun_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span> <span class="o">&gt;</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
-    <span class="n">cloud_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span> <span class="o">&lt;</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+    <span class="n">clear_sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span> <span class="o">&gt;</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+    <span class="n">cloud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratioBR_norm_1d_nz</span> <span class="o">&lt;</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
 
-    <span class="n">fractional_sky_cover</span> <span class="o">=</span> <span class="n">cloud_pixels</span> <span class="o">/</span> <span class="p">(</span><span class="n">sun_pixels</span> <span class="o">+</span> <span class="n">cloud_pixels</span><span class="p">)</span>
+    <span class="n">cloud_cover_total</span> <span class="o">=</span> <span class="n">cloud</span> <span class="o">/</span> <span class="p">(</span><span class="n">clear_sky</span> <span class="o">+</span> <span class="n">cloud</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">fractional_sky_cover</span></div>
+    <span class="k">return</span> <span class="n">cloud_cover_total</span></div>
 </pre></div>
 
            </div>

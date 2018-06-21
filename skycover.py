@@ -16,28 +16,26 @@ def fixed(red_blue_ratio, fixed_sunny_threshold, fixed_thin_threshold):
     """
     # TODO: replace red_blue ratio with masked numpy version to clean up code below this comment, similar to hybrid below
     # calculate number of sunny/thin and opaque pixels
-    sunny_pixels = np.sum(np.logical_and(red_blue_ratio > 0.01, red_blue_ratio <= fixed_sunny_threshold))
-    thin_pixels = np.sum(np.logical_and(red_blue_ratio > 0.01,
+    clear_sky = np.sum(np.logical_and(red_blue_ratio > 0.01, red_blue_ratio <= fixed_sunny_threshold))
+    thin = np.sum(np.logical_and(red_blue_ratio > 0.01,
                                         np.logical_and(red_blue_ratio > fixed_sunny_threshold,
                                                        red_blue_ratio <= fixed_thin_threshold)))
-    opaque_pixels = np.sum(np.logical_and(red_blue_ratio > 0.01, red_blue_ratio > fixed_thin_threshold))
+    opaque = np.sum(np.logical_and(red_blue_ratio > 0.01, red_blue_ratio > fixed_thin_threshold))
 
-    cloudy_pixels = thin_pixels + opaque_pixels
+    cloud = thin + opaque
 
-    thin_sky_cover = thin_pixels / (sunny_pixels + cloudy_pixels)
-    opaque_sky_cover = opaque_pixels / (sunny_pixels + cloudy_pixels)
-    fractional_sky_cover = thin_sky_cover + opaque_sky_cover
+    cloud_cover_thin = thin / (clear_sky + cloud)
+    cloud_cover_opaque = opaque / (clear_sky + cloud)
+    cloud_cover_total = cloud_cover_thin + cloud_cover_opaque
 
     # check for NaN and odd values
     if math.isnan(np.min(red_blue_ratio)):
-        print('R/B ratio NaN found')
-        sys.exit('')
+        raise Exception('R/B ratio NaN found')
 
-    if sunny_pixels + cloudy_pixels > settings.y * settings.x:
-        print('Total amount of non-mask pixels error: ', sunny_pixels, cloudy_pixels)
-        sys.exit('')
+    if clear_sky + cloud > settings.y * settings.x:
+        raise Exception('Total amount of non-mask pixels error: ', clear_sky, cloud)
 
-    return thin_sky_cover, opaque_sky_cover, fractional_sky_cover
+    return cloud_cover_thin, cloud_cover_opaque, cloud_cover_total
 
 
 def hybrid(ratioBR_norm_1d_nz, hybrid_threshold):
@@ -51,9 +49,9 @@ def hybrid(ratioBR_norm_1d_nz, hybrid_threshold):
         float: fractional sky cover as determined by the hybrid thresholding algorithm
     """
 
-    sun_pixels = np.sum(ratioBR_norm_1d_nz > hybrid_threshold)
-    cloud_pixels = np.sum(ratioBR_norm_1d_nz < hybrid_threshold)
+    clear_sky = np.sum(ratioBR_norm_1d_nz > hybrid_threshold)
+    cloud = np.sum(ratioBR_norm_1d_nz < hybrid_threshold)
 
-    fractional_sky_cover = cloud_pixels / (sun_pixels + cloud_pixels)
+    cloud_cover_total = cloud / (clear_sky + cloud)
 
-    return fractional_sky_cover
+    return cloud_cover_total

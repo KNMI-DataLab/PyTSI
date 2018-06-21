@@ -80,7 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
 </ul>
 
             
@@ -157,7 +157,11 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../main.html#main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Call processing functions and write output to file&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Call mainn functions and write output to file.</span>
+
+<span class="sd">    First is the call to the processing loop. Afterwards, postprocessing, machine learning and cropping functionality</span>
+<span class="sd">    are carried out (specified in settings file). Finally, some plotting functions are called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_processing_loop</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">output_data</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
@@ -175,11 +179,12 @@
         <span class="n">postprocessor</span><span class="o">.</span><span class="n">aerosol_correction</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_machine_learning</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_knn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_knn</span><span class="p">:</span>  <span class="c1"># k nearest neighbor</span>
             <span class="n">machine_learning</span><span class="o">.</span><span class="n">knn</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_kmeans</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_kmeans</span><span class="p">:</span> <span class="c1"># k means</span>
             <span class="n">machine_learning</span><span class="o">.</span><span class="n">k_means</span><span class="p">()</span>
 
+    <span class="c1"># recursively crop all the mobotix images within directory</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">crop_mobotix_images</span><span class="p">:</span>
         <span class="n">crop</span><span class="o">.</span><span class="n">mobotix</span><span class="p">()</span>
 
@@ -187,12 +192,15 @@
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_sky_cover_comparison</span><span class="p">:</span>
         <span class="n">plotskycover</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
+    <span class="c1"># plot time series</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_sky_cover_time_series</span><span class="p">:</span>
         <span class="n">plot</span><span class="o">.</span><span class="n">single_time_series</span><span class="p">(</span><span class="s1">&#39;sky_cover_time_series&#39;</span><span class="p">,</span> <span class="s1">&#39;azimuth&#39;</span><span class="p">,</span> <span class="s1">&#39;cloud cover (%)&#39;</span><span class="p">)</span>
 
+    <span class="c1"># scatter plot comparing ground truth/old software vs new software</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_comparion_scatter</span><span class="p">:</span>
         <span class="n">plot</span><span class="o">.</span><span class="n">comparison_scatter</span><span class="p">()</span>
 
+    <span class="c1"># histogram of the differences between ground truth/old software and new software</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_difference_histogram</span><span class="p">:</span>
         <span class="n">plot</span><span class="o">.</span><span class="n">difference_histogram</span><span class="p">()</span></div>
 

@@ -80,7 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
 </ul>
 
             
@@ -159,10 +159,10 @@
     <span class="sd">&quot;&quot;&quot;Calculate the Grey Level Co-occurence Matrix (GLCM)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        img (int): masked RGB image (NumPy array)</span>
+<span class="sd">        img: masked RGB image (NumPy array)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: grey level co-occurrence matrix</span>
+<span class="sd">        grey level co-occurrence matrix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># set the number of grey levels used in the GLCM calculation</span>
     <span class="n">scaler</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">max_color_value</span> <span class="o">/</span> <span class="n">settings</span><span class="o">.</span><span class="n">grey_levels</span><span class="p">)</span>

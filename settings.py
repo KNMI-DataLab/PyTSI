@@ -1,4 +1,3 @@
-# DESCRIPTION: sets the global variables
 """
 Set the global variables for:
 
@@ -12,6 +11,7 @@ Set the global variables for:
 * Thresholding
 * Plotting
 * Toggling functions
+* And more
 """
 import sys
 import files_folders
@@ -30,6 +30,13 @@ main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
+
+# SWIM folders
+swim_dirs = (main_data + 'A-sky/images/',
+             # main_data + 'B-pattern/images/',
+             # main_data + 'C-thick-dark/images/',
+             main_data + 'D-thick-white/images/')
+             # main_data + 'E-veil/images/')
 
 # data type
 tsi_str = 'TSI'

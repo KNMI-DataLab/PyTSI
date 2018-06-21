@@ -1,10 +1,7 @@
-# DESCRIPTION: sets the fixed thresholds
 import numpy as np
 import settings
-import sys
 from math import log10
 import ratio
-import matplotlib.pyplot as plt
 
 
 def fixed():
@@ -22,11 +19,12 @@ def fixed():
     else:
         return fixed_sunny_threshold, fixed_thin_threshold
 
+
 def min_cross_entropy(data, nbins):
     """Minimum cross entropy algorithm to determine the minimum of a histogram
 
     Args:
-        data (foat): the image data (e.g. blue/red ratio) to be used in the histogram
+        data (float): the image data (e.g. blue/red ratio) to be used in the histogram
         nbins (int): number of histogram bins
 
     Returns:
@@ -69,14 +67,14 @@ def min_cross_entropy(data, nbins):
     # catch miscalculation
     if threshold <= 0:
         pass
-        #print('histogram data:', hist)
-        #print('ERROR threshold (', threshold, ') smaller or equal to 0')
-        #print('minimum is in bin:',np.argmin(thresholdList))
-        #print('bins:',bins)
-        #print('******************************************************')
-        #plt.hist(data, settings.nbins_hybrid)
-        #plt.show()
-        #raise Exception('Error in threshold')
+        # print('histogram data:', hist)
+        # print('ERROR threshold (', threshold, ') smaller or equal to 0')
+        # print('minimum is in bin:',np.argmin(thresholdList))
+        # print('bins:',bins)
+        # print('******************************************************')
+        # plt.hist(data, settings.nbins_hybrid)
+        # plt.show()
+        # raise Exception('Error in threshold')
     return threshold
 
 

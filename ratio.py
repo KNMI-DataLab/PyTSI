@@ -1,6 +1,3 @@
-# DESCRIPTION: calculates the Red/Blue ratio of every image pixel by dividing
-#              the red by the blue band pixelwise while avoiding the mask
-
 import numpy as np
 import settings
 import sys
@@ -32,6 +29,7 @@ def red_blue(img):
 
     return red_blue_ratio
 
+
 def red_blue_v2(img):
     """Second version (maybe a better one) of the v1 algorithm
 
@@ -41,36 +39,37 @@ def red_blue_v2(img):
     Returns:
         float: red/blue ratio per image pixel
     """
-    blue_band = img[:,:,0]
-    red_band = img[:,:,2]
+    blue_band = img[:, :, 0]
+    red_band = img[:, :, 2]
 
     # rule out zeros
     mask = np.logical_and(blue_band > 0, red_band > 0)
 
     red_blue_ratio = np.zeros([settings.y, settings.x])
-    red_blue_ratio[mask] = np.divide(red_band[mask],blue_band[mask])
+    red_blue_ratio[mask] = np.divide(red_band[mask], blue_band[mask])
 
     return red_blue_ratio
 
+
 def blue_red(img):
-    """Second version (maybe a better one) of the v1 algorithm
+    """Calculate the blue/red ratio per image pixel
 
     Args:
         img: input image
 
     Returns:
-        float: blue/red ratio per image pixel
+        blue/red ratio per image pixel
     """
-    blue_band = img[:,:,0]
-    red_band = img[:,:,2]
+    blue_band = img[:, :, 0]
+    red_band = img[:, :, 2]
 
     # rule out zeros
     mask = np.logical_and(blue_band > 0, red_band > 0)
 
-    if settings.data_type == 'TSI':
+    if settings.data_type == settings.tsi_str:
         blue_red_ratio = np.zeros([settings.y, settings.x])
     else:
         blue_red_ratio = np.zeros([settings.x, settings.y])
-    blue_red_ratio[mask] = np.divide(blue_band[mask],red_band[mask])
+    blue_red_ratio[mask] = np.divide(blue_band[mask], red_band[mask])
 
     return blue_red_ratio

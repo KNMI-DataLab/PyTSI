@@ -80,7 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
 </ul>
 
             
@@ -144,13 +144,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for thresholds</h1><div class="highlight"><pre>
-<span></span><span class="c1"># DESCRIPTION: sets the fixed thresholds</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">settings</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">log10</span>
 <span class="kn">import</span> <span class="nn">ratio</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
 <div class="viewcode-block" id="fixed"><a class="viewcode-back" href="../thresholds.html#thresholds.fixed">[docs]</a><span class="k">def</span> <span class="nf">fixed</span><span class="p">():</span>
@@ -168,11 +165,12 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">fixed_sunny_threshold</span><span class="p">,</span> <span class="n">fixed_thin_threshold</span></div>
 
+
 <div class="viewcode-block" id="min_cross_entropy"><a class="viewcode-back" href="../thresholds.html#thresholds.min_cross_entropy">[docs]</a><span class="k">def</span> <span class="nf">min_cross_entropy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nbins</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Minimum cross entropy algorithm to determine the minimum of a histogram</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (foat): the image data (e.g. blue/red ratio) to be used in the histogram</span>
+<span class="sd">        data (float): the image data (e.g. blue/red ratio) to be used in the histogram</span>
 <span class="sd">        nbins (int): number of histogram bins</span>
 
 <span class="sd">    Returns:</span>
@@ -215,14 +213,14 @@
     <span class="c1"># catch miscalculation</span>
     <span class="k">if</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">pass</span>
-        <span class="c1">#print(&#39;histogram data:&#39;, hist)</span>
-        <span class="c1">#print(&#39;ERROR threshold (&#39;, threshold, &#39;) smaller or equal to 0&#39;)</span>
-        <span class="c1">#print(&#39;minimum is in bin:&#39;,np.argmin(thresholdList))</span>
-        <span class="c1">#print(&#39;bins:&#39;,bins)</span>
-        <span class="c1">#print(&#39;******************************************************&#39;)</span>
-        <span class="c1">#plt.hist(data, settings.nbins_hybrid)</span>
-        <span class="c1">#plt.show()</span>
-        <span class="c1">#raise Exception(&#39;Error in threshold&#39;)</span>
+        <span class="c1"># print(&#39;histogram data:&#39;, hist)</span>
+        <span class="c1"># print(&#39;ERROR threshold (&#39;, threshold, &#39;) smaller or equal to 0&#39;)</span>
+        <span class="c1"># print(&#39;minimum is in bin:&#39;,np.argmin(thresholdList))</span>
+        <span class="c1"># print(&#39;bins:&#39;,bins)</span>
+        <span class="c1"># print(&#39;******************************************************&#39;)</span>
+        <span class="c1"># plt.hist(data, settings.nbins_hybrid)</span>
+        <span class="c1"># plt.show()</span>
+        <span class="c1"># raise Exception(&#39;Error in threshold&#39;)</span>
     <span class="k">return</span> <span class="n">threshold</span></div>
 
 

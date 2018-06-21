@@ -11,7 +11,11 @@ import crop
 
 
 def main():
-    """Call processing functions and write output to file"""
+    """Call mainn functions and write output to file.
+
+    First is the call to the processing loop. Afterwards, postprocessing, machine learning and cropping functionality
+    are carried out (specified in settings file). Finally, some plotting functions are called.
+    """
 
     if settings.use_processing_loop:
         with open(settings.output_data, 'w') as fd:
@@ -29,11 +33,12 @@ def main():
         postprocessor.aerosol_correction()
 
     if settings.use_machine_learning:
-        if settings.use_knn:
+        if settings.use_knn:  # k nearest neighbor
             machine_learning.knn()
-        elif settings.use_kmeans:
+        elif settings.use_kmeans: # k means
             machine_learning.k_means()
 
+    # recursively crop all the mobotix images within directory
     if settings.crop_mobotix_images:
         crop.mobotix()
 
@@ -41,12 +46,15 @@ def main():
     if settings.plot_sky_cover_comparison:
         plotskycover.plot()
 
+    # plot time series
     if settings.plot_sky_cover_time_series:
         plot.single_time_series('sky_cover_time_series', 'azimuth', 'cloud cover (%)')
 
+    # scatter plot comparing ground truth/old software vs new software
     if settings.plot_comparion_scatter:
         plot.comparison_scatter()
 
+    # histogram of the differences between ground truth/old software and new software
     if settings.plot_difference_histogram:
         plot.difference_histogram()
 

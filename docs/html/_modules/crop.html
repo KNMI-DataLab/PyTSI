@@ -80,7 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">cloudDetection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
 </ul>
 
             
@@ -155,7 +155,12 @@
 
 
 <div class="viewcode-block" id="mobotix"><a class="viewcode-back" href="../crop.html#crop.mobotix">[docs]</a><span class="k">def</span> <span class="nf">mobotix</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Crop mobotix image to rectangular shape.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Crop mobotix image to rectangular shape.</span>
+
+<span class="sd">    The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is</span>
+<span class="sd">    south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,</span>
+<span class="sd">    the crop region is in the east. This is to avoid solar interference with the image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># initialize the observer object</span>
     <span class="n">camera</span> <span class="o">=</span> <span class="n">ephem</span><span class="o">.</span><span class="n">Observer</span><span class="p">()</span>
@@ -204,12 +209,15 @@
                 <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">filename_no_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">jpg_extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
+                <span class="c1"># read image</span>
                 <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
 
+                <span class="c1"># get resolution of the image</span>
                 <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
                 <span class="nb">print</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;azimuth:&#39;</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="s1">&#39;altitude:&#39;</span><span class="p">,</span> <span class="n">altitude</span><span class="p">)</span>
 
+                <span class="c1"># solar position dependent crop regions</span>
                 <span class="k">if</span> <span class="n">azimuth</span> <span class="o">&lt;=</span> <span class="mi">135</span><span class="p">:</span>
                     <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">520</span><span class="p">:</span><span class="mi">1350</span><span class="p">,</span> <span class="mi">670</span><span class="p">:</span><span class="mi">1400</span><span class="p">,:]</span>
                 <span class="k">elif</span> <span class="n">azimuth</span> <span class="o">&gt;</span> <span class="mi">135</span> <span class="ow">and</span> <span class="n">azimuth</span> <span class="o">&lt;</span> <span class="mi">225</span><span class="p">:</span>

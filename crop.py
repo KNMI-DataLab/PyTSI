@@ -9,7 +9,12 @@ import matplotlib.pyplot as plt
 
 
 def mobotix():
-    """Crop mobotix image to rectangular shape."""
+    """Crop mobotix image to rectangular shape.
+
+    The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is
+    south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,
+    the crop region is in the east. This is to avoid solar interference with the image.
+    """
 
     # initialize the observer object
     camera = ephem.Observer()
@@ -58,12 +63,15 @@ def mobotix():
                 filecounter += 1
                 filename_no_ext = filename.replace(settings.jpg_extension, '')
 
+                # read image
                 img = cv2.imread(os.path.join(subdir, filename))
 
+                # get resolution of the image
                 resolution.get_resolution(img)
 
                 print(camera.date, 'azimuth:', azimuth, 'altitude:', altitude)
 
+                # solar position dependent crop regions
                 if azimuth <= 135:
                     crop = img[520:1350, 670:1400,:]
                 elif azimuth > 135 and azimuth < 225:

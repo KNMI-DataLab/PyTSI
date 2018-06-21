@@ -13,10 +13,10 @@ def calculate_greymatrix(img):
     """Calculate the Grey Level Co-occurence Matrix (GLCM)
 
     Args:
-        img (int): masked RGB image (NumPy array)
+        img: masked RGB image (NumPy array)
 
     Returns:
-        float: grey level co-occurrence matrix
+        grey level co-occurrence matrix
     """
     # set the number of grey levels used in the GLCM calculation
     scaler = int(settings.max_color_value / settings.grey_levels)

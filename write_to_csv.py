@@ -2,6 +2,11 @@ import settings
 
 
 def headers(writer):
+    """Write the headers (strings) to csv file
+
+    Args:
+        writer: csv writing object
+    """
     if settings.data_type == settings.tsi_str:
         writer.writerow(['filename',
                          'altitude',
@@ -41,7 +46,8 @@ def headers(writer):
                          'entropy',
                          'contrast',
                          'homogeneity',
-                         'cloud_cover',
+                         'cloud_cover_fixed',
+                         'cloud_cover_hybrid',
                          'cloud_type'
                          ])
 

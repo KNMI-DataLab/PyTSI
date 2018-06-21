@@ -4,6 +4,11 @@ import settings
 
 
 def set_output_folder():
+    """Concatenate two strings and add a '/' to form the output directory string
+
+    Returns:
+        string: output directory
+    """
     directory = settings.results_folder + settings.data_type + '/'
     try:
         os.makedirs(directory)

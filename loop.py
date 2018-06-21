@@ -14,15 +14,12 @@ import resolution
 import write_to_csv
 import os
 import math
-from tqdm import tqdm
 import gzip
 import statistical_analysis
 import ephem
 import numpy as np
-import matplotlib.pyplot as plt
-import plot
-import sys
 import time
+from tqdm import tqdm
 
 
 def type_TSI(writer):
@@ -30,6 +27,9 @@ def type_TSI(writer):
 
     Args:
         writer: csv writing object
+
+    Returns:
+        n_files: amount of files processed (integer)
     """
     filecounter = 0
 
@@ -51,13 +51,14 @@ def type_TSI(writer):
                     if altitude >= settings.minimum_altitude:
                         filecounter += 1
                         # get the fractional sky cover from 'old' TSI software
-                        cover_thin_tsi, cover_opaque_tsi, cover_total_tsi = read_properties_file.get_fractional_sky_cover_tsi(
-                            lines)
+                        cover_thin_tsi, cover_opaque_tsi, cover_total_tsi = read_properties_file.get_fractional_sky_cover_tsi(lines)
 
+                        # filename variables
                         filename_jpg = filename.replace(settings.properties_extension, settings.jpg_extension)
                         filename_png = filename.replace(settings.properties_extension, settings.png_extension)
                         filename_no_ext = filename.replace(settings.properties_extension, '')
 
+                        # extract date/time information from the filename
                         year = filename[0:4]
                         month = filename[4:6]
                         day = filename[6:8]
@@ -74,12 +75,20 @@ def type_TSI(writer):
                         # get the resolution of the image
                         resolution.get_resolution(img)
 
+                        # create and apply the mask
                         mask = createmask.create(img, azimuth)
                         masked_img = cv2.bitwise_and(img, mask)
 
+                        # calculate fixed fractional skycover
                         fixed_sunny_threshold, fixed_thin_threshold = thresholds.fixed()
+                        cover_thin_fixed, cover_opaque_fixed, cover_total_fixed = skycover.fixed(red_blue_ratio,
+                                                                                                 fixed_sunny_threshold,
+                                                                                                 fixed_thin_threshold)
+
+                        # calculate hybrid sky cover
                         ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(
                             masked_img)
+                        cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
 
                         # calculate red/blue ratio per pixel
                         red_blue_ratio = ratio.red_blue_v2(masked_img)
@@ -93,6 +102,7 @@ def type_TSI(writer):
                                 labels,
                                 red_blue_ratio,
                                 fixed_sunny_threshold)
+
 
                             # overlay outlines on image(s)
                             image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
@@ -113,18 +123,13 @@ def type_TSI(writer):
                         else:
                             outside_c = outside_s = horizon_c = horizon_s = inner_c = inner_s = sun_c = sun_s = None
 
-                        # calculate fractional skycover
-                        cover_thin_fixed, cover_opaque_fixed, cover_total_fixed = skycover.fixed(red_blue_ratio,
-                                                                                                 fixed_sunny_threshold,
-                                                                                                 fixed_thin_threshold)
-                        cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
-
                         # calculate statistical properties of the image
                         if settings.use_statistical_analysis:
                             energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
                         else:
                             energy = entropy = contrast = homogeneity = None
 
+                        # prepare data for writing to csv
                         data_row = (filename_no_ext,
                                     altitude,
                                     azimuth,
@@ -158,42 +163,44 @@ def type_swimcat(writer):
 
     Args:
         writer: csv writing object
-    """
-    dir_list = (settings.main_data + 'A-sky/images/',
-                # settings.main_data + 'B-pattern/images/',
-                # settings.main_data + 'C-thick-dark/images/',
-                settings.main_data + 'D-thick-white/images/')
-                # settings.main_data + 'E-veil/images/')
 
+    Returns:
+        n_files: amount of files processed (integer)
+    """
     filecounter = 0
 
-    for cloud_type, dir_name in enumerate(tqdm(dir_list)):
-        dir_name = os.fsencode(dir_list[cloud_type])
+    for cloud_type, dir_name in enumerate(tqdm(settings.swim_dirs)):
+        dir_name = os.fsencode(settings.swim_dirs[cloud_type])
         dir_name = os.listdir(dir_name)
         for file in tqdm(dir_name):
             filecounter += 1
 
             filename = os.fsdecode(file)
             # absolute location of the file
-            file_location = dir_list[cloud_type] + filename
+            file_location = settings.swim_dirs[cloud_type] + filename
             # read the image
             img = cv2.imread(file_location)
 
             resolution.get_resolution(img)
 
-            # GLCM = statistical_analysis.calculate_greymatrix(img)
             energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
             mean_r, mean_g, mean_b, st_dev, skewness, diff_rg, diff_rb, diff_gb = statistical_analysis.spectral_features(
                 img)
 
-            if settings.use_hybrid_SEG:
-                ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(img)
-                cloud_cover = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
-            else:
-                red_blue_ratio = ratio.red_blue_v2(img)
-                threshold = settings.fixed_threshold_swim
-                tmp, tmp, cloud_cover = skycover.fixed(red_blue_ratio, threshold, threshold)
+            # fixed cloud cover
+            red_blue_ratio = ratio.red_blue_v2(img)
+            threshold = settings.fixed_threshold_swim
+            tmp, tmp, cloud_cover_fixed = skycover.fixed(red_blue_ratio, threshold, threshold)
 
+            # decide whether to use hybrid thresholding for this database
+            if settings.use_hybrid_SEG:
+                # hybrid cloud cover cloud cover
+                ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(img)
+                cloud_cover_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
+            else:
+                cloud_cover_hybrid = None
+
+            # prepare data for writing to csv
             data_row = (filename,
                         mean_r,
                         mean_g,
@@ -207,7 +214,8 @@ def type_swimcat(writer):
                         entropy,
                         contrast,
                         homogeneity,
-                        cloud_cover,
+                        cloud_cover_fixed,
+                        cloud_cover_hybrid,
                         cloud_type
                         )
 
@@ -221,7 +229,11 @@ def type_swimseg(writer):
 
     Args:
         writer: csv writing object
+
+    Returns:
+        n_files: amount of files processed (integer)
     """
+    # create empty list for ground truth values
     cloud_cover_GT = []
 
     filecounter = 0
@@ -232,11 +244,12 @@ def type_swimseg(writer):
         for i, filename in enumerate(files):
             if filename.endswith(settings.png_extension):
                 filecounter += 1
+                # check if we are dealing with ground truth maps or RGB images
                 if filename.find('GT', 0, len(filename)) != -1:
                     img = cv2.imread(os.path.join(subdir, filename))
 
+                    # get the resolution of the image
                     resolution.get_resolution(img)
-
 
                     # Calculate counts of cloudy and clear sky pixels. In this case, the images that are loaded are
                     # black/white (bw). Thus the only occurring RGB values are (255,255,255) and (0,0,0) for white and
@@ -244,9 +257,10 @@ def type_swimseg(writer):
                     # determine white or black pixel and subsequently if the ground truth map indicates clear sky
                     # or clouds.
 
-                    cloud = np.sum(img[:, :, 0] == 255) # when one of the bands is 255, pixel is white
-                    clear_sky = np.sum(img[:, :, 0] == 0) # when one of the bands is 0, pixel is black
+                    cloud = np.sum(img[:, :, 0] == 255)  # when one of the bands is 255, pixel is white
+                    clear_sky = np.sum(img[:, :, 0] == 0)  # when one of the bands is 0, pixel is black
 
+                    # append the cloud cover to the ground truth list
                     cloud_cover_GT.append(cloud / (cloud + clear_sky))
 
                 else:
@@ -256,25 +270,22 @@ def type_swimseg(writer):
 
                     resolution.get_resolution(img)
 
-                    # fixed sky cover
+                    # fixed cloud cover
                     red_blue_ratio = ratio.red_blue_v2(img)
                     cloud = np.sum(red_blue_ratio >= settings.fixed_threshold_swim)
                     clear_sky = np.sum(red_blue_ratio < settings.fixed_threshold_swim)
 
-                    img_bw = np.empty((settings.x, settings.y))
-                    img_bw[red_blue_ratio >= settings.fixed_threshold_swim] = 1
-                    img_bw[red_blue_ratio < settings.fixed_threshold_swim] = 0
-
                     cloud_cover_fixed = cloud / (cloud + clear_sky)
 
-                    # hybrid sky cover
+                    # hybrid cloud cover
                     ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(img)
                     cloud_cover_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, threshold)
 
+                    # prepare data for writing to csv
                     data_row = (filename_no_ext, cloud_cover_GT[i], cloud_cover_fixed, cloud_cover_hybrid)
                     print(filename_no_ext, cloud_cover_GT[i], cloud_cover_fixed, cloud_cover_hybrid)
 
-                    #plot.original_and_binary_and_histogram(img, filename,
+                    # plot.original_and_binary_and_histogram(img, filename,
                     #                                       blue_red_ratio_norm, 'blue/red ratio',
                     #                                       ratio_br_norm_1d_nz, 'blue/red norm histogram',
                     #                                      'Normalized B/R', 'Frequency',
@@ -290,6 +301,9 @@ def type_mobotix(writer):
 
     Args:
         writer: csv writing object
+
+    Returns:
+        int: amount of files processed
     """
     # initialize the observer object
     camera = ephem.Observer()
@@ -307,6 +321,7 @@ def type_mobotix(writer):
         files.sort()
 
         for filename in files:
+            # extract the dat/time information from the file name
             year = int('20' + filename[1:3])
             month = int(filename[3:5])
             day = int(filename[5:7])
@@ -315,20 +330,17 @@ def type_mobotix(writer):
             second = int(filename[11:13])
 
             # TODO: things WILL go wrong with UTC/CEST time zones
-            # set time of observer object
-            camera.date = str(year) + '/' + \
-                          str(month) + '/' + \
-                          str(day) + ' ' + \
-                          str(hour) + ':' + \
-                          str(minute) + ':' + \
-                          str(second)
+            # set time of observer object (in this case, the camera is the observer)
+            camera.date = str(year) + '/' + str(month) + '/' + str(day) + ' ' + str(hour) + ':' + \
+                          str(minute) + ':' + str(second)
 
-            # make sun object
+            # create and read position of sun object
             solar_position = ephem.Sun(camera)
 
             azimuth = math.degrees(float(repr(solar_position.az)))
             altitude = math.degrees(float(repr(solar_position.alt)))
 
+            # used for skipping files (see settings.py)
             n_increment += 1
 
             if altitude < settings.minimum_altitude:
@@ -340,21 +352,25 @@ def type_mobotix(writer):
 
                 img = cv2.imread(os.path.join(subdir, filename))
 
+                # crop image
+                # TODO: replace with function
                 img = img[105:2000, 335:2375, :]
 
+                # get resolution of the image
                 resolution.get_resolution(img)
 
+                # create and apply mask
                 mask = np.zeros(img.shape, dtype='uint8')
                 cv2.circle(mask, (int(settings.y / 2), int(settings.x / 2)), settings.radius_mobotix_circle,
                            settings.white, -1)
-
-                # img = img[..., ::-1]
 
                 masked = cv2.bitwise_and(img, mask)
 
                 cv2.line(masked, (840, 475), (720, 70), settings.black, 35)
 
+                # hybrid cloud cover
                 blue_red_ratio_norm_1d_nz, blue_red_ratio_norm, st_dev, threshold = thresholds.hybrid(masked)
+                cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
 
                 # plot.histogram(blue_red_ratio_norm_1d_nz, filename, 'Normalized B/R', 'Frequency', st_dev, threshold)
                 # plot.binary(blue_red_ratio_norm, filename, threshold)
@@ -365,15 +381,14 @@ def type_mobotix(writer):
                 #                                        'Normalized B/R', 'Frequency',
                 #                                        st_dev, threshold)
 
-                cloud_cover = skycover.hybrid(blue_red_ratio_norm_1d_nz, threshold)
-
                 print(camera.date, 'azimuth:', azimuth, 'altitude:', altitude, 'cloud cover:', cloud_cover)
 
                 if settings.use_statistical_analysis:
                     energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(img)
                 else:
-                    energy = entropy = contrast = homogeneity = 0
+                    energy = entropy = contrast = homogeneity = None
 
+                # prepare data for writing to csv
                 data_row = (filename_no_ext,
                             azimuth,
                             altitude,

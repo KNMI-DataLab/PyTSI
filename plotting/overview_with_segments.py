@@ -9,7 +9,7 @@
 ###############################################################################
 
 #import libraries
-from myimports import *
+import matplotlib.pyplot as plt
 
 def saveOutputToFigures(filename,img,imgTSI,regions,imageWithOutlines,imageWithOutlinesHYTA):
 	fig, (ax1,ax2,ax3,ax4,ax5) = plt.subplots(1,5)

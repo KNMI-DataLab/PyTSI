@@ -1,7 +1,11 @@
+"""Subdivide the image into four regions.
+
+In order for the postprocessing step to be carried out, the image has to be subdivided into four regions. Every function
+takes care of a different regions. Combining them all in the correct order leads to the final segmented image.
+"""
 import cv2 as cv2
 from math import cos, sin, sqrt, tan, pi
 import numpy as np
-import resolution
 import settings
 
 
@@ -18,10 +22,12 @@ def large_circle(regions, labels, outlines):
     Returns:
         tuple: regions, labels, outlines
     """
-    cv2.circle(regions, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.red, -1)
-    cv2.circle(labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, 1, -1)
-    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.red,
-               settings.outline_thickness)
+    cv2.circle(regions, (int(settings.x / 2), int(settings.y / 2)),
+               settings.radius_circle, settings.red, -1)
+    cv2.circle(labels, (int(settings.x / 2), int(settings.y / 2)),
+               settings.radius_circle, 1, -1)
+    cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)),
+               settings.radius_circle, settings.red, settings.outline_thickness)
 
     return regions, labels, outlines
 
@@ -47,10 +53,10 @@ def draw_horizon_area(azimuth, regions, labels, outlines):
     # horizon width from degrees to radians
     width = settings.width_horizon_area_degrees * pi / 180
     # four points at vertices of polygon
-    p1 = [int(int(settings.x / 2)), int(int(settings.y / 2))]
-    p2 = [int(int(settings.x / 2)) + r * cos(theta - width), int(int(settings.y / 2)) + r * sin(theta - width)]
-    p3 = [int(int(settings.x / 2)) + r * cos(theta), int(int(settings.y / 2)) + r * sin(theta)]
-    p4 = [int(int(settings.x / 2)) + r * cos(theta + width), int(int(settings.y / 2)) + r * sin(theta + width)]
+    p1 = [int(settings.x / 2), int(settings.y / 2)]
+    p2 = [int(settings.x / 2) + r * cos(theta - width), int(settings.y / 2) + r * sin(theta - width)]
+    p3 = [int(settings.x / 2) + r * cos(theta), int(settings.y / 2) + r * sin(theta)]
+    p4 = [int(settings.x / 2) + r * cos(theta + width), int(settings.y / 2) + r * sin(theta + width)]
     horizon_area = np.array([p1, p2, p3, p4], dtype=int)
     # draw the polygon
     cv2.fillConvexPoly(regions, horizon_area, color=settings.cyan)
@@ -74,10 +80,10 @@ def inner_circle(regions, labels, outlines):
     Returns:
         tuple: regions, labels, outlines
     """
-    cv2.circle(regions, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, settings.green, -1)
-    cv2.circle(labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, 3, -1)
-    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, (0, 0, 0), -1)
-    cv2.circle(outlines, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_inner_circle, settings.green,
+    cv2.circle(regions, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, settings.green, -1)
+    cv2.circle(labels, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, 3, -1)
+    cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, (0, 0, 0), -1)
+    cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, settings.green,
                settings.outline_thickness)
 
     return regions, labels, outlines
@@ -112,8 +118,8 @@ def sun_circle(altitude, regions, labels, outlines, theta):
     d = b ** 2 - 4 * a * c
     r = settings.radius_mirror * (-b - sqrt(d)) / (2 * a) / 2
     # x and y position of the sun
-    x_sun = int(int(settings.x / 2) + r * cos(theta))
-    y_sun = int(int(settings.y / 2) + r * sin(theta))
+    x_sun = int(settings.x / 2) + r * cos(theta)
+    y_sun = int(settings.y / 2) + r * sin(theta)
     # draw the circle
     cv2.circle(regions, (x_sun, y_sun), settings.radius_sun_circle, settings.yellow, -1)
     cv2.circle(labels, (x_sun, y_sun), settings.radius_sun_circle, 4, -1)
@@ -133,8 +139,8 @@ def create_stencil(stencil, stencil_labels):
     Returns:
         tuple: stencil in both RGB and scalar format
     """
-    cv2.circle(stencil, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, settings.white, -1)
-    cv2.circle(stencil_labels, (int(int(settings.x / 2)), int(int(settings.y / 2))), settings.radius_circle, 1, -1)
+    cv2.circle(stencil, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, settings.white, -1)
+    cv2.circle(stencil_labels, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, 1, -1)
 
     return stencil, stencil_labels
 
@@ -186,7 +192,6 @@ def overlay_outlines_on_image(img, outlines, stencil):
     image_with_outlines = cv2.bitwise_and(dst, stencil)
 
     return image_with_outlines
-
 
 
 def draw_arm(regions, labels, image_with_outlines):

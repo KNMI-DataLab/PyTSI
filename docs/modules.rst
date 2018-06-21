@@ -1,4 +1,4 @@
-cloudDetection
+Modules
 ==============
 
 .. toctree::
@@ -14,7 +14,6 @@ cloudDetection
    loop
    machine_learning
    main
-   myimports
    overlay
    postprocessor
    processor
