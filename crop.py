@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 def mobotix():
-    """Crop mobotix image to rectangular shape.
+    """Crop mobotix images to rectangular shape.
 
     The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is
     south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,
@@ -73,21 +73,39 @@ def mobotix():
 
                 # solar position dependent crop regions
                 if azimuth <= 135:
-                    crop = img[520:1350, 670:1400,:]
+                    crop = img[520:1350, 670:1400, :]
                 elif azimuth > 135 and azimuth < 225:
                     crop = img[520:1000, 670:2035, :]
-                elif azimuth >=225:
+                elif azimuth >= 225:
                     crop = img[520:1350, 1305:2035, :]
 
                 plt.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
                 plt.savefig(settings.results_folder + settings.data_type + '/crops/' + filename_no_ext + '_crop.png')
                 plt.close()
 
-                cv2.rectangle(img, (670, 520), (1400, 1350), (0, 255, 0), 10)
-                cv2.rectangle(img, (680, 530), (2045, 1010), (0, 0, 255), 10)
-                cv2.rectangle(img, (1295, 510), (2025, 1340), (255, 0, 0), 10)
-
-                plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-                plt.savefig(settings.results_folder + settings.data_type + '/' + filename_no_ext + '_crop_regions.png')
-                plt.close()
+                # cv2.rectangle(img, (670, 520), (1400, 1350), (0, 255, 0), 10)
+                # cv2.rectangle(img, (680, 530), (2045, 1010), (0, 0, 255), 10)
+                # cv2.rectangle(img, (1295, 510), (2025, 1340), (255, 0, 0), 10)
+                #
+                # plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                # plt.savefig(settings.results_folder + settings.data_type + '/' + filename_no_ext + '_crop_regions.png')
+                # plt.close()
                 # quit()
+
+
+def single_RGB_image(img, corner1, corner2, corner3, corner4):
+    """Crop a single Red Green Blue (RGB) image using the four corner points of a rectangle
+
+    Args:
+        img: RGB image
+        corner1: first corner of the rectangle
+        corner2: second corner of the rectangle
+        corner3: third corner of the rectangle
+        corner4: fourth corner of the rectangle
+
+    Returns:
+        Cropped image
+    """
+    crop = img[corner1:corner2, corner3:corner4, :]
+
+    return crop

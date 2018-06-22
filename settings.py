@@ -26,17 +26,10 @@ results_folder = project_folder + 'results/'
 
 # main data
 # main_data = project_folder + 'data/TSI/DBASE/201606/'
-main_data = project_folder + 'data/SWIM/swimseg/'
+# main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
-# main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/11/'
-
-# SWIM folders
-swim_dirs = (main_data + 'A-sky/images/',
-             # main_data + 'B-pattern/images/',
-             # main_data + 'C-thick-dark/images/',
-             main_data + 'D-thick-white/images/')
-             # main_data + 'E-veil/images/')
+main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/'
 
 # data type
 tsi_str = 'TSI'
@@ -55,11 +48,19 @@ elif main_data.find(mob_str, 0, len(main_data)) != -1:
 else:
     raise Exception('Data type not found in string: ' + str(main_data))
 
+if data_type == cat_str:
+    # SWIM folders
+    swim_dirs = (main_data + 'A-sky/images/',
+                 # main_data + 'B-pattern/images/',
+                 # main_data + 'C-thick-dark/images/',
+                 main_data + 'D-thick-white/images/')
+                 # main_data + 'E-veil/images/')
+
 output_folder = files_folders.set_output_folder()
 
 # output
-output_data = project_folder + 'cloud_detection/cloudDetection/data.csv'
-output_data_copy = project_folder + 'cloud_detection/cloudDetection/data' + data_type + '.csv'
+output_data = project_folder + 'cloud_detection/cloudDetection/output_data/data.csv'
+output_data_copy = project_folder + 'cloud_detection/cloudDetection/output_data/data' + data_type + '.csv'
 
 # csv delimiter
 delimiter = ','
@@ -81,7 +82,10 @@ camera_longitude = '4.927675'
 camera_elevation = 1
 
 # looping
-skip_loops = 120 # every 'x' files are used in stead of all files
+# every 'x' files are used in stead of all files
+# 4 images are taken every minute in case of the mobotix file
+# that means: 'skip_loops = 120' results in 1 image every half an hour being processed as 4*30=120
+skip_loops = 120
 
 # aerosol correction
 initial_adjustment_factor_limit = 0.5
@@ -164,7 +168,7 @@ use_processing_loop = True
 use_postprocessing = False
 use_statistical_analysis = False
 use_machine_learning = False
-crop_mobotix_images = True
+crop_mobotix_images = False
 
 # plotting
 plot_sky_cover_comparison = False

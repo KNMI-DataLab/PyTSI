@@ -20,6 +20,7 @@ import ephem
 import numpy as np
 import time
 from tqdm import tqdm
+import crop
 
 
 def type_TSI(writer):
@@ -243,7 +244,6 @@ def type_swimseg(writer):
         files.sort()
         for i, filename in enumerate(files):
             if filename.endswith(settings.png_extension):
-                filecounter += 1
                 # check if we are dealing with ground truth maps or RGB images
                 if filename.find('GT', 0, len(filename)) != -1:
                     img = cv2.imread(os.path.join(subdir, filename))
@@ -264,6 +264,8 @@ def type_swimseg(writer):
                     cloud_cover_GT.append(cloud / (cloud + clear_sky))
 
                 else:
+                    filecounter += 1
+
                     filename_no_ext = filename.replace(settings.png_extension, '')
 
                     img = cv2.imread(os.path.join(subdir, filename))
@@ -353,8 +355,7 @@ def type_mobotix(writer):
                 img = cv2.imread(os.path.join(subdir, filename))
 
                 # crop image
-                # TODO: replace with function
-                img = img[105:2000, 335:2375, :]
+                img = crop.single_RGB_image(img, 105, 2000, 335, 2375)
 
                 # get resolution of the image
                 resolution.get_resolution(img)
@@ -425,4 +426,5 @@ def structure(writer):
         n_files = type_mobotix(writer)
 
     print("Main loop time: %s seconds" % round((time.time() - start_time), 10))
+    print('Amount of file processed: %s' % n_files)
     print("Average time per image: %s seconds" % round((time.time() - start_time) / n_files, 10))
