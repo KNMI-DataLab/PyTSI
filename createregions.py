@@ -82,7 +82,7 @@ def inner_circle(regions, labels, outlines):
     """
     cv2.circle(regions, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, settings.green, -1)
     cv2.circle(labels, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, 3, -1)
-    cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, (0, 0, 0), -1)
+    cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, settings.black, -1)
     cv2.circle(outlines, (int(settings.x / 2), int(settings.y / 2)), settings.radius_inner_circle, settings.green,
                settings.outline_thickness)
 
@@ -123,7 +123,7 @@ def sun_circle(altitude, regions, labels, outlines, theta):
     # draw the circle
     cv2.circle(regions, (x_sun, y_sun), settings.radius_sun_circle, settings.yellow, -1)
     cv2.circle(labels, (x_sun, y_sun), settings.radius_sun_circle, 4, -1)
-    cv2.circle(outlines, (x_sun, y_sun), settings.radius_sun_circle, (0, 0, 0), -1)
+    cv2.circle(outlines, (x_sun, y_sun), settings.radius_sun_circle, settings.black, -1)
     cv2.circle(outlines, (x_sun, y_sun), settings.radius_sun_circle, settings.yellow, settings.outline_thickness)
 
     return regions, labels, outlines

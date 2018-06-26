@@ -21,6 +21,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 import crop
+import matplotlib.pyplot as plt
 
 
 def type_TSI(writer):
@@ -80,6 +81,9 @@ def type_TSI(writer):
                         mask = createmask.create(img, azimuth)
                         masked_img = cv2.bitwise_and(img, mask)
 
+                        # calculate red/blue ratio per pixel
+                        red_blue_ratio = ratio.red_blue_v2(masked_img)
+
                         # calculate fixed fractional skycover
                         fixed_sunny_threshold, fixed_thin_threshold = thresholds.fixed()
                         cover_thin_fixed, cover_opaque_fixed, cover_total_fixed = skycover.fixed(red_blue_ratio,
@@ -91,8 +95,9 @@ def type_TSI(writer):
                             masked_img)
                         cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
 
-                        # calculate red/blue ratio per pixel
-                        red_blue_ratio = ratio.red_blue_v2(masked_img)
+                        # plt.imshow(cv2.cvtColor(masked_img, cv2.COLOR_BGR2RGB))
+                        # plt.show()
+                        # plt.close()
 
                         if settings.use_postprocessing:
                             # create the segments for solar correction

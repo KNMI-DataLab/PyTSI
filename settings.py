@@ -25,11 +25,11 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-# main_data = project_folder + 'data/TSI/DBASE/201606/'
+main_data = project_folder + 'data/TSI/DBASE/201606/'
 # main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
-main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/'
+# main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/same_alignment/'
 
 # data type
 tsi_str = 'TSI'
@@ -85,7 +85,7 @@ camera_elevation = 1
 # every 'x' files are used in stead of all files
 # 4 images are taken every minute in case of the mobotix file
 # that means: 'skip_loops = 120' results in 1 image every half an hour being processed as 4*30=120
-skip_loops = 120
+skip_loops = 40
 
 # aerosol correction
 initial_adjustment_factor_limit = 0.5

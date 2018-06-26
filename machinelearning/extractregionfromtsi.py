@@ -1,15 +1,13 @@
 import cv2
 from tqdm import tqdm
 import os
-import sys
 import glob
 
-dataFolder = '/home/mos/Documents/TSI/machinelearning/data/tsi/'
-outputFolder = '/home/mos/Documents/TSI/machinelearning/data/croppedImages/'
+dataFolder = '/nobackup/users/mos/data/TSI/DBASE/'
+outputFolder = '/nobackup/users/mos/results/TSI/crops/'
 
-print('test')
-
-for subdir, dirs, files in tqdm(sorted(os.walk(dataFolder))):
+for subdir, dirs, files in sorted(os.walk(dataFolder)):
+    print(subdir)
     imageCounter = 0
     for file in tqdm(sorted(files)):
         numberOfImages = len(glob.glob1(subdir, "*.jpg"))
@@ -28,26 +26,26 @@ for subdir, dirs, files in tqdm(sorted(os.walk(dataFolder))):
             # this means that x coordinates are actually y coordinates and
             # vice versa
             # west
-            xWest   = 91
+            xWest = 91
             xdxWest = 191
-            yWest   = 60
+            yWest = 60
             ydyWest = 140
 
             # east
-            xEast   = 91
+            xEast = 91
             xdxEast = 191
-            yEast   = 162
+            yEast = 162
             ydyEast = 242
 
             # MORNING
             if imageCounter / numberOfImages > 0.15 and imageCounter / numberOfImages < 0.17:
-                #print(imageCounter/numberOfImages, filename)
+                # print(imageCounter/numberOfImages, filename)
                 croppedImg = img[xWest:xdxWest, yWest:ydyWest]
                 cv2.imwrite(outputFolder + 'west_cropped' + filename, croppedImg)
 
             # MIDDAY
             if imageCounter / numberOfImages > 0.50 and imageCounter / numberOfImages < 0.52:
-                #print(imageCounter/numberOfImages, filename)
+                # print(imageCounter/numberOfImages, filename)
                 croppedImg = img[xWest:xdxWest, yWest:ydyWest]
                 cv2.imwrite(outputFolder + 'west_cropped' + filename, croppedImg)
 
@@ -56,7 +54,7 @@ for subdir, dirs, files in tqdm(sorted(os.walk(dataFolder))):
 
             # EVENING
             if imageCounter / numberOfImages > 0.83 and imageCounter / numberOfImages < 0.85:
-                #print(imageCounter/numberOfImages, filename)
+                # print(imageCounter/numberOfImages, filename)
                 croppedImg = img[xEast:xdxEast, yEast:ydyEast]
                 cv2.imwrite(outputFolder + 'east_cropped' + filename, croppedImg)
 
