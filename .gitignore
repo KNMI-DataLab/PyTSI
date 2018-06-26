@@ -7,7 +7,7 @@
 
 #text files
 *.txt
-*.csv
+
 
 #folders
 __pycache__
