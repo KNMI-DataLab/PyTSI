@@ -1,4 +1,4 @@
-import createmask
+import mask
 import ratio
 import createregions
 import poster_images
@@ -21,7 +21,6 @@ import numpy as np
 import time
 from tqdm import tqdm
 import crop
-import matplotlib.pyplot as plt
 
 
 def type_TSI(writer):
@@ -78,8 +77,8 @@ def type_TSI(writer):
                         resolution.get_resolution(img)
 
                         # create and apply the mask
-                        mask = createmask.create(img, azimuth)
-                        masked_img = cv2.bitwise_and(img, mask)
+                        mask_array = mask.create(img, azimuth)
+                        masked_img = mask.apply(img,mask_array)
 
                         # calculate red/blue ratio per pixel
                         red_blue_ratio = ratio.red_blue_v2(masked_img)
@@ -95,10 +94,6 @@ def type_TSI(writer):
                             masked_img)
                         cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
 
-                        # plt.imshow(cv2.cvtColor(masked_img, cv2.COLOR_BGR2RGB))
-                        # plt.show()
-                        # plt.close()
-
                         if settings.use_postprocessing:
                             # create the segments for solar correction
                             regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
@@ -108,7 +103,6 @@ def type_TSI(writer):
                                 labels,
                                 red_blue_ratio,
                                 fixed_sunny_threshold)
-
 
                             # overlay outlines on image(s)
                             image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,

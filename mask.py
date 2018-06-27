@@ -1,5 +1,5 @@
 import settings
-from math import cos, sin, tan, pi
+from math import cos, sin, pi
 import numpy as np
 import cv2 as cv2
 
@@ -10,8 +10,8 @@ def calculate_band_position(theta):
     The formula of a circle is used: :math:`x = r \\cos{\\theta} \wedge y = r \\sin{\\theta}`.
 
     Args:
-       theta (float): Azimuth of the sun with respect to the East. Normally, azimuth is measured from the North. However,
-                      to simplify calculations, the east was used.
+       theta (float): Azimuth of the sun with respect to the East. Normally, azimuth is measured from the North.
+       However, to simplify calculations, the east was used.
 
     Returns:
        tuple: X and y locations of the inner and outer points of the shadow band
@@ -41,11 +41,11 @@ def create(img, azimuth):
     Returns:
         int: The masked image of shape (x_resolution,y_resolution,3) for an RGB image
     """
-    mask = np.zeros(img.shape, dtype="uint8")
+    mask_array = np.zeros(img.shape, dtype="uint8")
 
     # HEMISPHERE
     # draw a white circle on the mask
-    cv2.circle(mask, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, settings.white, -1)
+    cv2.circle(mask_array, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, settings.white, -1)
 
     # SHADOWBAND
     # first calculate the position of the shadow band
@@ -60,11 +60,26 @@ def create(img, azimuth):
     x_inner, y_inner, x_outer, y_outer = calculate_band_position(theta)
 
     # draw a black line on the mask
-    cv2.line(mask, (x_inner, y_inner), (x_outer, y_outer), (0, 0, 0), 35)
+    cv2.line(mask_array, (x_inner, y_inner), (x_outer, y_outer), settings.black, 35)
 
     # ARM + CAMERA
-    cv2.rectangle(mask, (141, 190), (154, 153), (0, 0, 0), -1)
-    cv2.rectangle(mask, (145, 154), (152, 91), (0, 0, 0), -1)
-    cv2.rectangle(mask, (int(settings.x / 2), 91), (152, 26), (0, 0, 0), -1)
+    cv2.rectangle(mask_array, (141, 190), (154, 153), settings.black, -1)
+    cv2.rectangle(mask_array, (145, 154), (152, 91), settings.black, -1)
+    cv2.rectangle(mask_array, (int(settings.x / 2), 91), (152, 26), settings.black, -1)
 
-    return mask
+    return mask_array
+
+
+def apply(img, mask_array):
+    """Apply mask to image
+
+    Args:
+        img: image to be masked
+        mask_array: array of masking values
+
+    Returns:
+        masked image
+    """
+    masked_img = cv2.bitwise_and(img, mask_array)
+
+    return masked_img

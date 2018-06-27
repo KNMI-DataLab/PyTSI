@@ -25,7 +25,7 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/DBASE/201606/'
+main_data = project_folder + 'data/TSI/DBASE/201606/20160601_tsi-cabauw_realtime/'
 # main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
@@ -121,7 +121,7 @@ radius_sun_circle = 40
 radius_inner_circle = 80
 radius_circle = 130
 radius_mirror = 140
-outline_thickness = 3
+outline_thickness = 2
 band_thickness = 35
 width_horizon_area_degrees = 50
 r_inner = 40
@@ -164,8 +164,8 @@ use_knn = False
 use_kmeans = True
 
 # core functionality
-use_processing_loop = True
-use_postprocessing = False
+use_processing_loop = False
+use_postprocessing = True
 use_statistical_analysis = False
 use_machine_learning = False
 crop_mobotix_images = False

@@ -74,9 +74,9 @@ def mobotix():
                 # solar position dependent crop regions
                 if azimuth <= 135:
                     crop = img[520:1350, 670:1400, :]
-                elif azimuth > 135 and azimuth < 225:
+                elif 135 < azimuth < 225:
                     crop = img[520:1000, 670:2035, :]
-                elif azimuth >= 225:
+                else:
                     crop = img[520:1350, 1305:2035, :]
 
                 plt.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))

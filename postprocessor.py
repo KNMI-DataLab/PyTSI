@@ -12,7 +12,7 @@ def aerosol_correction():
     :meth:`settings`. Subsequently, the corrected sky cover percentages are written to a file.
     """
     # read columns of file
-    df = np.genfromtxt('/usr/people/mos/Documents/cloudDetection/data.csv', skip_header=1, delimiter=settings.delimiter)
+    df = np.genfromtxt(settings.output_data_copy, skip_header=1, delimiter=settings.delimiter)
 
     azimuth = df[:, 2]
     outside_c = df[:, 14]
@@ -117,7 +117,7 @@ def aerosol_correction():
     # zip data and put into file
     rows = zip(azimuth, corrected_sky_cover, smooth_corrected_sky_cover)
 
-    with open('corrections.csv', 'w') as f:
+    with open(settings.project_folder + 'cloud_detection/cloudDetection/output_data/corrections.csv', 'w') as f:
         writer = csv.writer(f, delimiter=settings.delimiter)
         writer.writerow(['azimuth', 'corrected_sky_cover', 'smooth_corrected_sky_cover'])
         for row in rows:
