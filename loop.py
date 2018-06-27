@@ -52,7 +52,8 @@ def type_TSI(writer):
                     if altitude >= settings.minimum_altitude:
                         filecounter += 1
                         # get the fractional sky cover from 'old' TSI software
-                        cover_thin_tsi, cover_opaque_tsi, cover_total_tsi = read_properties_file.get_fractional_sky_cover_tsi(lines)
+                        cover_thin_tsi, cover_opaque_tsi, cover_total_tsi = read_properties_file.get_fractional_sky_cover_tsi(
+                            lines)
 
                         # filename variables
                         filename_jpg = filename.replace(settings.properties_extension, settings.jpg_extension)
@@ -67,7 +68,7 @@ def type_TSI(writer):
                         minute = filename[10:12]
                         second = filename[12:13] + '0'
 
-                        print(day + '/' + month + '/' + year + ' ' + hour + ':' + minute + ':' + second)
+                        print(day + '/' + month + '/' + year + ' ' + hour + ':' + minute + ':' + second, end='\r')
 
                         # read the image
                         img = cv2.imread(os.path.join(subdir, filename_jpg))
@@ -78,7 +79,7 @@ def type_TSI(writer):
 
                         # create and apply the mask
                         mask_array = mask.create(img, azimuth)
-                        masked_img = mask.apply(img,mask_array)
+                        masked_img = mask.apply(img, mask_array)
 
                         # calculate red/blue ratio per pixel
                         red_blue_ratio = ratio.red_blue_v2(masked_img)
@@ -97,12 +98,12 @@ def type_TSI(writer):
                         if settings.use_postprocessing:
                             # create the segments for solar correction
                             regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
-                                                                                                           altitude)
+                                                                                                           altitude,
+                                                                                                           mask_array)
                             # get some data before doing actual solar/horizon area corrections
-                            outside_c, outside_s, horizon_c, horizon_s, inner_c, inner_s, sun_c, sun_s = labelled_image.calculate_pixels(
-                                labels,
-                                red_blue_ratio,
-                                fixed_sunny_threshold)
+                            outside_c, outside_s, horizon_c, horizon_s, \
+                            inner_c, inner_s, sun_c, sun_s = labelled_image.calculate_pixels(labels, red_blue_ratio,
+                                                                                             fixed_sunny_threshold)
 
                             # overlay outlines on image(s)
                             image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
@@ -115,7 +116,7 @@ def type_TSI(writer):
                                 overview.plot(img, img_tsi, regions, image_with_outlines_fixed,
                                               image_with_outlines_hybrid,
                                               azimuth,
-                                              ratio_br_norm_1d_nz, hybrid_threshold, st_dev)
+                                              ratio_br_norm_1d_nz, hybrid_threshold, st_dev, filename_no_ext)
 
                             if settings.plot_poster_images:
                                 # plot images for use in poster

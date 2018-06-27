@@ -51,7 +51,7 @@ def main():
         plot.single_time_series('sky_cover_time_series', 'azimuth', 'cloud cover (%)')
 
     # scatter plot comparing ground truth/old software vs new software
-    if settings.plot_comparion_scatter:
+    if settings.plot_comparison_scatter:
         plot.comparison_scatter()
 
     # histogram of the differences between ground truth/old software and new software

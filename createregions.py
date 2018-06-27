@@ -256,7 +256,7 @@ def labels_from_regions(labels, regions):
     return labels
 
 
-def create(img, azimuth, altitude):
+def create(img, azimuth, altitude, mask_array):
     """Create the empty arrays and call drawing and masking functions
 
     Args:
@@ -286,7 +286,6 @@ def create(img, azimuth, altitude):
     image_with_outlines = overlay_outlines_on_image(img, outlines, stencil)
 
     # apply mask to regions
-    mask_array = mask.create(regions, azimuth)
     masked_regions = mask.apply(regions, mask_array)
 
     # apply mask to image with outlines
@@ -295,4 +294,4 @@ def create(img, azimuth, altitude):
     # convert regions to labels
     labels = labels_from_regions(labels, masked_regions)
 
-    return regions, outlines, labels, stencil, image_with_outlines
+    return masked_regions, outlines, labels, stencil, image_with_outlines

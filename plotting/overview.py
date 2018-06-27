@@ -1,14 +1,15 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import settings
 
 
 def plot(img, imgTSI, regions, imageWithOutlines, imageWithOutlinesHYTA, azimuth, flatNormalizedRatioBRNoZeros,
-         threshold, st_dev):
-    currentAzimuth = azimuth
+         threshold, st_dev, filename):
+    current_azimuth = azimuth
 
-    data = np.genfromtxt('output_data_movie.csv', delimiter='\t', names=True)
-    corrections = np.genfromtxt('corrections.csv', delimiter='\t', names=True)
-    mobotix = np.genfromtxt('/nobackup/users/mos/testing/mobotix/mobotix_cloud_cover.csv', delimiter='\t')
+    data = np.genfromtxt('output_data/dataTSI.csv', delimiter=settings.delimiter, names=True)
+    corrections = np.genfromtxt('output_data/corrections.csv', delimiter=settings.delimiter, names=True)
+    # mobotix = np.genfromtxt('/nobackup/users/mos/testing/mobotix/mobotix_cloud_cover.csv', delimiter='\t')
 
     plt.figure(figsize=(16, 9))
 
@@ -64,35 +65,35 @@ def plot(img, imgTSI, regions, imageWithOutlines, imageWithOutlinesHYTA, azimuth
     ax6.hist(flatNormalizedRatioBRNoZeros, nbins, range=[0, 1], density=1)
     ax6.legend()
 
-    ax7.plot(data['azimuth'], data['fractionalSkyCoverTSI'] * 100,
+    ax7.plot(data['azimuth'], data['cloud_cover_TSI'] * 100,
              color='tab:red', label='Old', linewidth=2.0)
-    ax7.plot(data['azimuth'], data['fractionalSkyCover'] * 100,
+    ax7.plot(data['azimuth'], data['cloud_cover_fixed'] * 100,
              color='tab:green', label='New', linewidth=2.0)
-    ax7.plot(data['azimuth'], data['fractionalSkyCoverHYTA'] * 100,
+    ax7.plot(data['azimuth'], data['cloud_cover_hybrid'] * 100,
              color='tab:purple', label='HYTA', linewidth=2.0)
     ax7.plot(data['azimuth'], corrections['corrected_sky_cover'] * 100,
              color='tab:blue', label='Corrected', linewidth=2.0)
     ax7.plot(data['azimuth'], corrections['smooth_corrected_sky_cover'] * 100,
              color='tab:orange', label='Smoothened', linewidth=2.0)
-    ax7.plot(mobotix[:, 0], mobotix[:, 2] * 100,
-             color='tab:pink', label='Mobotix', linewidth=2.0)
-    ax7.axvline(currentAzimuth, color='k', linestyle='dashed', linewidth=2, label='azimuth')
-    ax7.set_title('Cloud cover. Current azimuth=' + str(currentAzimuth))
+    # ax7.plot(mobotix[:, 0], mobotix[:, 2] * 100,
+    #          color='tab:pink', label='Mobotix', linewidth=2.0)
+    ax7.axvline(current_azimuth, color='k', linestyle='dashed', linewidth=2, label='azimuth')
+    ax7.set_title('Cloud cover. Current azimuth=' + str(current_azimuth))
     ax7.legend(bbox_to_anchor=(1.005, 0.9), loc=2, borderaxespad=0.)
 
     ax7.set_ylabel('absolute (%)')
     ax7.set_ylim([-5, 105])
     ax7.grid()
 
-    ax8.plot(data['azimuth'], abs((data['fractionalSkyCoverTSI'] - data['fractionalSkyCover']) * 100),
+    ax8.plot(data['azimuth'], abs((data['cloud_cover_TSI'] - data['cloud_cover_fixed']) * 100),
              color='tab:green', label='Old-new', linewidth=2.0)
-    ax8.plot(data['azimuth'], abs((data['fractionalSkyCoverTSI'] - data['fractionalSkyCoverHYTA']) * 100),
+    ax8.plot(data['azimuth'], abs((data['cloud_cover_TSI'] - data['cloud_cover_hybrid']) * 100),
              color='tab:purple', label='Old-HYTA', linewidth=2.0)
-    ax8.plot(data['azimuth'], abs((data['fractionalSkyCoverTSI'] - corrections['corrected_sky_cover']) * 100),
+    ax8.plot(data['azimuth'], abs((data['cloud_cover_TSI'] - corrections['corrected_sky_cover']) * 100),
              color='tab:blue', label='Old-corrected', linewidth=2.0)
-    ax8.plot(data['azimuth'], abs((data['fractionalSkyCoverTSI'] - corrections['smooth_corrected_sky_cover']) * 100),
+    ax8.plot(data['azimuth'], abs((data['cloud_cover_TSI'] - corrections['smooth_corrected_sky_cover']) * 100),
              color='tab:orange', label='Old-smoothened', linewidth=2.0)
-    ax8.axvline(currentAzimuth, color='k', linestyle='dashed', linewidth=2, label='azimuth')
+    ax8.axvline(current_azimuth, color='k', linestyle='dashed', linewidth=2, label='azimuth')
     ax8.legend(bbox_to_anchor=(1.005, 0.7), loc=2, borderaxespad=0.)
 
     ax8.set_ylabel('difference (%)')
@@ -102,5 +103,5 @@ def plot(img, imgTSI, regions, imageWithOutlines, imageWithOutlinesHYTA, azimuth
 
     plt.tight_layout()
 
-    # plt.savefig('results/completeoverview/'+filename)
+    plt.savefig(settings.results_folder + 'TSI/movie_images/' + filename)
     plt.close()

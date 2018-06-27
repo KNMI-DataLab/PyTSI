@@ -15,6 +15,7 @@ Set the global variables for:
 """
 import sys
 import files_folders
+import warnings
 
 # import the path
 sys.path.append('./plotting')
@@ -25,7 +26,7 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/DBASE/201606/20160601_tsi-cabauw_realtime/'
+main_data = project_folder + 'data/TSI/DBASE/201606/'  # 20160601_tsi-cabauw_realtime/'
 # main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
@@ -153,8 +154,8 @@ use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not
 #         2) devThr: 0.03 , fixThr: 0.25
 nbins_hybrid = 100
 if data_type == tsi_str or data_type == seg_str or data_type == cat_str:
-    deviation_threshold = 0.03  # original was 0.03, 'working:0.065'
-    fixed_threshold = 0.25  # original was 0.250, 'working:0.20'
+    deviation_threshold = 0.045  # original was 0.03, 'working:0.065'
+    fixed_threshold = 0.20  # original was 0.250, 'working:0.20'
 elif data_type == mob_str:
     deviation_threshold = 0.08
     fixed_threshold = 0.10
@@ -164,18 +165,21 @@ use_knn = False
 use_kmeans = True
 
 # core functionality
-use_processing_loop = False
-use_postprocessing = True
-use_statistical_analysis = False
-use_machine_learning = False
-crop_mobotix_images = False
+use_processing_loop = 0
+use_postprocessing = 0
+use_statistical_analysis = 0
+use_machine_learning = 0
+crop_mobotix_images = 0
 
 # plotting
-plot_sky_cover_comparison = False
-plot_sky_cover_time_series = False
-plot_correction_result = False
-plot_overview = False
-plot_poster_images = False
-use_project_3d = False
-plot_comparion_scatter = False
-plot_difference_histogram = False
+plot_sky_cover_comparison = 0
+plot_sky_cover_time_series = 0
+plot_correction_result = 0
+plot_overview = 0
+plot_poster_images = 0
+use_project_3d = 0
+plot_comparison_scatter = 1
+plot_difference_histogram = 0
+
+# ignore FutureWarnings
+warnings.simplefilter(action='ignore', category=FutureWarning)

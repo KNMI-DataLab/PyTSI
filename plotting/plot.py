@@ -11,7 +11,7 @@ from matplotlib.mlab import bivariate_normal
 
 
 def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
-    """
+    """Histogram object used in :meth:`plot.orignal_and_binary_and_histogram`.
 
     Args:
         data: input data
@@ -21,7 +21,7 @@ def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
         st_dev: standard deviation, used in histogram title
         threshold: calculated threshold value, plotted as line in histogram
     """
-    ax.set_title(str(plot_title) + ', st dev:' + str(round(st_dev,4)))
+    ax.set_title(str(plot_title) + ', st dev:' + str(round(st_dev, 4)))
     ax.axvline(threshold, color='k', linestyle='dashed', linewidth=2, label='threshold:' + str(round(threshold, 2)))
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -32,21 +32,22 @@ def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
 
     return out
 
+
 def difference_histogram():
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    nbins=25
+    nbins = 25
 
     plt.figure(figsize=(6, 4))
 
-    #plt.xticks(np.arange(-1.1,1.1, step=0.1))
+    # plt.xticks(np.arange(-1.1,1.1, step=0.1))
 
     x = data['cloud_cover_TSI']
     y = data['cloud_cover_fixed']
     diff1 = (y - x) * 100
     y = data['cloud_cover_hybrid']
     diff2 = (y - x) * 100
-    plt.hist([diff1, diff2], bins=nbins, label=['Fixed', 'Hybrid'], range=(-100,100), histtype='bar')
+    plt.hist([diff1, diff2], bins=nbins, label=['Fixed', 'Hybrid'], range=(-100, 100), histtype='bar')
 
     plt.ylabel('Frequency')
     plt.xlabel('Difference (%)')
@@ -59,7 +60,7 @@ def difference_histogram():
 
 
 def binary_obj(ax, data, plot_title, threshold):
-    """
+    """Binary image object
 
     Args:
         data: input data (2D array)
@@ -84,6 +85,7 @@ def binary_obj(ax, data, plot_title, threshold):
 
 
 def single_time_series(plot_title, x_label, y_label):
+    """Plot a time series."""
     if settings.data_type == 'mobotix':
         data = np.genfromtxt('data.csv', delimiter=settings.delimiter, names=True)
         plt.plot(data['azimuth'], data['cloud_cover'])
@@ -96,6 +98,20 @@ def single_time_series(plot_title, x_label, y_label):
 
 def original_and_binary_and_histogram(img, filename, data1, title1, data2, title2, x_label2, y_label2,
                                       st_dev, threshold):
+    """Plot the original RGB image, the binary image (blue sky/cloud) and the histogram
+
+    Args:
+        img: RGB original image
+        filename (str): filename
+        data1: r/b or b/r grayscale image
+        title1: title of the binary image
+        data2: 1d array of r/b or b/r ratios
+        title2: title of the histogram
+        x_label2: x-axis label of histogram
+        y_label2: y-axis label of histogram
+        st_dev (float): stdev of histogram
+        threshold (float): threshold (as determined by the hybrid algorithm
+    """
     plt.figure(figsize=(16, 5))
 
     ax1 = plt.subplot2grid((1, 3), (0, 0), rowspan=1, colspan=1)
@@ -117,6 +133,7 @@ def original_and_binary_and_histogram(img, filename, data1, title1, data2, title
 
 
 def comparison_scatter():
+    """Plot the scatter of two datasets against each other with a 1:1 line, best fit and r2 score."""
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
     x = data['cloud_cover_TSI']
@@ -134,13 +151,13 @@ def comparison_scatter():
     else:
         for name in names:
             names_str.append(name.decode('UTF-8'))
-    names=names_str
+    names = names_str
 
     # Calculate the point density
     xy = np.vstack([x, y])
     c = gaussian_kde(xy)(xy)
 
-    norm = colors.Normalize(0,2)
+    norm = colors.Normalize(0, 2)
     cmap = plt.cm.viridis
 
     a, b = np.polyfit(x, y, 1)
@@ -151,7 +168,7 @@ def comparison_scatter():
     x_fit = np.array([-1, 2])
     y_fit = a * x_fit + b
 
-    fig, ax = plt.subplots(figsize=(6,6))
+    fig, ax = plt.subplots(figsize=(6, 6))
     sc = ax.scatter(x, y, c=c, cmap=cmap, norm=norm, s=10)
 
     annot = ax.annotate("", xy=(0, 0), xytext=(20, 20), textcoords="offset points",
@@ -186,10 +203,10 @@ def comparison_scatter():
     ax.set_xlim([-0.05, 1.05])
     ax.set_ylim([-0.05, 1.05])
 
-    ax.plot(x_fit, y_fit, c='black', linewidth=3, label='y='+str(a)+'x+'+str(b), linestyle='--')
-    ax.plot([-1,2], [-1,2], c='tab:red', linewidth=3, label='y=x')
+    ax.plot(x_fit, y_fit, c='black', linewidth=3, label='y=' + str(a) + 'x+' + str(b), linestyle='--')
+    ax.plot([-1, 2], [-1, 2], c='tab:red', linewidth=3, label='y=x')
     ax.legend()
-    ax.set_title('$r^2$ score:'+str(round(r2_score(x, y),2)))
+    ax.set_title('$r^2$ score:' + str(round(r2_score(x, y), 2)))
     plt.grid()
     plt.xlabel('Ground truth/TSI cloud cover')
     plt.ylabel('Model cloud cover')
