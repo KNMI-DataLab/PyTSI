@@ -144,7 +144,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for loop</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">createmask</span>
+<span></span><span class="kn">import</span> <span class="nn">mask</span>
 <span class="kn">import</span> <span class="nn">ratio</span>
 <span class="kn">import</span> <span class="nn">createregions</span>
 <span class="kn">import</span> <span class="nn">poster_images</span>
@@ -166,6 +166,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">crop</span>
 
 
 <div class="viewcode-block" id="type_TSI"><a class="viewcode-back" href="../loop.html#loop.type_TSI">[docs]</a><span class="k">def</span> <span class="nf">type_TSI</span><span class="p">(</span><span class="n">writer</span><span class="p">):</span>
@@ -197,7 +198,8 @@
                     <span class="k">if</span> <span class="n">altitude</span> <span class="o">&gt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">minimum_altitude</span><span class="p">:</span>
                         <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="c1"># get the fractional sky cover from &#39;old&#39; TSI software</span>
-                        <span class="n">cover_thin_tsi</span><span class="p">,</span> <span class="n">cover_opaque_tsi</span><span class="p">,</span> <span class="n">cover_total_tsi</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_fractional_sky_cover_tsi</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                        <span class="n">cover_thin_tsi</span><span class="p">,</span> <span class="n">cover_opaque_tsi</span><span class="p">,</span> <span class="n">cover_total_tsi</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_fractional_sky_cover_tsi</span><span class="p">(</span>
+                            <span class="n">lines</span><span class="p">)</span>
 
                         <span class="c1"># filename variables</span>
                         <span class="n">filename_jpg</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">properties_extension</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">jpg_extension</span><span class="p">)</span>
@@ -212,7 +214,7 @@
                         <span class="n">minute</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
                         <span class="n">second</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span>
 
-                        <span class="nb">print</span><span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">month</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">year</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">minute</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">second</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">day</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">month</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">year</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">hour</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">minute</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">second</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
 
                         <span class="c1"># read the image</span>
                         <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename_jpg</span><span class="p">))</span>
@@ -222,8 +224,11 @@
                         <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
                         <span class="c1"># create and apply the mask</span>
-                        <span class="n">mask</span> <span class="o">=</span> <span class="n">createmask</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">)</span>
-                        <span class="n">masked_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+                        <span class="n">mask_array</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">)</span>
+                        <span class="n">masked_img</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask_array</span><span class="p">)</span>
+
+                        <span class="c1"># calculate red/blue ratio per pixel</span>
+                        <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">masked_img</span><span class="p">)</span>
 
                         <span class="c1"># calculate fixed fractional skycover</span>
                         <span class="n">fixed_sunny_threshold</span><span class="p">,</span> <span class="n">fixed_thin_threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">fixed</span><span class="p">()</span>
@@ -236,19 +241,15 @@
                             <span class="n">masked_img</span><span class="p">)</span>
                         <span class="n">cover_total_hybrid</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
 
-                        <span class="c1"># calculate red/blue ratio per pixel</span>
-                        <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">masked_img</span><span class="p">)</span>
-
                         <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_postprocessing</span><span class="p">:</span>
                             <span class="c1"># create the segments for solar correction</span>
                             <span class="n">regions</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">createregions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span>
-                                                                                                           <span class="n">altitude</span><span class="p">)</span>
+                                                                                                           <span class="n">altitude</span><span class="p">,</span>
+                                                                                                           <span class="n">mask_array</span><span class="p">)</span>
                             <span class="c1"># get some data before doing actual solar/horizon area corrections</span>
-                            <span class="n">outside_c</span><span class="p">,</span> <span class="n">outside_s</span><span class="p">,</span> <span class="n">horizon_c</span><span class="p">,</span> <span class="n">horizon_s</span><span class="p">,</span> <span class="n">inner_c</span><span class="p">,</span> <span class="n">inner_s</span><span class="p">,</span> <span class="n">sun_c</span><span class="p">,</span> <span class="n">sun_s</span> <span class="o">=</span> <span class="n">labelled_image</span><span class="o">.</span><span class="n">calculate_pixels</span><span class="p">(</span>
-                                <span class="n">labels</span><span class="p">,</span>
-                                <span class="n">red_blue_ratio</span><span class="p">,</span>
-                                <span class="n">fixed_sunny_threshold</span><span class="p">)</span>
-
+                            <span class="n">outside_c</span><span class="p">,</span> <span class="n">outside_s</span><span class="p">,</span> <span class="n">horizon_c</span><span class="p">,</span> <span class="n">horizon_s</span><span class="p">,</span> \
+                            <span class="n">inner_c</span><span class="p">,</span> <span class="n">inner_s</span><span class="p">,</span> <span class="n">sun_c</span><span class="p">,</span> <span class="n">sun_s</span> <span class="o">=</span> <span class="n">labelled_image</span><span class="o">.</span><span class="n">calculate_pixels</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">red_blue_ratio</span><span class="p">,</span>
+                                                                                             <span class="n">fixed_sunny_threshold</span><span class="p">)</span>
 
                             <span class="c1"># overlay outlines on image(s)</span>
                             <span class="n">image_with_outlines_fixed</span> <span class="o">=</span> <span class="n">overlay</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span>
@@ -261,7 +262,7 @@
                                 <span class="n">overview</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">img_tsi</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">image_with_outlines_fixed</span><span class="p">,</span>
                                               <span class="n">image_with_outlines_hybrid</span><span class="p">,</span>
                                               <span class="n">azimuth</span><span class="p">,</span>
-                                              <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">)</span>
+                                              <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">filename_no_ext</span><span class="p">)</span>
 
                             <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">plot_poster_images</span><span class="p">:</span>
                                 <span class="c1"># plot images for use in poster</span>
@@ -389,7 +390,6 @@
         <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">png_extension</span><span class="p">):</span>
-                <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="c1"># check if we are dealing with ground truth maps or RGB images</span>
                 <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;GT&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
@@ -410,6 +410,8 @@
                     <span class="n">cloud_cover_GT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cloud</span> <span class="o">/</span> <span class="p">(</span><span class="n">cloud</span> <span class="o">+</span> <span class="n">clear_sky</span><span class="p">))</span>
 
                 <span class="k">else</span><span class="p">:</span>
+                    <span class="n">filecounter</span> <span class="o">+=</span> <span class="mi">1</span>
+
                     <span class="n">filename_no_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">png_extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
                     <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
@@ -499,8 +501,7 @@
                 <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
 
                 <span class="c1"># crop image</span>
-                <span class="c1"># TODO: replace with function</span>
-                <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">105</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">335</span><span class="p">:</span><span class="mi">2375</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">img</span> <span class="o">=</span> <span class="n">crop</span><span class="o">.</span><span class="n">single_RGB_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">335</span><span class="p">,</span> <span class="mi">2375</span><span class="p">)</span>
 
                 <span class="c1"># get resolution of the image</span>
                 <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -571,6 +572,7 @@
         <span class="n">n_files</span> <span class="o">=</span> <span class="n">type_mobotix</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Main loop time: </span><span class="si">%s</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">),</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Amount of file processed: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">n_files</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average time per image: </span><span class="si">%s</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_files</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span></div>
 </pre></div>
 

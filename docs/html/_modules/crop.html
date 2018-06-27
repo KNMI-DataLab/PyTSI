@@ -155,7 +155,7 @@
 
 
 <div class="viewcode-block" id="mobotix"><a class="viewcode-back" href="../crop.html#crop.mobotix">[docs]</a><span class="k">def</span> <span class="nf">mobotix</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Crop mobotix image to rectangular shape.</span>
+    <span class="sd">&quot;&quot;&quot;Crop mobotix images to rectangular shape.</span>
 
 <span class="sd">    The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is</span>
 <span class="sd">    south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,</span>
@@ -219,24 +219,42 @@
 
                 <span class="c1"># solar position dependent crop regions</span>
                 <span class="k">if</span> <span class="n">azimuth</span> <span class="o">&lt;=</span> <span class="mi">135</span><span class="p">:</span>
-                    <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">520</span><span class="p">:</span><span class="mi">1350</span><span class="p">,</span> <span class="mi">670</span><span class="p">:</span><span class="mi">1400</span><span class="p">,:]</span>
-                <span class="k">elif</span> <span class="n">azimuth</span> <span class="o">&gt;</span> <span class="mi">135</span> <span class="ow">and</span> <span class="n">azimuth</span> <span class="o">&lt;</span> <span class="mi">225</span><span class="p">:</span>
+                    <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">520</span><span class="p">:</span><span class="mi">1350</span><span class="p">,</span> <span class="mi">670</span><span class="p">:</span><span class="mi">1400</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="k">elif</span> <span class="mi">135</span> <span class="o">&lt;</span> <span class="n">azimuth</span> <span class="o">&lt;</span> <span class="mi">225</span><span class="p">:</span>
                     <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">520</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">670</span><span class="p">:</span><span class="mi">2035</span><span class="p">,</span> <span class="p">:]</span>
-                <span class="k">elif</span> <span class="n">azimuth</span> <span class="o">&gt;=</span><span class="mi">225</span><span class="p">:</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">520</span><span class="p">:</span><span class="mi">1350</span><span class="p">,</span> <span class="mi">1305</span><span class="p">:</span><span class="mi">2035</span><span class="p">,</span> <span class="p">:]</span>
 
                 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">results_folder</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">+</span> <span class="s1">&#39;/crops/&#39;</span> <span class="o">+</span> <span class="n">filename_no_ext</span> <span class="o">+</span> <span class="s1">&#39;_crop.png&#39;</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-                <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">670</span><span class="p">,</span> <span class="mi">520</span><span class="p">),</span> <span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">1350</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-                <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">680</span><span class="p">,</span> <span class="mi">530</span><span class="p">),</span> <span class="p">(</span><span class="mi">2045</span><span class="p">,</span> <span class="mi">1010</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-                <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">1295</span><span class="p">,</span> <span class="mi">510</span><span class="p">),</span> <span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1340</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-
-                <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">results_folder</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename_no_ext</span> <span class="o">+</span> <span class="s1">&#39;_crop_regions.png&#39;</span><span class="p">)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+                <span class="c1"># cv2.rectangle(img, (670, 520), (1400, 1350), (0, 255, 0), 10)</span>
+                <span class="c1"># cv2.rectangle(img, (680, 530), (2045, 1010), (0, 0, 255), 10)</span>
+                <span class="c1"># cv2.rectangle(img, (1295, 510), (2025, 1340), (255, 0, 0), 10)</span>
+                <span class="c1">#</span>
+                <span class="c1"># plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))</span>
+                <span class="c1"># plt.savefig(settings.results_folder + settings.data_type + &#39;/&#39; + filename_no_ext + &#39;_crop_regions.png&#39;)</span>
+                <span class="c1"># plt.close()</span>
                 <span class="c1"># quit()</span>
+
+
+<div class="viewcode-block" id="single_RGB_image"><a class="viewcode-back" href="../crop.html#crop.single_RGB_image">[docs]</a><span class="k">def</span> <span class="nf">single_RGB_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">corner1</span><span class="p">,</span> <span class="n">corner2</span><span class="p">,</span> <span class="n">corner3</span><span class="p">,</span> <span class="n">corner4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Crop a single Red Green Blue (RGB) image using the four corner points of a rectangle</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img: RGB image</span>
+<span class="sd">        corner1: first corner of the rectangle</span>
+<span class="sd">        corner2: second corner of the rectangle</span>
+<span class="sd">        corner3: third corner of the rectangle</span>
+<span class="sd">        corner4: fourth corner of the rectangle</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Cropped image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">crop</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">corner1</span><span class="p">:</span><span class="n">corner2</span><span class="p">,</span> <span class="n">corner3</span><span class="p">:</span><span class="n">corner4</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">crop</span></div>
 </pre></div>
 
            </div>

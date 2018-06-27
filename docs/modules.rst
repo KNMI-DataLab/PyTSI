@@ -5,7 +5,6 @@ Modules
    :maxdepth: 4
 
    color_bands
-   createmask
    createregions
    crop
    debug_info
@@ -14,9 +13,9 @@ Modules
    loop
    machine_learning
    main
+   mask
    overlay
    postprocessor
-   processor
    ratio
    read_properties_file
    resolution

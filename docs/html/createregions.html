@@ -179,7 +179,7 @@
 takes care of a different regions. Combining them all in the correct order leads to the final segmented image.</p>
 <dl class="function">
 <dt id="createregions.create">
-<code class="descclassname">createregions.</code><code class="descname">create</code><span class="sig-paren">(</span><em>img</em>, <em>azimuth</em>, <em>altitude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.create" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">createregions.</code><code class="descname">create</code><span class="sig-paren">(</span><em>img</em>, <em>azimuth</em>, <em>altitude</em>, <em>mask_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the empty arrays and call drawing and masking functions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -276,7 +276,7 @@ takes care of a different regions. Combining them all in the correct order leads
 
 <dl class="function">
 <dt id="createregions.draw_horizon_area">
-<code class="descclassname">createregions.</code><code class="descname">draw_horizon_area</code><span class="sig-paren">(</span><em>azimuth</em>, <em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#draw_horizon_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.draw_horizon_area" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">createregions.</code><code class="descname">draw_horizon_area</code><span class="sig-paren">(</span><em>azimuth</em>, <em>regions</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#draw_horizon_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.draw_horizon_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw polygon which (when combined with other segments) makes up the horizon area</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -285,7 +285,6 @@ takes care of a different regions. Combining them all in the correct order leads
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>azimuth</strong> (<em>float</em>) – solar azimuth in degrees from North</li>
 <li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
-<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
 <li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
 </ul>
 </td>
@@ -302,7 +301,7 @@ takes care of a different regions. Combining them all in the correct order leads
 
 <dl class="function">
 <dt id="createregions.inner_circle">
-<code class="descclassname">createregions.</code><code class="descname">inner_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#inner_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.inner_circle" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">createregions.</code><code class="descname">inner_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#inner_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.inner_circle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the inner circle of the segmented image</p>
 <p>The radius is smaller than the radius used in <a class="reference internal" href="#createregions.large_circle" title="createregions.large_circle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">createregions.large_circle()</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -311,7 +310,6 @@ takes care of a different regions. Combining them all in the correct order leads
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
-<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
 <li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
 </ul>
 </td>
@@ -327,8 +325,32 @@ takes care of a different regions. Combining them all in the correct order leads
 </dd></dl>
 
 <dl class="function">
+<dt id="createregions.labels_from_regions">
+<code class="descclassname">createregions.</code><code class="descname">labels_from_regions</code><span class="sig-paren">(</span><em>labels</em>, <em>regions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#labels_from_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.labels_from_regions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ‘labels’ representation from the ‘regions’ representation.</p>
+<p>Regions is an image in RGB format which shows the 4 different regions used in horizon and sun circle postprocessing.
+Labels is merely a grayscale representation of this image, used by the calculations. I use grayscale in stead of
+RGB as it is a bit easier to work with.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> – empty labels array (2D)</li>
+<li><strong>regions</strong> – empty regions array (RGB)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">labels array in grayscale</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="createregions.large_circle">
-<code class="descclassname">createregions.</code><code class="descname">large_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>labels</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#large_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.large_circle" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">createregions.</code><code class="descname">large_circle</code><span class="sig-paren">(</span><em>regions</em>, <em>outlines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#large_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.large_circle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw a circle centered in the middle of the image.</p>
 <p>This circle has a radius slightly smaller than that of the mirror.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -337,7 +359,6 @@ takes care of a different regions. Combining them all in the correct order leads
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>regions</strong> – RGB representation of the segmented image</li>
-<li><strong>labels</strong> – Scalar (1,2,3,4) representation of the segmented image</li>
 <li><strong>outlines</strong> – RGB array of the segment outlines</li>
 </ul>
 </td>
@@ -406,13 +427,13 @@ takes care of a different regions. Combining them all in the correct order leads
 
 <dl class="function">
 <dt id="createregions.sun_circle">
-<code class="descclassname">createregions.</code><code class="descname">sun_circle</code><span class="sig-paren">(</span><em>altitude</em>, <em>regions</em>, <em>labels</em>, <em>outlines</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#sun_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.sun_circle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw the sun cirlce segment</p>
+<code class="descclassname">createregions.</code><code class="descname">sun_circle</code><span class="sig-paren">(</span><em>altitude</em>, <em>regions</em>, <em>outlines</em>, <em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/createregions.html#sun_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#createregions.sun_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the sun circle segment</p>
 <p>The position of the sun in the image plane is calculated using an approximation of the mirror. The function that is
 used to estimate the mirror geometry is <span class="math notranslate nohighlight">\(y = -0.23x+1.25\)</span>.</p>
 <p>The radial distance from the center of the image to the center of the sun can subsequently be calculated using
 the quadratic equation (abc formula).</p>
-<p>Using the description of a circle (<a class="reference internal" href="createmask.html#createmask.calculate_band_position" title="createmask.calculate_band_position"><code class="xref py py-meth docutils literal notranslate"><span class="pre">createmask.calculate_band_position()</span></code></a>), the solar position is calculated.</p>
+<p>Using the description of a circle (<code class="xref py py-meth docutils literal notranslate"><span class="pre">createmask.calculate_band_position()</span></code>), the solar position is calculated.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -420,9 +441,8 @@ the quadratic equation (abc formula).</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>altitude</strong> (<em>float</em>) – altitude of the sun, taken from the properties file</li>
 <li><strong>regions</strong> (<em>int</em>) – RGB representation of the segmented image</li>
-<li><strong>labels</strong> (<em>int</em>) – Scalar (1,2,3,4) representation of the segmented image</li>
 <li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
-<li><strong>theta</strong> (<em>float</em>) – azimuth measured from the East</li>
+<li><strong>theta</strong> – azimuth measured from the East</li>
 </ul>
 </td>
 </tr>
