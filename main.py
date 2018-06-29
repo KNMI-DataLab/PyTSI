@@ -8,6 +8,7 @@ import loop
 import machine_learning
 import plot
 import crop
+import image_interface
 
 
 def main():
