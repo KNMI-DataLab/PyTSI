@@ -89,6 +89,13 @@ camera_latitude = '51.968243'
 camera_longitude = '4.927675'
 camera_elevation = 1
 
+# dates/time
+year = '2018'
+month = '01'
+day = '01'
+hour = '12'
+minute = '00'
+
 # looping
 # every 'x' files are used in stead of all files
 # 4 images are taken every minute in case of the mobotix file

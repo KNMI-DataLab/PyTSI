@@ -54,20 +54,25 @@ def read_from_tar(filename_no_ext):
     filename_png = filename_no_ext + '.png'
     properties_file = filename_no_ext + '.properties.gz'
 
-    year = filename_no_ext[0:4]
-    month = filename_no_ext[4:6]
-    day = filename_no_ext[6:8]
+    settings.year = filename_no_ext[0:4]
+    settings.month = filename_no_ext[4:6]
+    settings.day = filename_no_ext[6:8]
+    settings.hour = filename_no_ext[8:10]
+    settings.minute = filename_no_ext[10:12]
 
-    path = settings.tsi_database + year + '/' + month + '/DBASE/' + year + month + day + '_tsi-cabauw_realtime.tar'
+    path = settings.tsi_database + settings.year + '/' + settings.month + '/DBASE/' + settings.year + settings.month + \
+           settings.day + '_tsi-cabauw_realtime.tar'
 
     tar = tarfile.open(path)
 
     tar.extract(filename_jpg, 'tmp')
+    tar.extract(filename_png, 'tmp')
     tar.extract(properties_file, 'tmp')
 
     tar.close()
 
     jpg_loc = 'tmp/' + filename_jpg
+    png_loc = 'tmp/' + filename_png
     properties_loc = 'tmp/' + properties_file
 
     # unzip the gzip file, open the file as rt=read text
@@ -78,12 +83,13 @@ def read_from_tar(filename_no_ext):
             lines.append(line)
 
     img = cv2.imread(jpg_loc)
+    img_tsi_processed = cv2.imread(png_loc)
 
-    return img, lines, filename_jpg, filename_png
+    return img, img_tsi_processed, lines, filename_jpg, filename_png
 
 
 def single(filename):
-    img, properties_file, filename_jpg, filename_png = read_from_tar(filename)
+    img, img_tsi_processed, properties_file, filename_jpg, filename_png = read_from_tar(filename)
 
     # get the altitude and azimuth from the defs
     altitude = read_properties_file.get_altitude(properties_file)
@@ -133,7 +139,9 @@ def single(filename):
                                                       fixed_thin_threshold)
         image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold)
 
-        save_processed_image(image_with_outlines_fixed, settings.tmp + filename + '_processed.png')
-        save_original_image(img, settings.tmp + filename_jpg)
+        save_processed_image(image_with_outlines_hybrid, settings.tmp + filename + '_hybrid.png')
+        save_processed_image(image_with_outlines_fixed, settings.tmp + filename + '_fixed.png')
+        save_original_image(img_tsi_processed, settings.tmp + filename + '_fixed_old.png')
+        save_original_image(img, settings.tmp + filename + '_original.png')
 
-        return azimuth, altitude, cover_total_fixed
+        return azimuth, altitude, cover_total_fixed, cover_total_hybrid, cover_total_tsi
