@@ -1,0 +1,1 @@
+In this folder, temporary images will be stored and removed at runtime.

@@ -172,12 +172,12 @@ use_knn = False
 use_kmeans = True
 
 # core functionality
-use_processing_loop = 0
+use_processing_loop = 1
 use_postprocessing = 0
 use_statistical_analysis = 0
 use_machine_learning = 0
 crop_mobotix_images = 0
-use_ui = 1
+use_ui = 0
 
 # plotting
 plot_sky_cover_comparison = 0

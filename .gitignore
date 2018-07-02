@@ -6,8 +6,6 @@
 *.jpg
 
 #text files
-*.txt
-
 
 #folders
 __pycache__
