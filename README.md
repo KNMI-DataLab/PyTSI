@@ -1,6 +1,6 @@
 # cloudDetection
 
-For documentation on this project see [the documentation website](https://jobmos.github.io).
+For documentation on this project see [the documentation website](https://knmi-datalab.github.io/PyTSI/).
 
 <!---
 ## Comparison of the original image, old TSI software and the new software
