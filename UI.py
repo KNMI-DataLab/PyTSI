@@ -141,29 +141,28 @@ class App:
         self.info.insert(tk.INSERT, new_info)
 
     def process(self, event=None):
-        self.filename = self.compose_filename()
+        self.compose_filename()
         self.azimuth, self.altitude, self.cloud_cover = image_interface.single(self.filename)
         self.update_image()
         self.update_info()
-        os.remove(self.filename + '_processed.png')
+        os.remove(settings.tmp + self.filename + '.jpg')
+        os.remove(settings.tmp + self.filename + '_processed.png')
+        os.remove(settings.tmp + self.filename + '.properties.gz')
 
     def update_image(self, event=None):
         filename1 = self.filename + '.jpg'
         filename2 = self.filename + '_processed.png'
-
-        img_new = ImageTk.PhotoImage(Image.open(settings.main_data + filename1))
+        img_new = ImageTk.PhotoImage(Image.open(settings.tmp + filename1))
         self.panel1.configure(image=img_new)
         self.panel1.image = img_new
-        img_new2 = ImageTk.PhotoImage(Image.open(filename2))
+        img_new2 = ImageTk.PhotoImage(Image.open(settings.tmp + filename2))
         self.panel2.configure(image=img_new2)
         self.panel2.image = img_new2
 
     def compose_filename(self, event=None):
-        filename_no_ext = self.date + self.time + '00'
-        filename_no_ext = filename_no_ext.replace(':', '')
-        filename_no_ext = filename_no_ext.replace('-', '')
-
-        return filename_no_ext
+        self.filename = self.date + self.time + '00'
+        self.filename = self.filename.replace(':', '')
+        self.filename = self.filename.replace('-', '')
 
     @staticmethod
     def select_all(event=None):

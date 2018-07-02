@@ -27,10 +27,17 @@ results_folder = project_folder + 'results/'
 
 # main data
 main_data = project_folder + 'data/TSI/DBASE/201606/20160601_tsi-cabauw_realtime/'
+# main_data = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
 # main_data = project_folder + 'data/SWIM/swimseg/'
 # main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/same_alignment/'
+
+# external data sources
+tsi_database = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
+
+# temporary folder(s)
+tmp = 'tmp/'
 
 # data type
 tsi_str = 'TSI'
