@@ -7,7 +7,6 @@ import cv2 as cv2
 from math import cos, sin, sqrt, tan, pi
 import numpy as np
 import settings
-import matplotlib.pyplot as plt
 import mask
 
 
@@ -263,6 +262,7 @@ def create(img, azimuth, altitude, mask_array):
         img (int): image in NumPy format
         azimuth (float): azimuth of the sun, taken from the properties file
         altitude (float): altitude of the sun, taken from the properties file
+        mask_array: masking array covering band, camera and outside of mirror
 
     Returns:
         tuple: regions, outlines, labels, stencil, image_with_outlines

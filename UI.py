@@ -42,7 +42,7 @@ class App:
         self.button_color = None
         self.azimuth = self.altitude = self.cloud_cover = None
         self.date = self.time = None
-        self.azimuth =  self.altitude = None
+        self.azimuth = self.altitude = None
         self.cover_total_hybrid = self.cover_total_tsi = self.cover_total_fixed = None
 
         # layout (fonts, colors etc)
@@ -68,7 +68,7 @@ class App:
                                     activeforeground='white')
 
         # time
-        self.time_entry = tk.Entry(self.master, width=10)
+        self.time_entry = tk.Entry(self.master, width=8)
         self.time_entry.delete(0, tk.END)
         self.time_entry.insert(0, self.time)
 
@@ -88,10 +88,11 @@ class App:
         self.organize_grid_elements()
 
         # binds
+        self.setup_binds()
+
+    def setup_binds(self):
         self.master.bind('<Return>', lambda evt: self.get_time(evt))
         self.time_entry.bind('<Control-KeyRelease-a>', lambda evt: self.select_all(evt))
-
-        root.mainloop()
 
     def organize_grid_elements(self):
         # title
@@ -166,7 +167,7 @@ class App:
         else:
             print('Error: hours need to be between 00 and 23, minutes need to be between 00 and 59')
 
-    def update_info(self):
+    def update_info_boxes(self):
         # clear the text boxes from beginning to end
         self.info_orig.delete('1.0', tk.END)
         self.info_tsi_fixed.delete('1.0', tk.END)
@@ -190,7 +191,7 @@ class App:
         self.azimuth, self.altitude, self.cover_total_fixed, self.cover_total_hybrid, self.cover_total_tsi = \
             image_interface.single(self.filename)
         self.update_image()
-        self.update_info()
+        self.update_info_boxes()
         self.update_title()
         os.remove(settings.tmp + self.filename + '_original.png')
         os.remove(settings.tmp + self.filename + '_fixed_old.png')
@@ -253,5 +254,7 @@ class App:
         event.widget.icursor('end')
 
 
-root = tk.Tk()
-app = App(root)
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()

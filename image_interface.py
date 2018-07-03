@@ -82,26 +82,22 @@ def read_from_tar(filename_no_ext):
         for line in f:
             lines.append(line)
 
+    # get the altitude and azimuth from the defs
+    altitude = read_properties_file.get_altitude(lines)
+    azimuth = read_properties_file.get_azimuth(lines)
+
     img = cv2.imread(jpg_loc)
     img_tsi_processed = cv2.imread(png_loc)
 
-    return img, img_tsi_processed, lines, filename_jpg, filename_png
+    return img, img_tsi_processed, lines, filename_jpg, filename_png, azimuth, altitude
 
 
 def single(filename):
-    img, img_tsi_processed, properties_file, filename_jpg, filename_png = read_from_tar(filename)
-
-    # get the altitude and azimuth from the defs
-    altitude = read_properties_file.get_altitude(properties_file)
-    azimuth = read_properties_file.get_azimuth(properties_file)
+    img, img_tsi_processed, properties_file, filename_jpg, filename_png, azimuth, altitude = read_from_tar(filename)
 
     if altitude >= settings.minimum_altitude:
         # get the fractional sky cover from 'old' TSI software
         cover_thin_tsi, cover_opaque_tsi, cover_total_tsi = read_properties_file.get_fractional_sky_cover_tsi(properties_file)
-
-        # read the image
-        # img = cv2.imread(settings.main_data + filename_jpg)
-        # img_tsi = cv2.imread(settings.main_data + filename_png)
 
         # get the resolution of the image
         resolution.get_resolution(img)
@@ -128,10 +124,6 @@ def single(filename):
         regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
                                                                                            altitude,
                                                                                            mask_array)
-        # get some data before doing actual solar/horizon area corrections
-        outside_c, outside_s, horizon_c, horizon_s, \
-        inner_c, inner_s, sun_c, sun_s = labelled_image.calculate_pixels(labels, red_blue_ratio,
-                                                                             fixed_sunny_threshold)
 
         # overlay outlines on image(s)
         image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,

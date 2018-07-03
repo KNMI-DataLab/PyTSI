@@ -134,7 +134,7 @@ mask_value = -99
 # regions
 radius_sun_circle = 40
 radius_inner_circle = 80
-radius_circle = 130
+radius_circle = 125
 radius_mirror = 140
 outline_thickness = 2
 band_thickness = 35
