@@ -9,6 +9,7 @@ import os
 
 class CalenderUI:
     """Calendar interface. Example taken from the official documentation of tkcalendar."""
+
     def __init__(self, cal_root):
         """Construct widget with master as parent widget"""
         self.top = tk.Toplevel(cal_root)
@@ -35,6 +36,7 @@ class CalenderUI:
 
 class App:
     """Main app."""
+
     def __init__(self, master):
         """All elements in the frame must be described in the __init__. """
         self.master = master
@@ -52,11 +54,11 @@ class App:
         self.layout()
 
         # initialize image frames
-        initial_img = ImageTk.PhotoImage(Image.open('images/placeholders/placeholder.png'))
-        self.panel1 = tk.Label(self.master, image=initial_img)
-        self.panel2 = tk.Label(self.master, image=initial_img)
-        self.panel3 = tk.Label(self.master, image=initial_img)
-        self.panel4 = tk.Label(self.master, image=initial_img)
+        self.initial_img = ImageTk.PhotoImage(Image.open('images/placeholders/placeholder.png'))
+        self.panel1 = tk.Label(self.master, image=self.initial_img)
+        self.panel2 = tk.Label(self.master, image=self.initial_img)
+        self.panel3 = tk.Label(self.master, image=self.initial_img)
+        self.panel4 = tk.Label(self.master, image=self.initial_img)
 
         # make self.date and self.time variables
         self.compose_date_time()
@@ -75,10 +77,27 @@ class App:
         self.time_entry.delete(0, tk.END)
         self.time_entry.insert(0, self.time)
 
+        # hybrid stdev threshold entry
+        self.hybrid_stdev_entry = tk.Entry(self.master, width=8)
+        self.hybrid_stdev_entry.delete(0, tk.END)
+        self.hybrid_stdev_entry.insert(0, settings.deviation_threshold)
+
+        # hybrid fixed threshold entry
+        self.hybrid_fixed_entry = tk.Entry(self.master, width=8)
+        self.hybrid_fixed_entry.delete(0, tk.END)
+        self.hybrid_fixed_entry.insert(0, settings.fixed_threshold)
+
         # time button
-        self.time_button = tk.Button(self.master, text='Select time', width=10, command=self.get_time,
+        self.time_button = tk.Button(self.master, text='Select time', width=10, command=self.get_entries,
                                      activebackground=self.button_color, activeforeground='white')
 
+        # hybrid stdev threshold box
+        self.hybrid_stdev_button = tk.Button(self.master, text='Select T(stdev)', width=10, command=self.get_entries,
+                                             activebackground=self.button_color, activeforeground='white')
+
+        # hybrid fixed threshold box
+        self.hybrid_fixed_button = tk.Button(self.master, text='Select T(fixed)', width=10, command=self.get_entries,
+                                             activebackground=self.button_color, activeforeground='white')
         # initialize info boxes
         self.info_orig = tk.Text(self.master, height=3, width=30)
         self.info_tsi_fixed = tk.Text(self.master, height=3, width=30)
@@ -93,11 +112,9 @@ class App:
         # binds
         self.setup_binds()
 
-        root.mainloop()
-
     def setup_binds(self):
         """Set up the binds, such as 'RETURN' to enter input or 'Ctrl-A' to select all text in entry box."""
-        self.master.bind('<Return>', lambda evt: self.get_time(evt))
+        self.master.bind('<Return>', lambda evt: self.get_entries(evt))
         self.time_entry.bind('<Control-KeyRelease-a>', lambda evt: self.select_all(evt))
 
     def organize_grid_elements(self):
@@ -106,36 +123,48 @@ class App:
         self.title.grid(row=0, column=1, columnspan=5, sticky='')
 
         # original image
-        self.panel1.grid(row=1, column=1, rowspan=2, sticky='NSEW')
+        self.panel1.grid(row=1, column=1, rowspan=4, sticky='NSEW')
 
         # old tsi software
-        self.panel2.grid(row=1, column=2, rowspan=2, sticky='NSEW')
+        self.panel2.grid(row=1, column=2, rowspan=4, sticky='NSEW')
 
         # fixed
-        self.panel3.grid(row=1, column=3, rowspan=2, sticky='NSEW')
+        self.panel3.grid(row=1, column=3, rowspan=4, sticky='NSEW')
 
         # hybrid
-        self.panel4.grid(row=1, column=4, rowspan=2, sticky='NSEW')
+        self.panel4.grid(row=1, column=4, rowspan=4, sticky='NSEW')
 
         # time entry
         self.time_entry.grid(row=2, column=6)
 
+        # hybrid stdev entry
+        self.hybrid_stdev_entry.grid(row=3, column=6)
+
+        # hybrid fixed entry
+        self.hybrid_fixed_entry.grid(row=4, column=6)
+
         # time button
         self.time_button.grid(row=2, column=7)
+
+        # hybrid stdev entry
+        self.hybrid_stdev_button.grid(row=3, column=7)
+
+        # hybrid fixed entry
+        self.hybrid_fixed_button.grid(row=4, column=7)
 
         # calendar button
         self.cal_button.grid(row=1, column=6, columnspan=2, sticky='EW')
 
         # info boxes
-        self.info_orig.grid(row=4, column=1, columnspan=1)
-        self.info_tsi_fixed.grid(row=4, column=2, columnspan=1)
-        self.info_fixed.grid(row=4, column=3, columnspan=1)
-        self.info_hybrid.grid(row=4, column=4, columnspan=1)
+        self.info_orig.grid(row=6, column=1, columnspan=1)
+        self.info_tsi_fixed.grid(row=6, column=2, columnspan=1)
+        self.info_fixed.grid(row=6, column=3, columnspan=1)
+        self.info_hybrid.grid(row=6, column=4, columnspan=1)
 
         # empty rows, fixes window scaling
         self.master.grid_rowconfigure(0, weight=1)
-        self.master.grid_rowconfigure(3, weight=1)
         self.master.grid_rowconfigure(5, weight=1)
+        self.master.grid_rowconfigure(7, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_columnconfigure(5, weight=1)
         self.master.grid_columnconfigure(8, weight=1)
@@ -168,15 +197,26 @@ class App:
         self.date = str(cal.date)
         self.process()
 
-    def get_time(self, event=None):
+    def get_entries(self, event=None):
         """Get the time as a variable from the time entry box and check for incorrect format."""
         self.time = self.time_entry.get()
+
+        settings.deviation_threshold = float(self.hybrid_stdev_entry.get())
+        settings.fixed_threshold = float(self.hybrid_fixed_entry.get())
+
+        # check the length of the time string
         if len(self.time) != 5 or self.time[2] != ':':
             print('Error: time format needs to follow specific format -> something like \'13:37\'.')
-        elif 0 <= int(self.time[0:2]) <= 23 and 0 <= int(self.time[3:5]) <= 59:
-            self.process()
-        else:
+        # check the ranges of the time string
+        elif (int(self.time[0:2]) > 23 or int(self.time[0:2]) < 0 or
+              int(self.time[3:5]) > 59 or int(self.time[3:5]) < 0):
             print('Error: hours need to be between 00 and 23, minutes need to be between 00 and 59')
+        # check the ranges of the thresholds
+        elif (settings.deviation_threshold < 0 or settings.deviation_threshold > 1 or
+              settings.fixed_threshold < -1 or settings.fixed_threshold > 1):
+            print('Error: only real numbers between -1 and 1 are valid.')
+        else:
+            self.process()
 
     def update_info_boxes(self):
         """Update the information in the text boxes underneath the images."""
@@ -275,3 +315,4 @@ class App:
 if __name__ == '__main__':
     root = tk.Tk()
     app = App(root)
+    root.mainloop()

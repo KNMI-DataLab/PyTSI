@@ -168,8 +168,8 @@ use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not
 #         2) devThr: 0.03 , fixThr: 0.25
 nbins_hybrid = 100
 if data_type == tsi_str or data_type == seg_str or data_type == cat_str:
-    deviation_threshold = 0.045  # original was 0.03, 'working:0.065'
-    fixed_threshold = 0.20  # original was 0.250, 'working:0.20'
+    deviation_threshold = 0.045  # original was 0.03, 'working:0.065', second setup '0.55'
+    fixed_threshold = 0.20  # original was 0.250, 'working:0.20', second setup '0.15'
 elif data_type == mob_str:
     deviation_threshold = 0.08
     fixed_threshold = 0.10

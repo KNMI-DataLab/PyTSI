@@ -146,6 +146,7 @@ def single(filename):
         # calculate hybrid sky cover
         ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(
             masked_img)
+        print(settings.deviation_threshold, settings.fixed_threshold)
         cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
 
         # create the segments for solar correction
