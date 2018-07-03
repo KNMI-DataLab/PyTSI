@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>UI &mdash; PyTSI 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PyTSI
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyTSI</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>UI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for UI</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="k">import</span> <span class="n">ttk</span><span class="p">,</span> <span class="n">font</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">ImageTk</span><span class="p">,</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">tkcalendar</span> <span class="k">import</span> <span class="n">Calendar</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+<span class="kn">import</span> <span class="nn">image_interface</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="CalenderUI"><a class="viewcode-back" href="../UI.html#UI.CalenderUI">[docs]</a><span class="k">class</span> <span class="nc">CalenderUI</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calendar interface. Example taken from the official documentation of tkcalendar.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cal_root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct widget with master as parent widget&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Toplevel</span><span class="p">(</span><span class="n">cal_root</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cal</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;Arial 14&quot;</span><span class="p">,</span> <span class="n">selectmode</span><span class="o">=</span><span class="s1">&#39;day&#39;</span><span class="p">,</span>
+                            <span class="n">cursor</span><span class="o">=</span><span class="s2">&quot;hand1&quot;</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">year</span><span class="p">),</span> <span class="n">month</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">month</span><span class="p">),</span> <span class="n">day</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">day</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cal</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ttk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_sel</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+        <span class="n">ttk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;exit&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quit1</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">grab_set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CalenderUI.print_sel"><a class="viewcode-back" href="../UI.html#UI.CalenderUI.print_sel">[docs]</a>    <span class="k">def</span> <span class="nf">print_sel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Callback function saving the date to a variable.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cal</span><span class="o">.</span><span class="n">selection_get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CalenderUI.quit1"><a class="viewcode-back" href="../UI.html#UI.CalenderUI.quit1">[docs]</a>    <span class="k">def</span> <span class="nf">quit1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Callback function that saves the date to a variable and exits the calendar window&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cal</span><span class="o">.</span><span class="n">selection_get</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="App"><a class="viewcode-back" href="../UI.html#UI.App">[docs]</a><span class="k">class</span> <span class="nc">App</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main app.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;All elements in the frame must be described in the __init__. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span> <span class="o">=</span> <span class="n">master</span>
+        <span class="n">master</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;PyTSI User Interface&quot;</span><span class="p">)</span>
+
+        <span class="c1"># initialize some variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_color</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloud_cover</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_hybrid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_tsi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_fixed</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># layout (fonts, colors etc)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span>
+
+        <span class="c1"># initialize image frames</span>
+        <span class="n">initial_img</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;images/placeholders/placeholder.png&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel1</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">initial_img</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel2</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">initial_img</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel3</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">initial_img</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel4</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">initial_img</span><span class="p">)</span>
+
+        <span class="c1"># make self.date and self.time variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compose_date_time</span><span class="p">()</span>
+
+        <span class="c1"># title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">master</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_title</span><span class="p">()</span>
+
+        <span class="c1"># calendar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cal_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Select date&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_date</span><span class="p">,</span>
+                                    <span class="n">activebackground</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">button_color</span><span class="p">,</span>
+                                    <span class="n">activeforeground</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+        <span class="c1"># time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="c1"># time button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Select time&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_time</span><span class="p">,</span>
+                                     <span class="n">activebackground</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">button_color</span><span class="p">,</span> <span class="n">activeforeground</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+        <span class="c1"># initialize info boxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_orig</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_tsi_fixed</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_fixed</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_hybrid</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_info_boxes</span><span class="p">()</span>
+
+        <span class="c1"># alignments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">organize_grid_elements</span><span class="p">()</span>
+
+        <span class="c1"># binds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_binds</span><span class="p">()</span>
+
+        <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+
+<div class="viewcode-block" id="App.setup_binds"><a class="viewcode-back" href="../UI.html#UI.App.setup_binds">[docs]</a>    <span class="k">def</span> <span class="nf">setup_binds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set up the binds, such as &#39;RETURN&#39; to enter input or &#39;Ctrl-A&#39; to select all text in entry box.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">&#39;&lt;Return&gt;&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">evt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time</span><span class="p">(</span><span class="n">evt</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s1">&#39;&lt;Control-KeyRelease-a&gt;&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">evt</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">evt</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="App.organize_grid_elements"><a class="viewcode-back" href="../UI.html#UI.App.organize_grid_elements">[docs]</a>    <span class="k">def</span> <span class="nf">organize_grid_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Structure all widgets into a grid with corresponding white space to accomodate for window scaling.&quot;&quot;&quot;</span>
+        <span class="c1"># title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="c1"># original image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;NSEW&#39;</span><span class="p">)</span>
+
+        <span class="c1"># old tsi software</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;NSEW&#39;</span><span class="p">)</span>
+
+        <span class="c1"># fixed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel3</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;NSEW&#39;</span><span class="p">)</span>
+
+        <span class="c1"># hybrid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel4</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;NSEW&#39;</span><span class="p">)</span>
+
+        <span class="c1"># time entry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="c1"># time button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_button</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+
+        <span class="c1"># calendar button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cal_button</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s1">&#39;EW&#39;</span><span class="p">)</span>
+
+        <span class="c1"># info boxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_orig</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_tsi_fixed</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_fixed</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_hybrid</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># empty rows, fixes window scaling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_rowconfigure</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_rowconfigure</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_columnconfigure</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">grid_columnconfigure</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.initialize_info_boxes"><a class="viewcode-back" href="../UI.html#UI.App.initialize_info_boxes">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_info_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the text in the boxes below the shown images.&quot;&quot;&quot;</span>
+        <span class="n">init_info_orig</span> <span class="o">=</span> <span class="s1">&#39;Original Image </span><span class="se">\n</span><span class="s1">Azimuth: </span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1">Altitude: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">))</span>
+        <span class="n">init_info_tsi_fixed</span> <span class="o">=</span> <span class="s1">&#39;Old TSI software </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cloud_cover</span><span class="p">))</span>
+        <span class="n">init_info_fixed</span> <span class="o">=</span> <span class="s1">&#39;New software (fixed) </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cloud_cover</span><span class="p">))</span>
+        <span class="n">init_info_hybrid</span> <span class="o">=</span> <span class="s1">&#39;New software (hybrid) </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cloud_cover</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_orig</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">init_info_orig</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_tsi_fixed</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">init_info_tsi_fixed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_fixed</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">init_info_fixed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_hybrid</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">init_info_hybrid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">init_info_orig</span><span class="p">,</span> <span class="n">init_info_tsi_fixed</span><span class="p">,</span> <span class="n">init_info_fixed</span><span class="p">,</span> <span class="n">init_info_hybrid</span></div>
+
+<div class="viewcode-block" id="App.update_title"><a class="viewcode-back" href="../UI.html#UI.App.update_title">[docs]</a>    <span class="k">def</span> <span class="nf">update_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the title to the currently selected date/time.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">tag_configure</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="s1">&#39; (UTC yyyy-mm-dd)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">tag_add</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.get_date"><a class="viewcode-back" href="../UI.html#UI.App.get_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the date as a variable from the calendar widget.&quot;&quot;&quot;</span>
+        <span class="n">cal</span> <span class="o">=</span> <span class="n">CalenderUI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">wait_window</span><span class="p">(</span><span class="n">cal</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cal</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="App.get_time"><a class="viewcode-back" href="../UI.html#UI.App.get_time">[docs]</a>    <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the time as a variable from the time entry box and check for incorrect format.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_entry</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: time format needs to follow specific format -&gt; something like </span><span class="se">\&#39;</span><span class="s1">13:37</span><span class="se">\&#39;</span><span class="s1">.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">23</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">59</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: hours need to be between 00 and 23, minutes need to be between 00 and 59&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.update_info_boxes"><a class="viewcode-back" href="../UI.html#UI.App.update_info_boxes">[docs]</a>    <span class="k">def</span> <span class="nf">update_info_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the information in the text boxes underneath the images.&quot;&quot;&quot;</span>
+        <span class="c1"># clear the text boxes from beginning to end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_orig</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_tsi_fixed</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_fixed</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_hybrid</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+
+        <span class="c1"># new text</span>
+        <span class="n">new_info_orig</span> <span class="o">=</span> <span class="s1">&#39;Original Image </span><span class="se">\n</span><span class="s1">Azimuth: </span><span class="si">%s</span><span class="s1"> </span><span class="se">\n</span><span class="s1">Altitude: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">))</span>
+        <span class="n">new_info_tsi_fixed</span> <span class="o">=</span> <span class="s1">&#39;Old TSI software </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cover_total_tsi</span><span class="p">))</span>
+        <span class="n">new_info_fixed</span> <span class="o">=</span> <span class="s1">&#39;New software (fixed) </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cover_total_fixed</span><span class="p">))</span>
+        <span class="n">new_info_hybrid</span> <span class="o">=</span> <span class="s1">&#39;New software (hybrid) </span><span class="se">\n</span><span class="s1">Cloud cover: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cover_total_hybrid</span><span class="p">))</span>
+
+        <span class="c1"># insert new text into text boxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_orig</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">new_info_orig</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_tsi_fixed</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">new_info_tsi_fixed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_fixed</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">new_info_fixed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_hybrid</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">INSERT</span><span class="p">,</span> <span class="n">new_info_hybrid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.process"><a class="viewcode-back" href="../UI.html#UI.App.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the processing underlying processing function and delete temporary files.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compose_filename</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_fixed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_hybrid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cover_total_tsi</span> <span class="o">=</span> \
+            <span class="n">image_interface</span><span class="o">.</span><span class="n">single</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_image</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_info_boxes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_title</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_original.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed_old.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_hybrid.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.properties.gz&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.update_image"><a class="viewcode-back" href="../UI.html#UI.App.update_image">[docs]</a>    <span class="k">def</span> <span class="nf">update_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Open the images produced by the processing functions and display them in the window.&quot;&quot;&quot;</span>
+        <span class="n">filename1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_original.png&#39;</span>
+        <span class="n">filename2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed_old.png&#39;</span>
+        <span class="n">filename3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed.png&#39;</span>
+        <span class="n">filename4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_hybrid.png&#39;</span>
+        <span class="n">img_new</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel1</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img_new</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">img_new</span>
+        <span class="n">img_new2</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel2</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img_new2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel2</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">img_new2</span>
+        <span class="n">img_new3</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename3</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel3</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img_new3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel3</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">img_new3</span>
+        <span class="n">img_new4</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel4</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img_new4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel4</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">img_new4</span></div>
+
+<div class="viewcode-block" id="App.compose_date_time"><a class="viewcode-back" href="../UI.html#UI.App.compose_date_time">[docs]</a>    <span class="k">def</span> <span class="nf">compose_date_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compose the date and time from the settings file variables.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">month</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">day</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">hour</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">minute</span></div>
+
+<div class="viewcode-block" id="App.compose_filename"><a class="viewcode-back" href="../UI.html#UI.App.compose_filename">[docs]</a>    <span class="k">def</span> <span class="nf">compose_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the &#39;naked&#39; filename (naked here means without any extension(s)) from the date and time variables.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="s1">&#39;00&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.layout"><a class="viewcode-back" href="../UI.html#UI.App.layout">[docs]</a>    <span class="k">def</span> <span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set some variables and settings relating to layout of the main window (colors, fonts etc.).&quot;&quot;&quot;</span>
+        <span class="c1"># background colors</span>
+        <span class="n">background_color</span> <span class="o">=</span> <span class="s1">&#39;#f4f4f4&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="n">background_color</span><span class="p">)</span>
+
+        <span class="c1"># button colors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_color</span> <span class="o">=</span> <span class="s1">&#39;#bababa&#39;</span>
+
+        <span class="c1"># fonts</span>
+        <span class="n">default_font</span> <span class="o">=</span> <span class="n">font</span><span class="o">.</span><span class="n">nametofont</span><span class="p">(</span><span class="s1">&#39;TkDefaultFont&#39;</span><span class="p">)</span>
+        <span class="n">default_font</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">option_add</span><span class="p">(</span><span class="s2">&quot;*Font&quot;</span><span class="p">,</span> <span class="n">default_font</span><span class="p">)</span>
+
+        <span class="c1"># sizes</span>
+        <span class="n">size_x</span> <span class="o">=</span> <span class="mi">1400</span>
+        <span class="n">size_y</span> <span class="o">=</span> <span class="mi">500</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">x</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size_x</span><span class="p">,</span> <span class="n">size_y</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="App.select_all"><a class="viewcode-back" href="../UI.html#UI.App.select_all">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Select-all bind callback.&quot;&quot;&quot;</span>
+        <span class="c1"># select text</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">select_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">)</span>
+        <span class="c1"># move cursor to the end</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">icursor</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">App</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -9,6 +9,7 @@ Modules
    crop
    debug_info
    files_folders
+   image_interface
    labelled_image
    loop
    machine_learning
@@ -23,4 +24,5 @@ Modules
    skycover
    statistical_analysis
    thresholds
+   UI
    write_to_csv

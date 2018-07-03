@@ -1,3 +1,5 @@
+"""Underlying processing module of the user interface."""
+
 import settings
 import read_properties_file
 import cv2
@@ -8,15 +10,19 @@ import skycover
 import createregions
 import numpy as np
 import ratio
-import labelled_image
 import overlay
 import gzip
 import matplotlib.pyplot as plt
 import tarfile
-import os
 
 
 def save_original_image(data, fn):
+    """Save image, converting it from BGR to RGB.
+
+    Args:
+        data: image in array format to be saved (BGR)
+        fn: filename
+    """
     sizes = np.shape(data)
     height = float(sizes[0])
     width = float(sizes[1])
@@ -33,6 +39,12 @@ def save_original_image(data, fn):
 
 
 def save_processed_image(data, fn):
+    """Save image as RGB.
+
+    Args:
+        data: image in array format to be saved (RGB)
+        fn: filename
+    """
     sizes = np.shape(data)
     height = float(sizes[0])
     width = float(sizes[1])
@@ -49,6 +61,14 @@ def save_processed_image(data, fn):
 
 
 def read_from_tar(filename_no_ext):
+    """Temporarily open source tar file, extracting any information out of it and saving to tmp folder.
+
+    Args:
+        filename_no_ext: filename without any extension
+
+    Returns:
+        tuple: imgages and additional information required for processing
+    """
     # filename variables
     filename_jpg = filename_no_ext + '.jpg'
     filename_png = filename_no_ext + '.png'
@@ -93,6 +113,14 @@ def read_from_tar(filename_no_ext):
 
 
 def single(filename):
+    """Process a single image
+
+    Args:
+        filename: filename without an extension
+
+    Returns:
+        tuple: information about the processed images
+    """
     img, img_tsi_processed, properties_file, filename_jpg, filename_png, azimuth, altitude = read_from_tar(filename)
 
     if altitude >= settings.minimum_altitude:

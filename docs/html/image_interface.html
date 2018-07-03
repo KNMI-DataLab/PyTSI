@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>loop module &mdash; PyTSI 1.0.0 documentation</title>
+  <title>image_interface module &mdash; PyTSI 1.0.0 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="machine_learning module" href="machine_learning.html" />
-    <link rel="prev" title="labelled_image module" href="labelled_image.html" /> 
+    <link rel="next" title="labelled_image module" href="labelled_image.html" />
+    <link rel="prev" title="files_folders module" href="files_folders.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,8 +88,9 @@
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">loop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mask.html">mask module</a></li>
@@ -102,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -152,13 +154,13 @@
         
           <li><a href="modules.html">Modules</a> &raquo;</li>
         
-      <li>loop module</li>
+      <li>image_interface module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/loop.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/image_interface.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -171,89 +173,76 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-loop">
-<span id="loop-module"></span><h1>loop module<a class="headerlink" href="#module-loop" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-image_interface">
+<span id="image-interface-module"></span><h1>image_interface module<a class="headerlink" href="#module-image_interface" title="Permalink to this headline">¶</a></h1>
+<p>Underlying processing module of the user interface.</p>
 <dl class="function">
-<dt id="loop.structure">
-<code class="descclassname">loop.</code><code class="descname">structure</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine and call loop for type of data</p>
+<dt id="image_interface.read_from_tar">
+<code class="descclassname">image_interface.</code><code class="descname">read_from_tar</code><span class="sig-paren">(</span><em>filename_no_ext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#read_from_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.read_from_tar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temporarily open source tar file, extracting any information out of it and saving to tmp folder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename_no_ext</strong> – filename without any extension</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">imgages and additional information required for processing</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="loop.type_TSI">
-<code class="descclassname">loop.</code><code class="descname">type_TSI</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_TSI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_TSI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop TSI data structure and features</p>
+<dt id="image_interface.save_original_image">
+<code class="descclassname">image_interface.</code><code class="descname">save_original_image</code><span class="sig-paren">(</span><em>data</em>, <em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#save_original_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.save_original_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save image, converting it from BGR to RGB.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – image in array format to be saved (BGR)</li>
+<li><strong>fn</strong> – filename</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="loop.type_mobotix">
-<code class="descclassname">loop.</code><code class="descname">type_mobotix</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_mobotix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_mobotix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processing loop for mobotix type images/data structure</p>
+<dt id="image_interface.save_processed_image">
+<code class="descclassname">image_interface.</code><code class="descname">save_processed_image</code><span class="sig-paren">(</span><em>data</em>, <em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#save_processed_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.save_processed_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save image as RGB.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – image in array format to be saved (RGB)</li>
+<li><strong>fn</strong> – filename</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="loop.type_swimcat">
-<code class="descclassname">loop.</code><code class="descname">type_swimcat</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_swimcat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_swimcat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop swimcat data structure and features</p>
+<dt id="image_interface.single">
+<code class="descclassname">image_interface.</code><code class="descname">single</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a single image</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – filename without an extension</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">information about the processed images</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="loop.type_swimseg">
-<code class="descclassname">loop.</code><code class="descname">type_swimseg</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_swimseg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_swimseg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop swimseg data structure and features</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
 </tr>
 </tbody>
 </table>
@@ -269,10 +258,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="machine_learning.html" class="btn btn-neutral float-right" title="machine_learning module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="labelled_image.html" class="btn btn-neutral float-right" title="labelled_image module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="labelled_image.html" class="btn btn-neutral" title="labelled_image module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="files_folders.html" class="btn btn-neutral" title="files_folders module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

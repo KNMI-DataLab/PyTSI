@@ -8,7 +8,9 @@ import os
 
 
 class CalenderUI:
+    """Calendar interface. Example taken from the official documentation of tkcalendar."""
     def __init__(self, cal_root):
+        """Construct widget with master as parent widget"""
         self.top = tk.Toplevel(cal_root)
 
         self.cal = Calendar(self.top, font="Arial 14", selectmode='day',
@@ -22,20 +24,21 @@ class CalenderUI:
         self.top.grab_set()
 
     def print_sel(self):
+        """Callback function saving the date to a variable."""
         self.date = self.cal.selection_get()
 
     def quit1(self):
+        """Callback function that saves the date to a variable and exits the calendar window"""
         self.date = self.cal.selection_get()
         self.top.destroy()
 
 
 class App:
+    """Main app."""
     def __init__(self, master):
+        """All elements in the frame must be described in the __init__. """
         self.master = master
         master.title("PyTSI User Interface")
-
-        style = ttk.Style(self.master)
-        style.theme_use('clam')
 
         # initialize some variables
         self.filename = None
@@ -90,11 +93,15 @@ class App:
         # binds
         self.setup_binds()
 
+        root.mainloop()
+
     def setup_binds(self):
+        """Set up the binds, such as 'RETURN' to enter input or 'Ctrl-A' to select all text in entry box."""
         self.master.bind('<Return>', lambda evt: self.get_time(evt))
         self.time_entry.bind('<Control-KeyRelease-a>', lambda evt: self.select_all(evt))
 
     def organize_grid_elements(self):
+        """Structure all widgets into a grid with corresponding white space to accomodate for window scaling."""
         # title
         self.title.grid(row=0, column=1, columnspan=5, sticky='')
 
@@ -134,6 +141,7 @@ class App:
         self.master.grid_columnconfigure(8, weight=1)
 
     def initialize_info_boxes(self):
+        """Initialize the text in the boxes below the shown images."""
         init_info_orig = 'Original Image \nAzimuth: %s \nAltitude: %s' % (str(self.azimuth), str(self.altitude))
         init_info_tsi_fixed = 'Old TSI software \nCloud cover: %s' % (str(self.cloud_cover))
         init_info_fixed = 'New software (fixed) \nCloud cover: %s' % (str(self.cloud_cover))
@@ -147,18 +155,21 @@ class App:
         return init_info_orig, init_info_tsi_fixed, init_info_fixed, init_info_hybrid
 
     def update_title(self):
+        """Set the title to the currently selected date/time."""
         self.title.delete('1.0', tk.END)
         self.title.tag_configure('center', justify='center')
         self.title.insert('1.0', self.date + ' ' + self.time + ' (UTC yyyy-mm-dd)')
         self.title.tag_add('center', '1.0', 'end')
 
     def get_date(self):
+        """Get the date as a variable from the calendar widget."""
         cal = CalenderUI(self.master)
         self.master.wait_window(cal.top)
         self.date = str(cal.date)
         self.process()
 
     def get_time(self, event=None):
+        """Get the time as a variable from the time entry box and check for incorrect format."""
         self.time = self.time_entry.get()
         if len(self.time) != 5 or self.time[2] != ':':
             print('Error: time format needs to follow specific format -> something like \'13:37\'.')
@@ -168,6 +179,7 @@ class App:
             print('Error: hours need to be between 00 and 23, minutes need to be between 00 and 59')
 
     def update_info_boxes(self):
+        """Update the information in the text boxes underneath the images."""
         # clear the text boxes from beginning to end
         self.info_orig.delete('1.0', tk.END)
         self.info_tsi_fixed.delete('1.0', tk.END)
@@ -187,6 +199,7 @@ class App:
         self.info_hybrid.insert(tk.INSERT, new_info_hybrid)
 
     def process(self):
+        """Call the processing underlying processing function and delete temporary files."""
         self.compose_filename()
         self.azimuth, self.altitude, self.cover_total_fixed, self.cover_total_hybrid, self.cover_total_tsi = \
             image_interface.single(self.filename)
@@ -202,6 +215,7 @@ class App:
         os.remove(settings.tmp + self.filename + '.properties.gz')
 
     def update_image(self):
+        """Open the images produced by the processing functions and display them in the window."""
         filename1 = self.filename + '_original.png'
         filename2 = self.filename + '_fixed_old.png'
         filename3 = self.filename + '_fixed.png'
@@ -220,15 +234,18 @@ class App:
         self.panel4.image = img_new4
 
     def compose_date_time(self):
+        """Compose the date and time from the settings file variables."""
         self.date = settings.year + '-' + settings.month + '-' + settings.day
         self.time = settings.hour + ':' + settings.minute
 
     def compose_filename(self):
+        """Create the 'naked' filename (naked here means without any extension(s)) from the date and time variables."""
         self.filename = self.date + self.time + '00'
         self.filename = self.filename.replace(':', '')
         self.filename = self.filename.replace('-', '')
 
     def layout(self):
+        """Set some variables and settings relating to layout of the main window (colors, fonts etc.)."""
         # background colors
         background_color = '#f4f4f4'
         self.master.configure(bg=background_color)
@@ -248,6 +265,7 @@ class App:
 
     @staticmethod
     def select_all(event=None):
+        """Select-all bind callback."""
         # select text
         event.widget.select_range(0, 'end')
         # move cursor to the end
@@ -257,4 +275,3 @@ class App:
 if __name__ == '__main__':
     root = tk.Tk()
     app = App(root)
-    root.mainloop()

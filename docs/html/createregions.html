@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="crop module" href="crop.html" />
-    <link rel="prev" title="createmask module" href="createmask.html" /> 
+    <link rel="prev" title="color_bands module" href="color_bands.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -84,7 +84,6 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="color_bands.html">color_bands module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="createmask.html">createmask module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">createregions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
@@ -93,9 +92,9 @@
 <li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mask.html">mask module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overlay.html">overlay module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postprocessor.html">postprocessor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processor.html">processor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ratio.html">ratio module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="read_properties_file.html">read_properties_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="resolution.html">resolution module</a></li>
@@ -189,6 +188,7 @@ takes care of a different regions. Combining them all in the correct order leads
 <li><strong>img</strong> (<em>int</em>) – image in NumPy format</li>
 <li><strong>azimuth</strong> (<em>float</em>) – azimuth of the sun, taken from the properties file</li>
 <li><strong>altitude</strong> (<em>float</em>) – altitude of the sun, taken from the properties file</li>
+<li><strong>mask_array</strong> – masking array covering band, camera and outside of mirror</li>
 </ul>
 </td>
 </tr>
@@ -469,7 +469,7 @@ the quadratic equation (abc formula).</p>
         <a href="crop.html" class="btn btn-neutral float-right" title="crop module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="createmask.html" class="btn btn-neutral" title="createmask module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="color_bands.html" class="btn btn-neutral" title="color_bands module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

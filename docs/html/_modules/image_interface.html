@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>image_interface &mdash; PyTSI 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PyTSI
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyTSI</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>image_interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for image_interface</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Underlying processing module of the user interface.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">settings</span>
+<span class="kn">import</span> <span class="nn">read_properties_file</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">resolution</span>
+<span class="kn">import</span> <span class="nn">mask</span>
+<span class="kn">import</span> <span class="nn">thresholds</span>
+<span class="kn">import</span> <span class="nn">skycover</span>
+<span class="kn">import</span> <span class="nn">createregions</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ratio</span>
+<span class="kn">import</span> <span class="nn">overlay</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+
+
+<div class="viewcode-block" id="save_original_image"><a class="viewcode-back" href="../image_interface.html#image_interface.save_original_image">[docs]</a><span class="k">def</span> <span class="nf">save_original_image</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save image, converting it from BGR to RGB.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: image in array format to be saved (BGR)</span>
+<span class="sd">        fn: filename</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">forward</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="save_processed_image"><a class="viewcode-back" href="../image_interface.html#image_interface.save_processed_image">[docs]</a><span class="k">def</span> <span class="nf">save_processed_image</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save image as RGB.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: image in array format to be saved (RGB)</span>
+<span class="sd">        fn: filename</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">forward</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="read_from_tar"><a class="viewcode-back" href="../image_interface.html#image_interface.read_from_tar">[docs]</a><span class="k">def</span> <span class="nf">read_from_tar</span><span class="p">(</span><span class="n">filename_no_ext</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Temporarily open source tar file, extracting any information out of it and saving to tmp folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename_no_ext: filename without any extension</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: imgages and additional information required for processing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># filename variables</span>
+    <span class="n">filename_jpg</span> <span class="o">=</span> <span class="n">filename_no_ext</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span>
+    <span class="n">filename_png</span> <span class="o">=</span> <span class="n">filename_no_ext</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+    <span class="n">properties_file</span> <span class="o">=</span> <span class="n">filename_no_ext</span> <span class="o">+</span> <span class="s1">&#39;.properties.gz&#39;</span>
+
+    <span class="n">settings</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">filename_no_ext</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">month</span> <span class="o">=</span> <span class="n">filename_no_ext</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">day</span> <span class="o">=</span> <span class="n">filename_no_ext</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">hour</span> <span class="o">=</span> <span class="n">filename_no_ext</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">minute</span> <span class="o">=</span> <span class="n">filename_no_ext</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">tsi_database</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">month</span> <span class="o">+</span> <span class="s1">&#39;/DBASE/&#39;</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">settings</span><span class="o">.</span><span class="n">month</span> <span class="o">+</span> \
+           <span class="n">settings</span><span class="o">.</span><span class="n">day</span> <span class="o">+</span> <span class="s1">&#39;_tsi-cabauw_realtime.tar&#39;</span>
+
+    <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">tar</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">filename_jpg</span><span class="p">,</span> <span class="s1">&#39;tmp&#39;</span><span class="p">)</span>
+    <span class="n">tar</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">filename_png</span><span class="p">,</span> <span class="s1">&#39;tmp&#39;</span><span class="p">)</span>
+    <span class="n">tar</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">properties_file</span><span class="p">,</span> <span class="s1">&#39;tmp&#39;</span><span class="p">)</span>
+
+    <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">jpg_loc</span> <span class="o">=</span> <span class="s1">&#39;tmp/&#39;</span> <span class="o">+</span> <span class="n">filename_jpg</span>
+    <span class="n">png_loc</span> <span class="o">=</span> <span class="s1">&#39;tmp/&#39;</span> <span class="o">+</span> <span class="n">filename_png</span>
+    <span class="n">properties_loc</span> <span class="o">=</span> <span class="s1">&#39;tmp/&#39;</span> <span class="o">+</span> <span class="n">properties_file</span>
+
+    <span class="c1"># unzip the gzip file, open the file as rt=read text</span>
+    <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">properties_loc</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># read the file and store line per line</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="c1"># get the altitude and azimuth from the defs</span>
+    <span class="n">altitude</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_altitude</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">azimuth</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_azimuth</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">jpg_loc</span><span class="p">)</span>
+    <span class="n">img_tsi_processed</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">png_loc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img</span><span class="p">,</span> <span class="n">img_tsi_processed</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">filename_jpg</span><span class="p">,</span> <span class="n">filename_png</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span></div>
+
+
+<div class="viewcode-block" id="single"><a class="viewcode-back" href="../image_interface.html#image_interface.single">[docs]</a><span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process a single image</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename: filename without an extension</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: information about the processed images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">img</span><span class="p">,</span> <span class="n">img_tsi_processed</span><span class="p">,</span> <span class="n">properties_file</span><span class="p">,</span> <span class="n">filename_jpg</span><span class="p">,</span> <span class="n">filename_png</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span> <span class="o">=</span> <span class="n">read_from_tar</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">altitude</span> <span class="o">&gt;=</span> <span class="n">settings</span><span class="o">.</span><span class="n">minimum_altitude</span><span class="p">:</span>
+        <span class="c1"># get the fractional sky cover from &#39;old&#39; TSI software</span>
+        <span class="n">cover_thin_tsi</span><span class="p">,</span> <span class="n">cover_opaque_tsi</span><span class="p">,</span> <span class="n">cover_total_tsi</span> <span class="o">=</span> <span class="n">read_properties_file</span><span class="o">.</span><span class="n">get_fractional_sky_cover_tsi</span><span class="p">(</span><span class="n">properties_file</span><span class="p">)</span>
+
+        <span class="c1"># get the resolution of the image</span>
+        <span class="n">resolution</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="c1"># create and apply the mask</span>
+        <span class="n">mask_array</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">)</span>
+        <span class="n">masked_img</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask_array</span><span class="p">)</span>
+
+        <span class="c1"># calculate red/blue ratio per pixel</span>
+        <span class="n">red_blue_ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">.</span><span class="n">red_blue_v2</span><span class="p">(</span><span class="n">masked_img</span><span class="p">)</span>
+
+        <span class="c1"># calculate fixed fractional skycover</span>
+        <span class="n">fixed_sunny_threshold</span><span class="p">,</span> <span class="n">fixed_thin_threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">fixed</span><span class="p">()</span>
+        <span class="n">cover_thin_fixed</span><span class="p">,</span> <span class="n">cover_opaque_fixed</span><span class="p">,</span> <span class="n">cover_total_fixed</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span>
+                                                                                 <span class="n">fixed_sunny_threshold</span><span class="p">,</span>
+                                                                                 <span class="n">fixed_thin_threshold</span><span class="p">)</span>
+
+        <span class="c1"># calculate hybrid sky cover</span>
+        <span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">blue_red_ratio_norm</span><span class="p">,</span> <span class="n">st_dev</span><span class="p">,</span> <span class="n">hybrid_threshold</span> <span class="o">=</span> <span class="n">thresholds</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span>
+            <span class="n">masked_img</span><span class="p">)</span>
+        <span class="n">cover_total_hybrid</span> <span class="o">=</span> <span class="n">skycover</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">ratio_br_norm_1d_nz</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+
+        <span class="c1"># create the segments for solar correction</span>
+        <span class="n">regions</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">image_with_outlines</span> <span class="o">=</span> <span class="n">createregions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span>
+                                                                                           <span class="n">altitude</span><span class="p">,</span>
+                                                                                           <span class="n">mask_array</span><span class="p">)</span>
+
+        <span class="c1"># overlay outlines on image(s)</span>
+        <span class="n">image_with_outlines_fixed</span> <span class="o">=</span> <span class="n">overlay</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">red_blue_ratio</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span>
+                                                      <span class="n">fixed_sunny_threshold</span><span class="p">,</span>
+                                                      <span class="n">fixed_thin_threshold</span><span class="p">)</span>
+        <span class="n">image_with_outlines_hybrid</span> <span class="o">=</span> <span class="n">overlay</span><span class="o">.</span><span class="n">hybrid</span><span class="p">(</span><span class="n">masked_img</span><span class="p">,</span> <span class="n">outlines</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span> <span class="n">hybrid_threshold</span><span class="p">)</span>
+
+        <span class="n">save_processed_image</span><span class="p">(</span><span class="n">image_with_outlines_hybrid</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_hybrid.png&#39;</span><span class="p">)</span>
+        <span class="n">save_processed_image</span><span class="p">(</span><span class="n">image_with_outlines_fixed</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed.png&#39;</span><span class="p">)</span>
+        <span class="n">save_original_image</span><span class="p">(</span><span class="n">img_tsi_processed</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_fixed_old.png&#39;</span><span class="p">)</span>
+        <span class="n">save_original_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_original.png&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span> <span class="n">cover_total_fixed</span><span class="p">,</span> <span class="n">cover_total_hybrid</span><span class="p">,</span> <span class="n">cover_total_tsi</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Job Mos.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
