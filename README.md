@@ -5,19 +5,26 @@ For documentation on this project see [the documentation website](https://knmi-d
 ## User Interface
 ![alt text](images/GUI.png "GUI")
 
-<!---
-## Comparison of the original image, old TSI software and the new software
-![alt text](results/semi_clouds.png "Semi cloudy")
+## Installation instructions:
 
-## Cloud cover comparison of the old and new software
-### No mask around the sun
-![alt text](results/skycovercomparison_nosundisk.png "Sky cover comparison")
-### With mask around the sun
-![alt text](results/skycovercomparison_sundisk.png "Sky cover comparison")
+* Clone the project:
+    ```
+    git clone https://github.com/KNMI-Datalab/PyTSI PyTSI
+    ```
 
-## Result of JPG compression
-![alt text](results/jpegcompressionresult.png "JPEG compression")
+* Install the requirements:
+  ```
+  pip install requirements.txt
+  ```
 
-## TSI image showing the Python set outlines
-![alt text](results/segmented_image.png "Segmented Image")
--->
+* Run the GUI using Python 3:
+  ```
+  python3 UI.py
+  ```
+
+* Run the recursive time loop:
+  ```
+  python3 main.py
+  ```
+  * To change functionality and parameters, change the settings in `settings.py`
+  

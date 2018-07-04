@@ -1,0 +1,7 @@
+numpy
+tkcalendar
+opencv-python
+pillow
+matplotlib
+ephem
+tqdm

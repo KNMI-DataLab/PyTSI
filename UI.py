@@ -36,7 +36,6 @@ class CalenderUI:
 
 class App:
     """Main app."""
-
     def __init__(self, master):
         """All elements in the frame must be described in the __init__. """
         self.master = master

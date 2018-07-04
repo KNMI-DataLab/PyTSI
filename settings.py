@@ -154,8 +154,8 @@ grey_levels = 256
 # thresholds
 # fixed
 # TSI ######################
-fixed_sunny_threshold = 0.80  # working: 0.795
-fixed_thin_threshold = 0.9  # working: 0.9
+fixed_sunny_threshold = 0.80  # working: 0.795. 2nd: 0.81
+fixed_thin_threshold = 0.9  # working: 0.9. 3rd: 0.92
 # swim #####################
 fixed_threshold_swim = 0.64
 
