@@ -1,4 +1,4 @@
-# cloudDetection
+# PyTSI
 
 For documentation on this project see [the documentation website](https://knmi-datalab.github.io/PyTSI/).
 
