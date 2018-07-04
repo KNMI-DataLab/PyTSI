@@ -144,9 +144,7 @@ def single(filename):
                                                                                  fixed_thin_threshold)
 
         # calculate hybrid sky cover
-        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(
-            masked_img)
-        print(settings.deviation_threshold, settings.fixed_threshold)
+        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
         cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
 
         # create the segments for solar correction
@@ -164,5 +162,12 @@ def single(filename):
         save_processed_image(image_with_outlines_fixed, settings.tmp + filename + '_fixed.png')
         save_original_image(img_tsi_processed, settings.tmp + filename + '_fixed_old.png')
         save_original_image(img, settings.tmp + filename + '_original.png')
+
+        azimuth = round(azimuth, 3)
+        altitude = round(altitude , 3)
+        cover_total_fixed= round(cover_total_fixed, 3)
+        cover_total_hybrid = round(cover_total_hybrid, 3)
+        cover_total_tsi = round(cover_total_tsi, 3)
+
 
         return azimuth, altitude, cover_total_fixed, cover_total_hybrid, cover_total_tsi

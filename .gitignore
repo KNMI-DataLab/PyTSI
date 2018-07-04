@@ -2,7 +2,6 @@
 .buildinfo
 
 #images
-*.png
 *.jpg
 
 #text files

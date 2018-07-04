@@ -159,7 +159,7 @@ fixed_thin_threshold = 0.9  # working: 0.9
 # swim #####################
 fixed_threshold_swim = 0.64
 
-use_single_threshold = True  # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
+use_single_threshold = False  # if True: fixed thin/opaque threshold == fixed thin/clear sky threshold
 use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not recommended)
 
 # hybrid

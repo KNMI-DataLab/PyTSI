@@ -72,10 +72,20 @@ class App:
                                     activebackground=self.button_color,
                                     activeforeground='white')
 
-        # time
+        # time entry
         self.time_entry = tk.Entry(self.master, width=8)
         self.time_entry.delete(0, tk.END)
         self.time_entry.insert(0, self.time)
+
+        # fixed clear/cloud threshold entry
+        self.fixed_sunny_entry = tk.Entry(self.master, width=8)
+        self.fixed_sunny_entry.delete(0, tk.END)
+        self.fixed_sunny_entry.insert(0, settings.fixed_sunny_threshold)
+
+        # fixed thin/opaque threshold entry
+        self.fixed_thin_entry = tk.Entry(self.master, width=8)
+        self.fixed_thin_entry.delete(0, tk.END)
+        self.fixed_thin_entry.insert(0, settings.fixed_thin_threshold)
 
         # hybrid stdev threshold entry
         self.hybrid_stdev_entry = tk.Entry(self.master, width=8)
@@ -83,13 +93,21 @@ class App:
         self.hybrid_stdev_entry.insert(0, settings.deviation_threshold)
 
         # hybrid fixed threshold entry
-        self.hybrid_fixed_entry = tk.Entry(self.master, width=8)
-        self.hybrid_fixed_entry.delete(0, tk.END)
-        self.hybrid_fixed_entry.insert(0, settings.fixed_threshold)
+        self.hybrid_fixed_sunny_entry = tk.Entry(self.master, width=8)
+        self.hybrid_fixed_sunny_entry.delete(0, tk.END)
+        self.hybrid_fixed_sunny_entry.insert(0, settings.fixed_threshold)
 
         # time button
         self.time_button = tk.Button(self.master, text='Select time', width=10, command=self.get_entries,
                                      activebackground=self.button_color, activeforeground='white')
+
+        # fixed clear/cloud threshold box
+        self.fixed_sunny_button = tk.Button(self.master, text='Select fixed', width=10, command=self.get_entries,
+                                      activebackground=self.button_color, activeforeground='white')
+
+        # fixed thin/opaque threshold box
+        self.fixed_thin_button = tk.Button(self.master, text='Select fixed', width=10, command=self.get_entries,
+                                      activebackground=self.button_color, activeforeground='white')
 
         # hybrid stdev threshold box
         self.hybrid_stdev_button = tk.Button(self.master, text='Select T(stdev)', width=10, command=self.get_entries,
@@ -99,10 +117,11 @@ class App:
         self.hybrid_fixed_button = tk.Button(self.master, text='Select T(fixed)', width=10, command=self.get_entries,
                                              activebackground=self.button_color, activeforeground='white')
         # initialize info boxes
-        self.info_orig = tk.Text(self.master, height=3, width=30)
-        self.info_tsi_fixed = tk.Text(self.master, height=3, width=30)
-        self.info_fixed = tk.Text(self.master, height=3, width=30)
-        self.info_hybrid = tk.Text(self.master, height=3, width=30)
+        info_width = 35
+        self.info_orig = tk.Text(self.master, height=3, width=info_width)
+        self.info_tsi_fixed = tk.Text(self.master, height=3, width=info_width)
+        self.info_fixed = tk.Text(self.master, height=3, width=info_width)
+        self.info_hybrid = tk.Text(self.master, height=3, width=info_width)
 
         self.initialize_info_boxes()
 
@@ -120,58 +139,71 @@ class App:
     def organize_grid_elements(self):
         """Structure all widgets into a grid with corresponding white space to accomodate for window scaling."""
         # title
-        self.title.grid(row=0, column=1, columnspan=5, sticky='')
+        self.title.grid(row=1, column=1, columnspan=8, sticky='')
 
         # original image
-        self.panel1.grid(row=1, column=1, rowspan=4, sticky='NSEW')
+        self.panel1.grid(row=3, column=1, rowspan=1, columnspan=2, sticky='NSEW')
 
-        # old tsi software
-        self.panel2.grid(row=1, column=2, rowspan=4, sticky='NSEW')
+        # old tsi software image
+        self.panel2.grid(row=3, column=3, rowspan=1, columnspan=2, sticky='NSEW')
 
-        # fixed
-        self.panel3.grid(row=1, column=3, rowspan=4, sticky='NSEW')
+        # fixed image
+        self.panel3.grid(row=3, column=5, rowspan=1, columnspan=2, sticky='NSEW')
 
-        # hybrid
-        self.panel4.grid(row=1, column=4, rowspan=4, sticky='NSEW')
+        # hybrid image
+        self.panel4.grid(row=3, column=7, rowspan=1, columnspan=2, sticky='NSEW')
 
         # time entry
-        self.time_entry.grid(row=2, column=6)
+        self.time_entry.grid(row=8, column=2, sticky='NESW')
+
+        # fixed clear/cloud entry
+        self.fixed_sunny_entry.grid(row=7, column=5, sticky='NESW')
+
+        # fixed thin/opauqe entry
+        self.fixed_thin_entry.grid(row=8, column=5, sticky='NESW')
 
         # hybrid stdev entry
-        self.hybrid_stdev_entry.grid(row=3, column=6)
+        self.hybrid_stdev_entry.grid(row=7, column=7, sticky='NESW')
 
         # hybrid fixed entry
-        self.hybrid_fixed_entry.grid(row=4, column=6)
+        self.hybrid_fixed_sunny_entry.grid(row=8, column=7, sticky='NESW')
 
         # time button
-        self.time_button.grid(row=2, column=7)
+        self.time_button.grid(row=8, column=3, sticky='NESW')
 
-        # hybrid stdev entry
-        self.hybrid_stdev_button.grid(row=3, column=7)
+        # fixed clear/cloud button
+        self.fixed_sunny_button.grid(row=7, column=6, sticky='NESW')
 
-        # hybrid fixed entry
-        self.hybrid_fixed_button.grid(row=4, column=7)
+        # fixed thin/opaque button
+        self.fixed_thin_button.grid(row=8, column=6, sticky='NESW')
+
+        # hybrid stdev button
+        self.hybrid_stdev_button.grid(row=7, column=8, sticky='NESW')
+
+        # hybrid fixed button
+        self.hybrid_fixed_button.grid(row=8, column=8, sticky='NESW')
 
         # calendar button
-        self.cal_button.grid(row=1, column=6, columnspan=2, sticky='EW')
+        self.cal_button.grid(row=7, column=2, columnspan=2, sticky='NESW')
 
         # info boxes
-        self.info_orig.grid(row=6, column=1, columnspan=1)
-        self.info_tsi_fixed.grid(row=6, column=2, columnspan=1)
-        self.info_fixed.grid(row=6, column=3, columnspan=1)
-        self.info_hybrid.grid(row=6, column=4, columnspan=1)
+        self.info_orig.grid(row=5, column=1, columnspan=2)
+        self.info_tsi_fixed.grid(row=5, column=3, columnspan=2)
+        self.info_fixed.grid(row=5, column=5, columnspan=2)
+        self.info_hybrid.grid(row=5, column=7, columnspan=2)
 
         # empty rows, fixes window scaling
         self.master.grid_rowconfigure(0, weight=1)
-        self.master.grid_rowconfigure(5, weight=1)
-        self.master.grid_rowconfigure(7, weight=1)
+        self.master.grid_rowconfigure(2, weight=1)
+        self.master.grid_rowconfigure(4, weight=1)
+        self.master.grid_rowconfigure(6, weight=1)
+        self.master.grid_rowconfigure(9, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_columnconfigure(5, weight=1)
-        self.master.grid_columnconfigure(8, weight=1)
+        self.master.grid_columnconfigure(9, weight=1)
 
     def initialize_info_boxes(self):
         """Initialize the text in the boxes below the shown images."""
-        init_info_orig = 'Original Image \nAzimuth: %s \nAltitude: %s' % (str(self.azimuth), str(self.altitude))
+        init_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth), str(self.altitude))
         init_info_tsi_fixed = 'Old TSI software \nCloud cover: %s' % (str(self.cloud_cover))
         init_info_fixed = 'New software (fixed) \nCloud cover: %s' % (str(self.cloud_cover))
         init_info_hybrid = 'New software (hybrid) \nCloud cover: %s' % (str(self.cloud_cover))
@@ -201,8 +233,10 @@ class App:
         """Get the time as a variable from the time entry box and check for incorrect format."""
         self.time = self.time_entry.get()
 
+        settings.fixed_sunny_threshold = float(self.fixed_sunny_entry.get())
+        settings.fixed_thin_threshold = float(self.fixed_thin_entry.get())
         settings.deviation_threshold = float(self.hybrid_stdev_entry.get())
-        settings.fixed_threshold = float(self.hybrid_fixed_entry.get())
+        settings.fixed_threshold = float(self.hybrid_fixed_sunny_entry.get())
 
         # check the length of the time string
         if len(self.time) != 5 or self.time[2] != ':':
@@ -212,9 +246,11 @@ class App:
               int(self.time[3:5]) > 59 or int(self.time[3:5]) < 0):
             print('Error: hours need to be between 00 and 23, minutes need to be between 00 and 59')
         # check the ranges of the thresholds
-        elif (settings.deviation_threshold < 0 or settings.deviation_threshold > 1 or
+        elif (settings.fixed_sunny_threshold < 0 or settings.fixed_sunny_threshold > 1 or
+              settings.fixed_thin_threshold < 0 or settings.fixed_thin_threshold > 1 or
+              settings.deviation_threshold < 0 or settings.deviation_threshold > 1 or
               settings.fixed_threshold < -1 or settings.fixed_threshold > 1):
-            print('Error: only real numbers between -1 and 1 are valid.')
+            print('Error: Threshold values out of range.')
         else:
             self.process()
 
@@ -227,7 +263,7 @@ class App:
         self.info_hybrid.delete('1.0', tk.END)
 
         # new text
-        new_info_orig = 'Original Image \nAzimuth: %s \nAltitude: %s' % (str(self.azimuth), str(self.altitude))
+        new_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth), str(self.altitude))
         new_info_tsi_fixed = 'Old TSI software \nCloud cover: %s' % (str(self.cover_total_tsi))
         new_info_fixed = 'New software (fixed) \nCloud cover: %s' % (str(self.cover_total_fixed))
         new_info_hybrid = 'New software (hybrid) \nCloud cover: %s' % (str(self.cover_total_hybrid))
@@ -299,8 +335,8 @@ class App:
         self.master.option_add("*Font", default_font)
 
         # sizes
-        size_x = 1400
-        size_y = 500
+        size_x = 1200
+        size_y = 550
         self.master.geometry('{}x{}'.format(size_x, size_y))
 
     @staticmethod
