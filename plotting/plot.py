@@ -136,9 +136,13 @@ def comparison_scatter():
     """Plot the scatter of two datasets against each other with a 1:1 line, best fit and r2 score."""
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    x = data['cloud_cover_TSI']
-    y = data['cloud_cover_hybrid']
-    names = data['filename']
+    x_name = 'cloud_cover_hybrid_mce'
+    y_name = 'cloud_cover_hybrid_otsu'
+    n_name = 'filename'
+
+    x = data[x_name]
+    y = data[y_name]
+    names = data[n_name]
 
     # convert 1D filename array to string
     # if there is an extension (.jpg/.png etc.) or the file name consists of a combination between letters and numbers

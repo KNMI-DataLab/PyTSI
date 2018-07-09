@@ -12,7 +12,7 @@ import image_interface
 
 
 def main():
-    """Call mainn functions and write output to file.
+    """Call main functions and write output to file.
 
     First is the call to the processing loop. Afterwards, postprocessing, machine learning and cropping functionality
     are carried out (specified in settings file). Finally, some plotting functions are called.

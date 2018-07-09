@@ -144,8 +144,10 @@ def single(filename):
                                                                                  fixed_thin_threshold)
 
         # calculate hybrid sky cover
-        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(masked_img)
-        cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
+        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold_mce, hybrid_threshold_otsu = \
+            thresholds.hybrid(masked_img)
+        cover_total_hybrid_mce = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_mce)
+        cover_total_hybrid_otsu = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_otsu)
 
         # create the segments for solar correction
         regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
@@ -156,7 +158,7 @@ def single(filename):
         image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
                                                       fixed_sunny_threshold,
                                                       fixed_thin_threshold)
-        image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold)
+        image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold_mce)
 
         save_processed_image(image_with_outlines_hybrid, settings.tmp + filename + '_hybrid.png')
         save_processed_image(image_with_outlines_fixed, settings.tmp + filename + '_fixed.png')
@@ -166,7 +168,7 @@ def single(filename):
         azimuth = round(azimuth, 3)
         altitude = round(altitude , 3)
         cover_total_fixed= round(cover_total_fixed, 3)
-        cover_total_hybrid = round(cover_total_hybrid, 3)
+        cover_total_hybrid = round(cover_total_hybrid_mce, 3)
         cover_total_tsi = round(cover_total_tsi, 3)
 
 

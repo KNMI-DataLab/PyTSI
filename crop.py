@@ -6,6 +6,7 @@ import numpy as np
 import resolution
 import cv2
 import matplotlib.pyplot as plt
+import thresholds
 
 
 def mobotix():
@@ -79,9 +80,9 @@ def mobotix():
                 else:
                     crop = img[520:1350, 1305:2035, :]
 
-                plt.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
-                plt.savefig(settings.results_folder + settings.data_type + '/crops/' + filename_no_ext + '_crop.png')
-                plt.close()
+                #plt.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
+                #plt.savefig(settings.results_folder + settings.data_type + '/crops/' + filename_no_ext + '_crop.png')
+                #plt.close()
 
                 # cv2.rectangle(img, (670, 520), (1400, 1350), (0, 255, 0), 10)
                 # cv2.rectangle(img, (680, 530), (2045, 1010), (0, 0, 255), 10)
@@ -91,6 +92,8 @@ def mobotix():
                 # plt.savefig(settings.results_folder + settings.data_type + '/' + filename_no_ext + '_crop_regions.png')
                 # plt.close()
                 # quit()
+
+                thresholds.otsu_for_crops(crop, filename_no_ext)
 
 
 def single_RGB_image(img, corner1, corner2, corner3, corner4):

@@ -36,6 +36,7 @@ class CalenderUI:
 
 class App:
     """Main app."""
+
     def __init__(self, master):
         """All elements in the frame must be described in the __init__. """
         self.master = master
@@ -101,22 +102,26 @@ class App:
                                      activebackground=self.button_color, activeforeground='white')
 
         # fixed clear/cloud threshold box
-        self.fixed_sunny_button = tk.Button(self.master, text='Select fixed', width=10, command=self.get_entries,
-                                      activebackground=self.button_color, activeforeground='white')
+        self.fixed_sunny_button = tk.Button(self.master, text='Select lower threshold', width=10,
+                                            command=self.get_entries,
+                                            activebackground=self.button_color, activeforeground='white')
 
         # fixed thin/opaque threshold box
-        self.fixed_thin_button = tk.Button(self.master, text='Select fixed', width=10, command=self.get_entries,
-                                      activebackground=self.button_color, activeforeground='white')
+        self.fixed_thin_button = tk.Button(self.master, text='Select upper threshold', width=10,
+                                           command=self.get_entries,
+                                           activebackground=self.button_color, activeforeground='white')
 
         # hybrid stdev threshold box
-        self.hybrid_stdev_button = tk.Button(self.master, text='Select T(stdev)', width=10, command=self.get_entries,
+        self.hybrid_stdev_button = tk.Button(self.master, text='Select stdev threshold', width=10,
+                                             command=self.get_entries,
                                              activebackground=self.button_color, activeforeground='white')
 
         # hybrid fixed threshold box
-        self.hybrid_fixed_button = tk.Button(self.master, text='Select T(fixed)', width=10, command=self.get_entries,
+        self.hybrid_fixed_button = tk.Button(self.master, text='Select fixed threshold', width=10,
+                                             command=self.get_entries,
                                              activebackground=self.button_color, activeforeground='white')
         # initialize info boxes
-        info_width = 35
+        info_width = 35  # pixels (?)
         self.info_orig = tk.Text(self.master, height=3, width=info_width)
         self.info_tsi_fixed = tk.Text(self.master, height=3, width=info_width)
         self.info_fixed = tk.Text(self.master, height=3, width=info_width)
@@ -202,7 +207,8 @@ class App:
 
     def initialize_info_boxes(self):
         """Initialize the text in the boxes below the shown images."""
-        init_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth), str(self.altitude))
+        init_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth),
+                                                                                      str(self.altitude))
         init_info_tsi_fixed = 'Old TSI software \nCloud cover: %s' % (str(self.cloud_cover))
         init_info_fixed = 'New software (fixed) \nCloud cover: %s' % (str(self.cloud_cover))
         init_info_hybrid = 'New software (hybrid) \nCloud cover: %s' % (str(self.cloud_cover))
@@ -262,7 +268,8 @@ class App:
         self.info_hybrid.delete('1.0', tk.END)
 
         # new text
-        new_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth), str(self.altitude))
+        new_info_orig = 'Original Image \nSolar Azimuth: %s \nSolar Altitude: %s' % (str(self.azimuth),
+                                                                                     str(self.altitude))
         new_info_tsi_fixed = 'Old TSI software \nCloud cover: %s' % (str(self.cover_total_tsi))
         new_info_fixed = 'New software (fixed) \nCloud cover: %s' % (str(self.cover_total_fixed))
         new_info_hybrid = 'New software (hybrid) \nCloud cover: %s' % (str(self.cover_total_hybrid))

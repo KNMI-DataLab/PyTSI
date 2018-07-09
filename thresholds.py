@@ -2,6 +2,11 @@ import numpy as np
 import settings
 from math import log10
 import ratio
+import skimage.filters
+import resolution
+import matplotlib.pyplot as plt
+import cv2
+import sklearn
 
 
 def fixed():
@@ -10,7 +15,7 @@ def fixed():
     Returns:
         tuple: the fixed thresholds
     """
-    # TODO: this might be unnecessary
+    # TODO: this is unnecessary
     fixed_sunny_threshold = settings.fixed_sunny_threshold
     fixed_thin_threshold = settings.fixed_thin_threshold
 
@@ -20,18 +25,17 @@ def fixed():
         return fixed_sunny_threshold, fixed_thin_threshold
 
 
-def min_cross_entropy(data, nbins):
+def min_cross_entropy(data):
     """Minimum cross entropy algorithm to determine the minimum of a histogram
 
     Args:
         data (float): the image data (e.g. blue/red ratio) to be used in the histogram
-        nbins (int): number of histogram bins
 
     Returns:
         float: the MCE threshold
     """
     # create the histogram and determine length
-    hist, bins = np.histogram(data, nbins)
+    hist, bins = np.histogram(data, settings.nbins_hybrid)
     L = len(hist)
 
     thresholdList = []
@@ -98,7 +102,7 @@ def flatten_clean_array(img):
 
     blue_red_ratio_1d = blue_red_ratio.flatten()
     blue_red_ratio_1d_nz = blue_red_ratio_1d[blue_red_ratio_1d > 0]
-    blue_red_ratio_1d_nz_norm = np.divide(blue_red_ratio_1d_nz -1, blue_red_ratio_1d_nz + 1)
+    blue_red_ratio_1d_nz_norm = np.divide(blue_red_ratio_1d_nz - 1, blue_red_ratio_1d_nz + 1)
 
     # catch Nan
     if np.argwhere(np.isnan(blue_red_ratio_norm)).any():
@@ -121,12 +125,55 @@ def hybrid(img):
     # calculate standard deviation
     st_dev = np.std(blue_red_ratio_norm_1d_nz)
 
+    threshold = 0
+
     # decide which thresholding needs to be used
     if st_dev <= settings.deviation_threshold:
         # fixed thresholding
-        threshold = settings.fixed_threshold
+        threshold_mce = threshold_otsu = settings.fixed_threshold
     else:
         # MCE thresholding
-        threshold = min_cross_entropy(blue_red_ratio_norm_1d_nz, settings.nbins_hybrid)
+        threshold_mce = min_cross_entropy(blue_red_ratio_norm_1d_nz)
+        # Otsu thresholding
+        threshold_otsu = otsu(blue_red_ratio_norm_1d_nz)
 
-    return blue_red_ratio_norm_1d_nz, blue_red_ratio_norm_nz, st_dev, threshold
+    return blue_red_ratio_norm_1d_nz, blue_red_ratio_norm_nz, st_dev, threshold_mce, threshold_otsu
+
+
+def otsu(blue_red_ratio_norm_1d_nz):
+    """Calculate the threshold using the Otsu algorithm"""
+    threshold = skimage.filters.threshold_otsu(blue_red_ratio_norm_1d_nz, nbins=settings.nbins_hybrid)
+
+    return threshold
+
+
+def otsu_for_crops(img, filename_no_ext):
+    resolution.get_resolution(img)
+
+    # r_rb = ratio.red_blue_v2(img)
+    r_br = ratio.blue_red(img)
+
+    # normalize the data
+    r_br_normed = (r_br -1) / (r_br + 1)
+    # r_br_normed = sklearn.preprocessing.normalize(r_br, norm='l1')
+    # r_br_normed = r_br - np.min(r_br) / np.max(r_br) - np.min(r_br)
+
+    # if np.std(r_br_normed.flatten()) < 0.045:
+    # if np.std(r_br_normed.flatten()) < 0.08:
+    #     thresh = 0.1
+    # else:
+    #     thresh = skimage.filters.threshold_otsu(r_br_normed, nbins=256)
+
+    thresh = skimage.filters.threshold_otsu(r_br_normed, nbins=256)
+
+    binary_otsu = r_br_normed > thresh
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(10,5))
+
+    ax1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    ax2.imshow(binary_otsu, cmap='Blues')
+    ax3.hist(r_br_normed.flatten(), bins=50)
+    # ax3.set_xlim(-1, 1)
+    fig.suptitle('stdev='+str(np.std(r_br_normed.flatten())))
+    plt.savefig(settings.results_folder + settings.data_type + '/thresholding_tests/' + filename_no_ext + '.png')
+    plt.close()

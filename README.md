@@ -26,5 +26,6 @@ For documentation on this project see [the documentation website](https://knmi-d
   ```
   python3 main.py
   ```
-  * To change functionality and parameters, change the settings in `settings.py`
+
+* To change functionality and parameters, change the settings in `settings.py`
   

@@ -26,10 +26,9 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/DBASE/201606/20160601_tsi-cabauw_realtime/'
+main_data = project_folder + 'data/TSI/DBASE/201804/'
 # main_data = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
 # main_data = project_folder + 'data/SWIM/swimseg/'
-# main_data = '/data/mobotix/bbc.knmi.nl/'
 # main_data = 'data/mobotix/development_images/subfolder/'
 # main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/same_alignment/'
 
@@ -39,7 +38,7 @@ tsi_database = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
 # temporary folder(s)
 tmp = 'tmp/'
 
-# data type
+# data types
 tsi_str = 'TSI'
 seg_str = 'swimseg'
 cat_str = 'swimcat'
@@ -168,11 +167,14 @@ use_hybrid_SEG = False  # if True: use hybrid thresholding for SEG database (not
 #         2) devThr: 0.03 , fixThr: 0.25
 nbins_hybrid = 100
 if data_type == tsi_str or data_type == seg_str or data_type == cat_str:
-    deviation_threshold = 0.045  # original was 0.03, 'working:0.065', second setup '0.55'
-    fixed_threshold = 0.20  # original was 0.250, 'working:0.20', second setup '0.15'
+    deviation_threshold = 0.065  # original was 0.03, 'working:0.065', more setups '0.55', '0.045'
+    fixed_threshold = 0.20  # original was 0.250, 'working:0.20', more setups '0.15', '0.20'
 elif data_type == mob_str:
     deviation_threshold = 0.08
     fixed_threshold = 0.10
+
+# type of adaptive threshold
+adpt_threshold_type = 'otsu' # 'mce'
 
 # machine learning
 use_knn = False
@@ -184,7 +186,7 @@ use_postprocessing = 0
 use_statistical_analysis = 0
 use_machine_learning = 0
 crop_mobotix_images = 0
-use_ui = 0
+use_ui = 1
 
 # plotting
 plot_sky_cover_comparison = 0
@@ -193,7 +195,7 @@ plot_correction_result = 0
 plot_overview = 0
 plot_poster_images = 0
 use_project_3d = 0
-plot_comparison_scatter = 0
+plot_comparison_scatter = 1
 plot_difference_histogram = 0
 
 # ignore FutureWarnings

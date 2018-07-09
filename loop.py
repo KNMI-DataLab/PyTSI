@@ -91,9 +91,10 @@ def type_TSI(writer):
                                                                                                  fixed_thin_threshold)
 
                         # calculate hybrid sky cover
-                        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold = thresholds.hybrid(
-                            masked_img)
-                        cover_total_hybrid = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold)
+                        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold_mce, hybrid_threshold_otsu = \
+                            thresholds.hybrid(masked_img)
+                        cover_total_hybrid_mce = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_mce)
+                        cover_total_hybrid_otsu = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_otsu)
 
                         if settings.use_postprocessing:
                             # create the segments for solar correction
@@ -109,14 +110,14 @@ def type_TSI(writer):
                             image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
                                                                       fixed_sunny_threshold,
                                                                       fixed_thin_threshold)
-                            image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold)
+                            image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold_mce)
 
                             if settings.plot_overview:
                                 # plot complete overview with 5 different images, histogram and cloud cover comparisons
                                 overview.plot(img, img_tsi, regions, image_with_outlines_fixed,
                                               image_with_outlines_hybrid,
                                               azimuth,
-                                              ratio_br_norm_1d_nz, hybrid_threshold, st_dev, filename_no_ext)
+                                              ratio_br_norm_1d_nz, hybrid_threshold_mce, st_dev, filename_no_ext)
 
                             if settings.plot_poster_images:
                                 # plot images for use in poster
@@ -136,7 +137,8 @@ def type_TSI(writer):
                                     azimuth,
                                     cover_thin_fixed, cover_opaque_fixed,
                                     cover_total_fixed,
-                                    cover_total_hybrid,
+                                    cover_total_hybrid_mce,
+                                    cover_total_hybrid_otsu,
                                     cover_thin_tsi,
                                     cover_opaque_tsi,
                                     cover_total_tsi,
