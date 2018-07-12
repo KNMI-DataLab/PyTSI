@@ -1,8 +1,12 @@
+import settings
 import os
 import ephem
 import math
-from src import resolution, thresholds, settings
+import numpy as np
+import resolution
 import cv2
+import matplotlib.pyplot as plt
+import thresholds
 
 
 def mobotix():

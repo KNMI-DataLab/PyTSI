@@ -1,8 +1,13 @@
 import csv
+import settings
 import plotskycover
+import postprocessor
 from shutil import copyfile
+import write_to_csv
+import loop
+import machine_learning
 import plot
-from src import crop, postprocessor, machine_learning, loop, write_to_csv, settings
+import crop
 
 
 def main():

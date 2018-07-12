@@ -1,7 +1,9 @@
 import numpy as np
+import settings
 from math import log10, sqrt
 from skimage.feature import greycomatrix
-from src import color_bands, settings
+import color_bands
+import resolution
 
 
 # TODO: mask GLCM matrices properly with NumPy

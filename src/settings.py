@@ -14,11 +14,11 @@ Set the global variables for:
 * And more
 """
 import sys
-from src import files_folders
+import files_folders
 import warnings
 
 # import the path
-sys.path.append('./plotting')
+sys.path.append('../plotting')
 
 # data
 # project folder

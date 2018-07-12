@@ -230,6 +230,7 @@ class App:
     def get_date(self):
         """Get the date as a variable from the calendar widget."""
         cal = CalenderUI(self.master)
+        self.master.focus()
         self.master.wait_window(cal.top)
         self.date = str(cal.date)
         self.process()

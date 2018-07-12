@@ -1,6 +1,6 @@
 import os
 import errno
-from src import settings
+import settings
 
 
 def set_output_folder():

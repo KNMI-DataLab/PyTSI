@@ -3,7 +3,7 @@ from sklearn import model_selection, neighbors
 from sklearn.cluster import KMeans
 import pandas as pd
 from tqdm import tqdm
-from src import settings
+import settings
 import matplotlib.pyplot as plt
 # style.use('ggplot')
 

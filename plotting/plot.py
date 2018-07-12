@@ -6,8 +6,7 @@ from sklearn.metrics import r2_score
 from math import ceil
 from scipy.stats import gaussian_kde
 from matplotlib import colors
-import os
-from matplotlib.mlab import bivariate_normal
+import scipy
 
 
 def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
@@ -132,11 +131,64 @@ def original_and_binary_and_histogram(img, filename, data1, title1, data2, title
     plt.close()
 
 
+def mean_method_difference_bar():
+    plt.style.use('seaborn')
+
+    data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
+
+    x_name = 'cloud_cover_fixed'
+    y1_name = 'cloud_cover_hybrid_mce'
+    y2_name = 'cloud_cover_hybrid_otsu'
+    y3_name = 'cloud_cover_hybrid_kmeans'
+    a_name = 'relative_altitude'
+
+    x = data[x_name]
+    y1 = data[y1_name]
+    y2 = data[y2_name]
+    y3 = data[y3_name]
+    alt = data[a_name]
+
+    diff1 = abs(x - y1)
+    diff2 = abs(x - y2)
+    diff3 = abs(x - y3)
+
+    nbins = 10
+
+    bin_means1, bin_edges1, binnumber1 = scipy.stats.binned_statistic(alt, diff1, 'mean', bins=nbins)
+    bin_means2, bin_edges2, binnumber2 = scipy.stats.binned_statistic(alt, diff2, 'mean', bins=nbins)
+    bin_means3, bin_edges3, binnumber3 = scipy.stats.binned_statistic(alt, diff3, 'mean', bins=nbins)
+
+    w = (bin_edges1[1] - bin_edges1[0]) * 0.28
+    bins1 = (bin_edges1[1:] + bin_edges1[:-1]) / 2
+    bins2 = (bin_edges2[1:] + bin_edges2[:-1]) / 2
+    bins3 = (bin_edges3[1:] + bin_edges3[:-1]) / 2
+
+    fig = plt.figure(figsize=(6, 4))
+
+    ax = plt.subplot(111)
+
+    # plt.plot(az, diff, 'b.')
+    # plt.fill_between(bin_edges, np.concatenate(([0],bin_means)), step='pre')
+    # plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='g')
+    ax.bar(bins1 - w, bin_means1, width=w, align='center', label='MCE')
+    ax.bar(bins2, bin_means2, width=w, align='center', label='Otsu')
+    ax.bar(bins3 + w, bin_means3, width=w, align='center', label='K-means')
+    ax.set_xticks(np.arange(0, 1.1, 0.1))
+    ax.set_xlim((0, 1))
+    ax.set_xlabel('Relative solar altitude')
+    ax.set_ylabel('Mean method difference')
+    #ax.set_title('Daily mean differences between hybrid methods and fixed approach')
+    handles, labels = ax.get_legend_handles_labels()
+    lgd = ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,-0.15), ncol=3)
+    #plt.tight_layout(pad=2)
+    plt.savefig(settings.results_folder + 'mean_method_differences.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.close()
+
 def comparison_scatter():
     """Plot the scatter of two datasets against each other with a 1:1 line, best fit and r2 score."""
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    x_name = 'cloud_cover_hybrid_mce'
+    x_name = 'cloud_cover_fixed'
     y_name = 'cloud_cover_hybrid_otsu'
     n_name = 'filename'
 

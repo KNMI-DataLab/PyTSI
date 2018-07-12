@@ -1,10 +1,13 @@
 import numpy as np
+import settings
 from math import log10
+import ratio
 import skimage.filters
-from src import resolution, ratio, settings
+import resolution
 import matplotlib.pyplot as plt
 import cv2
 from sklearn.cluster import KMeans
+import scipy
 
 
 def fixed():

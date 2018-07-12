@@ -6,7 +6,8 @@ takes care of a different regions. Combining them all in the correct order leads
 import cv2 as cv2
 from math import cos, sin, sqrt, tan, pi
 import numpy as np
-from src import mask, settings
+import settings
+import mask
 
 
 def large_circle(regions, outlines):
@@ -168,7 +169,7 @@ def overlay_outlines_on_image(img, outlines, stencil):
     """
     # create mask of outlines and create inverse mask
     img2gray = cv2.cvtColor(outlines, cv2.COLOR_BGR2GRAY)
-    ret, mask_array = cv2.threshold(img2gray, 10, settings.max_color_value - 1, cv2.THRESH_BINARY)
+    ret, mask_array = cv2.threshold(img2gray, 10, settings.max_color_value-1, cv2.THRESH_BINARY)
     mask_inv = cv2.bitwise_not(mask_array)
 
     # black out area of outlines

@@ -1,4 +1,4 @@
-from src import settings
+import settings
 
 
 def get_resolution(img):

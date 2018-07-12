@@ -1,5 +1,5 @@
 import numpy as np
-from src import settings
+import settings
 import sys
 
 

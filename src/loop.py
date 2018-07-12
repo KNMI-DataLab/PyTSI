@@ -1,15 +1,27 @@
+import mask
+import ratio
+import createregions
 import poster_images
+import skycover
+import thresholds
+import settings
 import cv2
+import overlay
+import labelled_image
 import overview
-from src import resolution, crop, solar_position, thresholds, createregions, ratio, overlay, skycover, mask, \
-    statistical_analysis, labelled_image, read_properties_file, write_to_csv, settings
+import read_properties_file
+import resolution
+import write_to_csv
 import os
 import math
 import gzip
+import statistical_analysis
 import ephem
 import numpy as np
 import time
 from tqdm import tqdm
+import crop
+import solar_position
 
 
 def type_TSI(writer):

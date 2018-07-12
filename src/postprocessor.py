@@ -1,7 +1,7 @@
 import numpy as np
 from plotcorrectionresult import plot_correction_results
 import csv as csv
-from src import settings
+import settings
 
 
 def aerosol_correction():

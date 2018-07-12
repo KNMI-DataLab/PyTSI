@@ -1,4 +1,4 @@
-from src import settings
+import settings
 from math import cos, sin, pi
 import numpy as np
 import cv2 as cv2

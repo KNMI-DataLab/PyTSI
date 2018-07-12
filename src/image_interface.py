@@ -1,8 +1,16 @@
 """Underlying processing module of the user interface."""
 
+import settings
+import read_properties_file
 import cv2
-from src import resolution, thresholds, createregions, ratio, overlay, skycover, mask, read_properties_file, settings
+import resolution
+import mask
+import thresholds
+import skycover
+import createregions
 import numpy as np
+import ratio
+import overlay
 import gzip
 import matplotlib.pyplot as plt
 import tarfile
@@ -144,13 +152,13 @@ def single(filename):
 
         # create the segments for solar correction
         regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth,
-                                                                                       altitude,
-                                                                                       mask_array)
+                                                                                           altitude,
+                                                                                           mask_array)
 
         # overlay outlines on image(s)
         image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
-                                                  fixed_sunny_threshold,
-                                                  fixed_thin_threshold)
+                                                      fixed_sunny_threshold,
+                                                      fixed_thin_threshold)
         image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold_mce)
 
         save_processed_image(image_with_outlines_hybrid, settings.tmp + filename + '_hybrid.png')
