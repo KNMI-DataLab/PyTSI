@@ -19,13 +19,13 @@ For documentation on this project see [the documentation website](https://knmi-d
 
 * Run the GUI using Python 3:
   ```
-  python3 UI.py
+  python3 src/UI.py
   ```
 
 * Run the recursive time loop:
   ```
-  python3 main.py
+  python3 src/main.py
   ```
 
-* To change functionality and parameters, change the settings in `settings.py`
+* To change functionality and parameters, change the settings in `src/settings.py`
   
