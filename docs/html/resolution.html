@@ -84,18 +84,18 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="color_bands.html">color_bands module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="createmask.html">createmask module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="createregions.html">createregions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_interface.html">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mask.html">mask module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overlay.html">overlay module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postprocessor.html">postprocessor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processor.html">processor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ratio.html">ratio module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="read_properties_file.html">read_properties_file module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">resolution module</a></li>
@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -172,28 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-resolution">
-<span id="resolution-module"></span><h1>resolution module<a class="headerlink" href="#module-resolution" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="resolution.get_resolution">
-<code class="descclassname">resolution.</code><code class="descname">get_resolution</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/resolution.html#get_resolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#resolution.get_resolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the resolution of the image.</p>
-<p>Order (x,y) can be swapped/reversed because the image format of TSI jpg files is reversed (for some reason).
-Resolution in both directions is then set as global so that it can be called like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>img</strong> – Original unprocessed image</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="resolution-module">
+<h1>resolution module<a class="headerlink" href="#resolution-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

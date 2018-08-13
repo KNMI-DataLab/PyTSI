@@ -88,6 +88,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_interface.html">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
@@ -102,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -171,41 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-crop">
-<span id="crop-module"></span><h1>crop module<a class="headerlink" href="#module-crop" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="crop.mobotix">
-<code class="descclassname">crop.</code><code class="descname">mobotix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/crop.html#mobotix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#crop.mobotix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop mobotix images to rectangular shape.</p>
-<p>The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is
-south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,
-the crop region is in the east. This is to avoid solar interference with the image.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="crop.single_RGB_image">
-<code class="descclassname">crop.</code><code class="descname">single_RGB_image</code><span class="sig-paren">(</span><em>img</em>, <em>corner1</em>, <em>corner2</em>, <em>corner3</em>, <em>corner4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/crop.html#single_RGB_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#crop.single_RGB_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop a single Red Green Blue (RGB) image using the four corner points of a rectangle</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> – RGB image</li>
-<li><strong>corner1</strong> – first corner of the rectangle</li>
-<li><strong>corner2</strong> – second corner of the rectangle</li>
-<li><strong>corner3</strong> – third corner of the rectangle</li>
-<li><strong>corner4</strong> – fourth corner of the rectangle</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Cropped image</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="crop-module">
+<h1>crop module<a class="headerlink" href="#crop-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

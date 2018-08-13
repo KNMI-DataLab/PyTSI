@@ -79,11 +79,12 @@ def type_TSI(writer):
                         transit_alt = solar_position.transit(year, month, day, obs, solar_body)
 
                         # relative current solar altitude
+                        relative_alt = 0
                         relative_alt = altitude / transit_alt
 
                         # read the image
                         img = cv2.imread(os.path.join(subdir, filename_jpg))
-                        img_tsi = cv2.imread(os.path.join(subdir, filename_png))
+                        # img_tsi = cv2.imread(os.path.join(subdir, filename_png))
 
                         # get the resolution of the image
                         resolution.get_resolution(img)
@@ -96,17 +97,19 @@ def type_TSI(writer):
                         red_blue_ratio = ratio.red_blue_v2(masked_img)
 
                         # calculate fixed fractional skycover
+                        cover_thin_fixed = cover_opaque_fixed = cover_total_fixed = 0
                         fixed_sunny_threshold, fixed_thin_threshold = thresholds.fixed()
                         cover_thin_fixed, cover_opaque_fixed, cover_total_fixed = skycover.fixed(red_blue_ratio,
                                                                                                  fixed_sunny_threshold,
                                                                                                  fixed_thin_threshold)
 
                         # calculate hybrid sky cover
-                        ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold_mce, hybrid_threshold_otsu, \
-                            hybrid_threshold_kmeans= thresholds.hybrid(masked_img)
-                        cover_total_hybrid_mce = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_mce)
-                        cover_total_hybrid_otsu = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_otsu)
-                        cover_total_hybrid_kmeans = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_kmeans)
+                        cover_total_hybrid_mce = cover_total_hybrid_otsu = cover_total_hybrid_kmeans = 0
+                        #ratio_br_norm_1d_nz, blue_red_ratio_norm, st_dev, hybrid_threshold_mce, hybrid_threshold_otsu, \
+                        #    hybrid_threshold_kmeans = thresholds.hybrid(masked_img)
+                        #cover_total_hybrid_mce = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_mce)
+                        #cover_total_hybrid_otsu = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_otsu)
+                        #cover_total_hybrid_kmeans = skycover.hybrid(ratio_br_norm_1d_nz, hybrid_threshold_kmeans)
 
                         if settings.use_postprocessing:
                             # create the segments for solar correction
@@ -119,21 +122,10 @@ def type_TSI(writer):
                                                                                              fixed_sunny_threshold)
 
                             # overlay outlines on image(s)
-                            image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
-                                                                      fixed_sunny_threshold,
-                                                                      fixed_thin_threshold)
-                            image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold_mce)
-
-                            if settings.plot_overview:
-                                # plot complete overview with 5 different images, histogram and cloud cover comparisons
-                                overview.plot(img, img_tsi, regions, image_with_outlines_fixed,
-                                              image_with_outlines_hybrid,
-                                              azimuth,
-                                              ratio_br_norm_1d_nz, hybrid_threshold_mce, st_dev, filename_no_ext)
-
-                            if settings.plot_poster_images:
-                                # plot images for use in poster
-                                poster_images.plot(filename_no_ext, img, img_tsi, image_with_outlines_fixed)
+                            #image_with_outlines_fixed = overlay.fixed(red_blue_ratio, outlines, stencil,
+                            #                                          fixed_sunny_threshold,
+                            #                                          fixed_thin_threshold)
+                            #image_with_outlines_hybrid = overlay.hybrid(masked_img, outlines, stencil, hybrid_threshold_mce)
                         else:
                             outside_c = outside_s = horizon_c = horizon_s = inner_c = inner_s = sun_c = sun_s = None
 
@@ -232,7 +224,6 @@ def type_swimcat(writer):
                         contrast,
                         homogeneity,
                         cloud_cover_fixed,
-                        cloud_cover_hybrid,
                         cloud_type
                         )
 

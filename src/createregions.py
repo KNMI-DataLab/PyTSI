@@ -8,6 +8,7 @@ from math import cos, sin, sqrt, tan, pi
 import numpy as np
 import settings
 import mask
+import image_interface
 
 
 def large_circle(regions, outlines):
@@ -86,7 +87,7 @@ def sun_circle(altitude, regions, outlines, theta):
     """Draw the sun circle segment
 
     The position of the sun in the image plane is calculated using an approximation of the mirror. The function that is
-    used to estimate the mirror geometry is :math:`y = -0.23x+1.25`.
+    used to estimate the mirror geometry is :math:`y = -0.23x^2+1.25`.
 
     The radial distance from the center of the image to the center of the sun can subsequently be calculated using
     the quadratic equation (abc formula).
@@ -104,6 +105,14 @@ def sun_circle(altitude, regions, outlines, theta):
     """
     # altitude from degrees to radians
     altitude_radians = altitude * pi / 180
+    # method: (intersect between altitude line and parabola)
+    # intersection between:
+    # y1 = sin(alt)/cos(alt)x+0 (y=ax+b, linear line)
+    # y2 = -0.23x**2+1.25 (parabola that describes the geometry of mirror)
+    # the second order function that needs to be solved (y1=y2):
+    # -0.23x**2-sin(alt)/cos(alt)x+1=0
+    # solution x is the distance of the sun from the zenith in pixels
+    # x = (-b + sqrt(b **2 - 4 * a * c))/(2*a)
     a = -0.23
     b = -tan(altitude_radians)
     c = 1.25
@@ -278,15 +287,22 @@ def create(img, azimuth, altitude, mask_array):
     img = img[..., ::-1]
 
     # drawing the shapes on arrays
+    #image_interface.save_processed_image(regions, '/usr/people/mos/Documents/Report/images/postprocessing_step0.png')
     regions, outlines = large_circle(regions, outlines)
+    #image_interface.save_processed_image(regions, '/usr/people/mos/Documents/Report/images/postprocessing_step1.png')
     regions, outlines, theta = draw_horizon_area(azimuth, regions, outlines)
+    #image_interface.save_processed_image(regions, '/usr/people/mos/Documents/Report/images/postprocessing_step2.png')
     regions, outlines = inner_circle(regions, outlines)
+    #image_interface.save_processed_image(regions, '/usr/people/mos/Documents/Report/images/postprocessing_step3.png')
     regions, outlines = sun_circle(altitude, regions, outlines, theta)
+    #image_interface.save_processed_image(regions, '/usr/people/mos/Documents/Report/images/postprocessing_step4.png')
     stencil, stencil_labels = create_stencil(stencil, stencil_labels)
     image_with_outlines = overlay_outlines_on_image(img, outlines, stencil)
 
     # apply mask to regions
     masked_regions = mask.apply(regions, mask_array)
+
+    #image_interface.save_processed_image(masked_regions, '/usr/people/mos/Documents/Report/images/postprocessing_step5.png')
 
     # apply mask to image with outlines
     image_with_outlines = mask.apply(image_with_outlines, mask_array)

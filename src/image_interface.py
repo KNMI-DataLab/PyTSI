@@ -1,5 +1,4 @@
 """Underlying processing module of the user interface."""
-
 import settings
 import read_properties_file
 import cv2
@@ -14,6 +13,7 @@ import overlay
 import gzip
 import matplotlib.pyplot as plt
 import tarfile
+import createregions
 
 
 def save_original_image(data, fn):
@@ -57,6 +57,38 @@ def save_processed_image(data, fn):
 
     ax.imshow(data)
     plt.savefig(fn, dpi=height)
+    plt.close()
+
+
+def save_original_image_and_histogram(img, hist_data, fn):
+    """Save image, converting it from BGR to RGB.
+
+    Args:
+        data: image in array format to be saved (BGR)
+
+        fn: filename
+    """
+    hist_data.flatten()
+    hist_data = hist_data[hist_data > 0]
+    hist_data = np.divide(hist_data - 1, hist_data + 1)
+    print(max(hist_data), min(hist_data))
+
+    x_min = -0.5
+    x_max = 0.5
+    nbins = 50
+    step = (abs(x_min) + abs(x_max)) / (nbins + 1)
+
+    bin_edges = np.arange(x_min, x_max, step)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,3))
+    ax1.axis('off')
+    ax1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    ax2.set_xlim((x_min,x_max))
+    ax2.hist(hist_data, bins=bin_edges, density=True, color='gray', edgecolor='black')
+    ax2.set_xlabel('Normalized R/B')
+    ax2.set_ylabel('Frequency')
+    plt.tight_layout()
+    plt.savefig(fn, bbox_inches="tight")
     plt.close()
 
 
@@ -134,6 +166,8 @@ def single(filename):
         mask_array = mask.create(img, azimuth)
         masked_img = mask.apply(img, mask_array)
 
+        masked_regions, outlines, labels, stencil, image_with_outlines = createregions.create(img, azimuth, altitude, mask_array)
+
         # calculate red/blue ratio per pixel
         red_blue_ratio = ratio.red_blue_v2(masked_img)
 
@@ -165,12 +199,12 @@ def single(filename):
         save_processed_image(image_with_outlines_fixed, settings.tmp + filename + '_fixed.png')
         save_original_image(img_tsi_processed, settings.tmp + filename + '_fixed_old.png')
         save_original_image(img, settings.tmp + filename + '_original.png')
+        # save_original_image_and_histogram(masked_img, red_blue_ratio, '/usr/people/mos/Documents/Report/images/orig_hist.png')
 
         azimuth = round(azimuth, 3)
         altitude = round(altitude , 3)
         cover_total_fixed= round(cover_total_fixed, 3)
         cover_total_hybrid = round(cover_total_hybrid_mce, 3)
         cover_total_tsi = round(cover_total_tsi, 3)
-
 
         return azimuth, altitude, cover_total_fixed, cover_total_hybrid, cover_total_tsi

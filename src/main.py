@@ -25,8 +25,8 @@ def main():
 
             loop.structure(writer)
 
-            # rename file
-            copyfile(settings.output_data, settings.output_data_copy)
+        # rename file
+        copyfile(settings.output_data, settings.output_data_copy)
 
     # postprocessing step which carries out corrections for solar/horizon area
     if settings.use_postprocessing:
@@ -35,12 +35,18 @@ def main():
     if settings.use_machine_learning:
         if settings.use_knn:  # k nearest neighbor
             machine_learning.knn()
+            #machine_learning.knn_SWIM()
+            #machine_learning.knn_mobotix()
         elif settings.use_kmeans: # k means
             machine_learning.k_means()
 
     # recursively crop all the mobotix images within directory
     if settings.crop_mobotix_images:
-        crop.mobotix()
+        with open(settings.output_data, 'w') as fd:
+            writer = csv.writer(fd, delimiter=settings.delimiter)
+            write_to_csv.headers(writer)
+            crop.mobotix(writer)
+            copyfile(settings.output_data, settings.output_data_copy)
 
     # plot the sky cover comparison
     if settings.plot_sky_cover_comparison:

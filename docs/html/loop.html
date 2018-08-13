@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_interface.html">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
@@ -102,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -171,94 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-loop">
-<span id="loop-module"></span><h1>loop module<a class="headerlink" href="#module-loop" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="loop.structure">
-<code class="descclassname">loop.</code><code class="descname">structure</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine and call loop for type of data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="loop.type_TSI">
-<code class="descclassname">loop.</code><code class="descname">type_TSI</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_TSI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_TSI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop TSI data structure and features</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="loop.type_mobotix">
-<code class="descclassname">loop.</code><code class="descname">type_mobotix</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_mobotix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_mobotix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processing loop for mobotix type images/data structure</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="loop.type_swimcat">
-<code class="descclassname">loop.</code><code class="descname">type_swimcat</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_swimcat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_swimcat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop swimcat data structure and features</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="loop.type_swimseg">
-<code class="descclassname">loop.</code><code class="descname">type_swimseg</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loop.html#type_swimseg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loop.type_swimseg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop swimseg data structure and features</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>writer</strong> – csv writing object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">amount of files processed (integer)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">n_files</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="loop-module">
+<h1>loop module<a class="headerlink" href="#loop-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

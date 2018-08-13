@@ -33,28 +33,34 @@ def histogram_obj(ax, data, plot_title, x_label, y_label, st_dev, threshold):
 
 
 def difference_histogram():
+    plt.style.use('seaborn')
+
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    nbins = 25
+    nbins = 21
 
-    plt.figure(figsize=(6, 4))
-
-    # plt.xticks(np.arange(-1.1,1.1, step=0.1))
+    fig = plt.figure(figsize=(10, 3))
+    ax = plt.subplot(111)
 
     x = data['cloud_cover_TSI']
     y = data['cloud_cover_fixed']
     diff1 = (y - x) * 100
-    y = data['cloud_cover_hybrid']
+    y = data['cloud_cover_hybrid_mce']
     diff2 = (y - x) * 100
-    plt.hist([diff1, diff2], bins=nbins, label=['Fixed', 'Hybrid'], range=(-100, 100), histtype='bar')
+    y = data['cloud_cover_hybrid_otsu']
+    diff3 = (y - x) * 100
+    y = data['cloud_cover_hybrid_kmeans']
+    diff4 = (y - x) * 100
 
-    plt.ylabel('Frequency')
-    plt.xlabel('Difference (%)')
+    labels = ['Fixed', 'MCE', 'Otsu', 'K-means + MCE']
+    ax.hist([diff1, diff2, diff3, diff4], bins=nbins,label=labels, range=(-100, 100), histtype='bar')
 
-    plt.title('Differences between model and grount truth/TSI')
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
+    ax.set_ylabel('Frequency')
+    ax.set_xlabel('Difference (%)')
+
+    handles, labels = ax.get_legend_handles_labels()
+    lgd = plt.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,-0.15), ncol=4)
+    plt.savefig(settings.results_folder + 'diff_hist_fixed_mce.eps', bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.close()
 
 
@@ -170,9 +176,9 @@ def mean_method_difference_bar():
     # plt.plot(az, diff, 'b.')
     # plt.fill_between(bin_edges, np.concatenate(([0],bin_means)), step='pre')
     # plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='g')
-    ax.bar(bins1 - w, bin_means1, width=w, align='center', label='MCE')
-    ax.bar(bins2, bin_means2, width=w, align='center', label='Otsu')
-    ax.bar(bins3 + w, bin_means3, width=w, align='center', label='K-means')
+    ax.bar(bins1 - w, bin_means1, width=w, align='center', color='C1', label='MCE')
+    ax.bar(bins2, bin_means2, width=w, align='center', color='C2', label='Otsu')
+    ax.bar(bins3 + w, bin_means3, width=w, align='center', color='C3', label='K-means + MCE')
     ax.set_xticks(np.arange(0, 1.1, 0.1))
     ax.set_xlim((0, 1))
     ax.set_xlabel('Relative solar altitude')
@@ -181,15 +187,16 @@ def mean_method_difference_bar():
     handles, labels = ax.get_legend_handles_labels()
     lgd = ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,-0.15), ncol=3)
     #plt.tight_layout(pad=2)
-    plt.savefig(settings.results_folder + 'mean_method_differences.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(settings.results_folder + 'mean_method_differences.eps', bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.close()
 
 def comparison_scatter():
     """Plot the scatter of two datasets against each other with a 1:1 line, best fit and r2 score."""
+
     data = np.genfromtxt(settings.output_data_copy, delimiter=settings.delimiter, names=True, dtype=None)
 
-    x_name = 'cloud_cover_fixed'
-    y_name = 'cloud_cover_hybrid_otsu'
+    x_name = 'cloud_cover_TSI'
+    y_name = 'cloud_cover_hybrid_mce'
     n_name = 'filename'
 
     x = data[x_name]
@@ -261,11 +268,12 @@ def comparison_scatter():
 
     ax.plot(x_fit, y_fit, c='black', linewidth=3, label='y=' + str(a) + 'x+' + str(b), linestyle='--')
     ax.plot([-1, 2], [-1, 2], c='tab:red', linewidth=3, label='y=x')
-    ax.legend()
+    ax.legend(loc='lower center')
     ax.set_title('$r^2$ score:' + str(round(r2_score(x, y), 2)))
     plt.grid()
-    plt.xlabel('Ground truth/TSI cloud cover')
+    plt.xlabel('Old TSI cloud cover')
     plt.ylabel('Model cloud cover')
+    # plt.savefig(settings.results_folder + 'scatter_tsi_fixed.png', bbox_inches='tight')
     plt.show()
     plt.close()
 

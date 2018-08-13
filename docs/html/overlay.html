@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="postprocessor module" href="postprocessor.html" />
-    <link rel="prev" title="main module" href="main.html" /> 
+    <link rel="prev" title="mask module" href="mask.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -84,18 +84,18 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="color_bands.html">color_bands module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="createmask.html">createmask module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="createregions.html">createregions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_interface.html">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mask.html">mask module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">overlay module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postprocessor.html">postprocessor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processor.html">processor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ratio.html">ratio module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="read_properties_file.html">read_properties_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="resolution.html">resolution module</a></li>
@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -172,86 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-overlay">
-<span id="overlay-module"></span><h1>overlay module<a class="headerlink" href="#module-overlay" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="overlay.fixed">
-<code class="descclassname">overlay.</code><code class="descname">fixed</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em>, <em>fixed_sunny_threshold</em>, <em>fixed_thin_threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.fixed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Preprocess image to be compatible with <a class="reference internal" href="#overlay.outlines_over_image" title="overlay.outlines_over_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">overlay.outlines_over_image()</span></code></a> using fixed thresholding</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> – image in NumPy format</li>
-<li><strong>outlines</strong> – RGB array of the segment outlines</li>
-<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
-<li><strong>fixed_sunny_threshold</strong> (<em>float</em>) – threshold for sun/cloud</li>
-<li><strong>fixed_thin_threshold</strong> (<em>float</em>) – threshold for thin/opaque cloud</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="overlay.hybrid">
-<code class="descclassname">overlay.</code><code class="descname">hybrid</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em>, <em>threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#hybrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.hybrid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Preprocess image to be compatible with <a class="reference internal" href="#overlay.outlines_over_image" title="overlay.outlines_over_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">overlay.outlines_over_image()</span></code></a> using the hybrid threshold</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> – image in NumPy format</li>
-<li><strong>outlines</strong> – RGB array of the segment outlines</li>
-<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
-<li><strong>threshold</strong> (<em>float</em>) – threshold for sun/cloud determined by HYbrid Thresholding Algorithm (HYTA)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="overlay.outlines_over_image">
-<code class="descclassname">overlay.</code><code class="descname">outlines_over_image</code><span class="sig-paren">(</span><em>img</em>, <em>outlines</em>, <em>stencil</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/overlay.html#outlines_over_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overlay.outlines_over_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overlay outlines on image by converting to BW and performing several other operations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>img</strong> – image in NumPy format</li>
-<li><strong>outlines</strong> (<em>int</em>) – RGB array of the segment outlines</li>
-<li><strong>stencil</strong> (<em>int</em>) – stencil array in RGB format</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image with outlines as overlay</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="overlay-module">
+<h1>overlay module<a class="headerlink" href="#overlay-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -265,7 +188,7 @@
         <a href="postprocessor.html" class="btn btn-neutral float-right" title="postprocessor module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="main.html" class="btn btn-neutral" title="main module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mask.html" class="btn btn-neutral" title="mask module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

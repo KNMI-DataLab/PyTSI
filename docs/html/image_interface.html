@@ -173,81 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-image_interface">
-<span id="image-interface-module"></span><h1>image_interface module<a class="headerlink" href="#module-image_interface" title="Permalink to this headline">¶</a></h1>
-<p>Underlying processing module of the user interface.</p>
-<dl class="function">
-<dt id="image_interface.read_from_tar">
-<code class="descclassname">image_interface.</code><code class="descname">read_from_tar</code><span class="sig-paren">(</span><em>filename_no_ext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#read_from_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.read_from_tar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Temporarily open source tar file, extracting any information out of it and saving to tmp folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename_no_ext</strong> – filename without any extension</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">imgages and additional information required for processing</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="image_interface.save_original_image">
-<code class="descclassname">image_interface.</code><code class="descname">save_original_image</code><span class="sig-paren">(</span><em>data</em>, <em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#save_original_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.save_original_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save image, converting it from BGR to RGB.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> – image in array format to be saved (BGR)</li>
-<li><strong>fn</strong> – filename</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="image_interface.save_processed_image">
-<code class="descclassname">image_interface.</code><code class="descname">save_processed_image</code><span class="sig-paren">(</span><em>data</em>, <em>fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#save_processed_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.save_processed_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save image as RGB.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> – image in array format to be saved (RGB)</li>
-<li><strong>fn</strong> – filename</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="image_interface.single">
-<code class="descclassname">image_interface.</code><code class="descname">single</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/image_interface.html#single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#image_interface.single" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process a single image</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – filename without an extension</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">information about the processed images</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="image-interface-module">
+<h1>image_interface module<a class="headerlink" href="#image-interface-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

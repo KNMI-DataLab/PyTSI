@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="crop.html">crop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="debug_info.html">debug_info module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_folders.html">files_folders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_interface.html">image_interface module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="labelled_image.html">labelled_image module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loop.html">loop module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning.html">machine_learning module</a></li>
@@ -102,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="skycover.html">skycover module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="statistical_analysis.html">statistical_analysis module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thresholds.html">thresholds module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UI.html">UI module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="write_to_csv.html">write_to_csv module</a></li>
 </ul>
 </li>
@@ -171,17 +173,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-postprocessor">
-<span id="postprocessor-module"></span><h1>postprocessor module<a class="headerlink" href="#module-postprocessor" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="postprocessor.aerosol_correction">
-<code class="descclassname">postprocessor.</code><code class="descname">aerosol_correction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/postprocessor.html#aerosol_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#postprocessor.aerosol_correction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform the horizon area/sun circle correction.</p>
-<p>The data from the main processing loop is used which is then subjected to a few steps. The approach by Long 2010
-is used. Several statistical features of the segmetns are tested against a set of thresholds defined in
-<a class="reference internal" href="settings.html#module-settings" title="settings"><code class="xref py py-meth docutils literal notranslate"><span class="pre">settings()</span></code></a>. Subsequently, the corrected sky cover percentages are written to a file.</p>
-</dd></dl>
-
+  <div class="section" id="postprocessor-module">
+<h1>postprocessor module<a class="headerlink" href="#postprocessor-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

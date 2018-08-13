@@ -136,9 +136,9 @@ def hybrid(img):
         # MCE thresholding
         threshold_mce = min_cross_entropy(blue_red_ratio_norm_1d_nz)
         # Otsu thresholding
-        threshold_otsu = otsu(blue_red_ratio_norm_1d_nz)
+        #! threshold_otsu = otsu(blue_red_ratio_norm_1d_nz)
         # k-means thresholding
-        #threshold_kmeans = kmeans(blue_red_ratio_norm_1d_nz)
+        threshold_kmeans = kmeans(blue_red_ratio_norm_1d_nz)
 
     return blue_red_ratio_norm_1d_nz, blue_red_ratio_norm_nz, st_dev, threshold_mce, threshold_otsu, threshold_kmeans
 
@@ -149,11 +149,18 @@ def kmeans(blue_red_ratio_norm_1d_nz):
     blue_red_ratio_norm_1d_nz.sort()
     data = blue_red_ratio_norm_1d_nz.reshape(-1, 1)
 
+    plt.figure(figsize=(7,4))
+    plt.hist(data, bins=35, density=True, color='lightgrey', edgecolor='black', alpha=0.5)
+    plt.xlim((-0.5, 0.5))
+
     # apply the kmeans
     result = KMeans(n_clusters=2, random_state=0).fit(data)
 
     # find the clusters
     clusters = result.cluster_centers_
+
+    plt.axvline(min(clusters), color='tab:blue', label='k-means clusters', linewidth=4, linestyle='--')
+    plt.axvline(max(clusters), color='tab:blue', linewidth=4, linestyle='--')
 
     # find the closest indices of the cluster centers
     arg1 = (np.abs(blue_red_ratio_norm_1d_nz - min(clusters))).argmin()
@@ -164,6 +171,16 @@ def kmeans(blue_red_ratio_norm_1d_nz):
     # calculate the threshold
     # threshold = sum(clusters)/len(result.cluster_centers_)
     threshold = min_cross_entropy(data_to_plot)
+
+    plt.axvline(threshold, color='tab:orange', label='MCE threshold', linewidth=4, linestyle='--')
+
+    plt.legend()
+    plt.xlabel('Normalized R/B')
+    plt.ylabel('Normalized frequency')
+    plt.tight_layout()
+    plt.savefig('/nobackup/users/mos/results/kmeans_mce_histogram.eps')
+    plt.show()
+    plt.close()
 
     return threshold
 

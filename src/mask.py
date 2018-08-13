@@ -47,6 +47,11 @@ def create(img, azimuth):
     # draw a white circle on the mask
     cv2.circle(mask_array, (int(settings.x / 2), int(settings.y / 2)), settings.radius_circle, settings.white, -1)
 
+    # ARM + CAMERA
+    cv2.rectangle(mask_array, (141, 190), (154, 153), settings.black, -1)
+    cv2.rectangle(mask_array, (145, 154), (152, 91), settings.black, -1)
+    cv2.rectangle(mask_array, (int(settings.x / 2), 91), (152, 26), settings.black, -1)
+
     # SHADOWBAND
     # first calculate the position of the shadow band
     # this is based on angle theta, this angle should directly be linked
@@ -61,11 +66,6 @@ def create(img, azimuth):
 
     # draw a black line on the mask
     cv2.line(mask_array, (x_inner, y_inner), (x_outer, y_outer), settings.black, 35)
-
-    # ARM + CAMERA
-    cv2.rectangle(mask_array, (141, 190), (154, 153), settings.black, -1)
-    cv2.rectangle(mask_array, (145, 154), (152, 91), settings.black, -1)
-    cv2.rectangle(mask_array, (int(settings.x / 2), 91), (152, 26), settings.black, -1)
 
     return mask_array
 

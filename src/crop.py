@@ -7,15 +7,22 @@ import resolution
 import cv2
 import matplotlib.pyplot as plt
 import thresholds
+import statistical_analysis
+import write_to_csv
+import image_interface
+import skycover
+import ratio
 
 
-def mobotix():
-    """Crop mobotix images to rectangular shape.
+def mobotix(writer):
+    """Crop mobotix images to rectangular shape and process for machine learning part
 
     The shape is dependent on the solar location. If the sun is east, then a crop in the west is made. If the sun is
     south (for the Northern Hemisphere), the crop region spans the north from east to west. If the sun is in the west,
     the crop region is in the east. This is to avoid solar interference with the image.
     """
+
+    settings.data_type = 'mobotix_crop_ml'
 
     # initialize the observer object
     camera = ephem.Observer()
@@ -80,20 +87,62 @@ def mobotix():
                 else:
                     crop = img[520:1350, 1305:2035, :]
 
-                #plt.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
-                #plt.savefig(settings.results_folder + settings.data_type + '/crops/' + filename_no_ext + '_crop.png')
-                #plt.close()
+                cv2.rectangle(img, (680, 530), (1400, 1360), (0, 255, 0), 20)
+                cv2.rectangle(img, (670, 520), (2035, 1000), (255, 0, 0), 20)
+                cv2.rectangle(img, (1305, 530), (2025, 1350), (0, 0, 255), 20)
 
-                # cv2.rectangle(img, (670, 520), (1400, 1350), (0, 255, 0), 10)
-                # cv2.rectangle(img, (680, 530), (2045, 1010), (0, 0, 255), 10)
-                # cv2.rectangle(img, (1295, 510), (2025, 1340), (255, 0, 0), 10)
+                img = img[...,::-1]
+                image_interface.save_processed_image(img,'/nobackup/users/mos/results/mobotix_crop_regions.png')
+                plt.close()
+                quit()
+
+                # convert from bgr to rgb
+                #crop = crop[...,::-1]
+
+                resolution.get_resolution(crop)
+
+                energy, entropy, contrast, homogeneity = statistical_analysis.textural_features(crop)
+                mean_r, mean_g, mean_b, st_dev, skewness, diff_rg, diff_rb, diff_gb = \
+                    statistical_analysis.spectral_features(crop)
+
+                red_blue_ratio = ratio.red_blue_v2(crop)
+
+                t_swimcat = 0.9
+
+                tmp, tmp, cloud_cover = skycover.fixed(red_blue_ratio, t_swimcat, t_swimcat)
+
+                # prepare data for writing to csv
+                data_row = (filename,
+                            mean_r,
+                            mean_g,
+                            mean_b,
+                            st_dev,
+                            skewness,
+                            diff_rg,
+                            diff_rb,
+                            diff_gb,
+                            energy,
+                            entropy,
+                            contrast,
+                            homogeneity,
+                            cloud_cover
+                            )
+
+                # imgRGB = np.zeros((settings.x, settings.y, 3), np.uint8)
+                # # sun
+                # imgRGB[np.where(red_blue_ratio <= t_swimcat)] = settings.blue
+                # # cloud
+                # imgRGB[np.where(red_blue_ratio > t_swimcat)] = settings.white
                 #
-                # plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-                # plt.savefig(settings.results_folder + settings.data_type + '/' + filename_no_ext + '_crop_regions.png')
+                # fig, (ax1, ax2) = plt.subplots(2, 1)
+                # ax1.imshow(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
+                # ax2.imshow(imgRGB)
+                # plt.savefig('/nobackup/users/mos/results/mobotix/thresholding_tests/'+filename)
                 # plt.close()
-                # quit()
+                #
+                # image_interface.save_original_image(crop, '/nobackup/users/mos/data/mobotix/machine_learning/crops/'+filename+'_crop.png')
 
-                thresholds.otsu_for_crops(crop, filename_no_ext)
+                write_to_csv.output_data(writer, data_row)
 
 
 def single_RGB_image(img, corner1, corner2, corner3, corner4):

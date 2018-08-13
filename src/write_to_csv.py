@@ -50,7 +50,6 @@ def headers(writer):
                          'contrast',
                          'homogeneity',
                          'cloud_cover_fixed',
-                         'cloud_cover_hybrid',
                          'cloud_type'
                          ])
 
@@ -72,6 +71,21 @@ def headers(writer):
                          'cloud_cover'
                          ])
 
+    elif settings.data_type == 'mobotix_crop_ml':
+        writer.writerow(['filename',
+                         'mean_r',
+                         'mean_g',
+                         'mean_b',
+                         'st_dev',
+                         'skewness',
+                         'diff_rg',
+                         'diff_rb',
+                         'diff_gb',
+                         'enegry',
+                         'entropy',
+                         'contrast',
+                         'homogeneity',
+                         ])
 
 def output_data(writer, data_row):
     # if settings.data_type == 'TSI':

@@ -54,7 +54,8 @@ class App:
         self.layout()
 
         # initialize image frames
-        self.initial_img = ImageTk.PhotoImage(Image.open('images/placeholders/placeholder.png'))
+        self.initial_img = ImageTk.PhotoImage(Image.open(settings.project_folder +
+                                                         'cloud_detection/cloudDetection/images/placeholders/placeholder.png'))
         self.panel1 = tk.Label(self.master, image=self.initial_img)
         self.panel2 = tk.Label(self.master, image=self.initial_img)
         self.panel3 = tk.Label(self.master, image=self.initial_img)
@@ -230,10 +231,10 @@ class App:
     def get_date(self):
         """Get the date as a variable from the calendar widget."""
         cal = CalenderUI(self.master)
-        self.master.focus()
         self.master.wait_window(cal.top)
         self.date = str(cal.date)
         self.process()
+        self.master.focus()
 
     def get_entries(self, event=None):
         """Get the time as a variable from the time entry box and check for incorrect format."""

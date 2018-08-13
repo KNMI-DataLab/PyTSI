@@ -18,7 +18,7 @@ import files_folders
 import warnings
 
 # import the path
-sys.path.append('../plotting')
+sys.path.append('./plotting')
 
 # data
 # project folder
@@ -26,11 +26,12 @@ project_folder = '/nobackup/users/mos/'
 results_folder = project_folder + 'results/'
 
 # main data
-main_data = project_folder + 'data/TSI/2015/' # /20160613_tsi-cabauw_realtime'
-# main_data = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
-# main_data = project_folder + 'data/SWIM/swimseg/'
-# main_data = 'data/mobotix/development_images/subfolder/'
-# main_data = project_folder+'data/mobotix/bbc.knmi.nl/MEMBERS/knmi/datatransfer/mobotix/vectrontest/2018/05/same_alignment/'
+#main_data = project_folder + 'data/TSI/2015/' # /20160613_tsi-cabauw_realtime'
+# main_data = project_folder + 'data/TSI/single_day/'
+#main_data = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
+# main_data = project_folder + 'data/SWIM/swimcat/'
+#main_data = 'data/mobotix/development_images/'
+main_data = project_folder+'data/mobotix/machine_learning/'
 
 # external data sources
 tsi_database = '/net/baltink/nobackup/users/baltink/DATABASE/TSI/'
@@ -58,10 +59,10 @@ else:
 if data_type == cat_str:
     # SWIM folders
     swim_dirs = (main_data + 'A-sky/images/',
-                 # main_data + 'B-pattern/images/',
+                 main_data + 'B-pattern/images/',
                  # main_data + 'C-thick-dark/images/',
-                 main_data + 'D-thick-white/images/')
-                 # main_data + 'E-veil/images/')
+                 main_data + 'D-thick-white/images/',
+                 main_data + 'E-veil/images/')
 
 output_folder = files_folders.set_output_folder()
 
@@ -100,7 +101,7 @@ minute = '00'
 # 4 images are taken every minute in case of the mobotix file
 # that means: 'skip_loops = 120' results in 1 image every half an hour being processed as 4*30=120
 # TSI takes images every 1 minute, so skip_loops = 30 is also every half an hour
-skip_loops = 30
+skip_loops = 40
 
 # aerosol correction
 initial_adjustment_factor_limit = 0.5
@@ -174,20 +175,18 @@ elif data_type == mob_str:
     deviation_threshold = 0.08
     fixed_threshold = 0.10
 
-# type of adaptive threshold
-adpt_threshold_type = 'otsu' # 'mce'
-
 # machine learning
-use_knn = False
-use_kmeans = True
+use_knn = True
+use_kmeans = False
 
 # core functionality
 use_processing_loop = 0
 use_postprocessing = 0
 use_statistical_analysis = 0
 use_machine_learning = 0
-crop_mobotix_images = 0
+crop_mobotix_images = 1
 use_ui = 0
+test_performance = 0
 
 # plotting
 plot_sky_cover_comparison = 0
@@ -196,9 +195,9 @@ plot_correction_result = 0
 plot_overview = 0
 plot_poster_images = 0
 use_project_3d = 0
-plot_comparison_scatter = 1
+plot_comparison_scatter = 0
 plot_difference_histogram = 0
-plot_mean_method_difference_bar = 1
+plot_mean_method_difference_bar = 0
 
 # ignore FutureWarnings
 warnings.simplefilter(action='ignore', category=FutureWarning)

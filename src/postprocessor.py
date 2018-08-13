@@ -1,5 +1,5 @@
 import numpy as np
-from plotcorrectionresult import plot_correction_results
+import matplotlib.pyplot as plt
 import csv as csv
 import settings
 
@@ -14,15 +14,15 @@ def aerosol_correction():
     # read columns of file
     df = np.genfromtxt(settings.output_data_copy, skip_header=1, delimiter=settings.delimiter)
 
-    azimuth = df[:, 2]
-    outside_c = df[:, 14]
-    outside_s = df[:, 15]
-    horizon_c = df[:, 16]
-    horizon_s = df[:, 17]
-    inner_c = df[:, 18]
-    inner_s = df[:, 19]
-    sun_c = df[:, 20]
-    sun_s = df[:, 21]
+    azimuth = df[:, 3]
+    outside_c = df[:, 17]
+    outside_s = df[:, 18]
+    horizon_c = df[:, 19]
+    horizon_s = df[:, 20]
+    inner_c = df[:, 21]
+    inner_s = df[:, 22]
+    sun_c = df[:, 23]
+    sun_s = df[:, 24]
 
     n_samples = len(df[:, 0])
 
@@ -45,6 +45,7 @@ def aerosol_correction():
     remainder_sky_cover = np.subtract(original_sky_cover, np.add(sun_sky_cover_partial, horizon_sky_cover_partial))
 
     initial_adjustment_factor = np.subtract(1, remainder_sky_cover)
+
 
     initial_adjustment_factor = np.where(initial_adjustment_factor > settings.initial_adjustment_factor_limit,
                                          settings.initial_adjustment_factor_limit,
@@ -110,15 +111,24 @@ def aerosol_correction():
 
     smooth_corrected_sky_cover[smooth_corrected_sky_cover < 0] = 0
 
-    # plot
-    if settings.plot_correction_result:
-        plot_correction_results(corrected_sky_cover, smooth_corrected_sky_cover)
-
     # zip data and put into file
-    rows = zip(azimuth, corrected_sky_cover, smooth_corrected_sky_cover)
+    rows = zip(azimuth, original_sky_cover, corrected_sky_cover, smooth_corrected_sky_cover)
 
     with open(settings.project_folder + 'cloud_detection/cloudDetection/output_data/corrections.csv', 'w') as f:
         writer = csv.writer(f, delimiter=settings.delimiter)
-        writer.writerow(['azimuth', 'corrected_sky_cover', 'smooth_corrected_sky_cover'])
+        writer.writerow(['azimuth', 'original_sky_cover', 'corrected_sky_cover', 'smooth_corrected_sky_cover'])
         for row in rows:
             writer.writerow(row)
+
+    plt.figure(figsize=(8,3))
+    plt.ylim((-0.01,0.15))
+    plt.ylabel('Cloud cover')
+    plt.xlabel('Azimuth (deg)')
+    plt.grid()
+    plt.plot(azimuth, original_sky_cover, label='Original cloud cover')
+    plt.plot(azimuth, smooth_corrected_sky_cover, label='Corrected cloud cover')
+    plt.legend(loc= 'upper center',ncol=2)
+    plt.tight_layout()
+    #plt.savefig('/usr/people/mos')
+    plt.show()
+    plt.close()
